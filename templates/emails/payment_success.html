@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #333; line-height: 1.6; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 8px; }
+        .success-header { background: #27ae60; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; margin-top: -20px; margin-left: -20px; margin-right: -20px; }
+        h1 { margin: 0; }
+        .info-block { background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        .footer { margin-top: 30px; font-size: 0.9em; color: #7f8c8d; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success-header">
+            <h1>Payment Successful!</h1>
+        </div>
+        
+        <p>Hi {{ traveler_name }},</p>
+        <p>Great news! Your payment for <strong>{{ experience.title }}</strong> has been successfully processed.</p>
+        
+        <div class="info-block">
+            <p><strong>Booking ID:</strong> #{{ booking.id }}</p>
+            <p><strong>Amount Paid:</strong> â‚¹{{ booking.total_price }}</p>
+            <p><strong>Dates:</strong> {{ booking.start_date|date:"M j" }} to {{ booking.end_date|date:"M j, Y" }}</p>
+            <p><strong>Host:</strong> {{ experience.host.username }}</p>
+        </div>
+
+        <p>Your booking is now fully confirmed. You can reach out to your host via the Safar platform to coordinate arrival details.</p>
+        
+        <p>Safe travels!</p>
+        <div class="footer">
+            &copy; {% now "Y" %} Safar Travels. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,55 @@
+PUSH block at 4
+POP endblock at 4, expected matches block opened at 4
+PUSH block at 6
+PUSH if at 23
+PUSH if at 26
+POP endif at 28, expected matches if opened at 26
+PUSH if at 49
+POP endif at 55, expected matches if opened at 49
+PUSH for at 58
+POP endfor at 63, expected matches for opened at 58
+PUSH if at 65
+POP endif at 76, expected matches if opened at 65
+PUSH if at 87
+POP endif at 95, expected matches if opened at 87
+PUSH if at 98
+POP endif at 100, expected matches if opened at 98
+PUSH if at 145
+POP endif at 152, expected matches if opened at 145
+PUSH if at 166
+PUSH if at 168
+POP endif at 168, expected matches if opened at 168
+POP endif at 171, expected matches if opened at 166
+PUSH if at 174
+PUSH for at 176
+PUSH for at 191
+PUSH if at 192
+POP endif at 195, expected matches if opened at 192
+POP endfor at 196, expected matches for opened at 191
+POP endfor at 201, expected matches for opened at 176
+PUSH if at 207
+POP endif at 214, expected matches if opened at 207
+PUSH if at 221
+POP endif at 229, expected matches if opened at 221
+POP endif at 234, expected matches if opened at 174
+PUSH if at 250
+PUSH for at 251
+POP endfor at 256, expected matches for opened at 251
+POP endif at 257, expected matches if opened at 250
+PUSH if at 266
+POP endif at 266, expected matches if opened at 266
+PUSH if at 272
+POP endif at 272, expected matches if opened at 272
+PUSH if at 280
+POP endif at 280, expected matches if opened at 280
+PUSH for at 281
+PUSH if at 282
+PUSH if at 283
+POP endif at 283, expected matches if opened at 283
+POP endif at 284, expected matches if opened at 282
+POP endfor at 285, expected matches for opened at 281
+PUSH if at 289
+POP endif at 327, expected matches if opened at 289
+POP endblock at 335, expected matches if opened at 23
+PUSH block at 337
+POP endblock at 388, expected matches block opened at 337

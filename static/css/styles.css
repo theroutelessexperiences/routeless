@@ -1,0 +1,609 @@
+/*
+ * Safar Marketplace — Custom Styles
+ * Compatible with updated base.html / index.html
+ */
+
+/* =============================================
+   CSS Custom Properties (Design Tokens)
+   ============================================= */
+:root {
+    --primary-color: #2b6777;
+    --accent-color: #f2a900;
+    --secondary-color: #4a90d9;
+    --dark-color: #1f2937;
+    --text-dark: #1f2937;
+    --text-muted: #6b7280;
+    --bg-light: #f8fafc;
+
+    --border-radius-card: 1rem;
+    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.15);
+    --transition-speed: 0.25s;
+    --navbar-height: 78px;
+}
+
+/* =============================================
+   Base Typography / Body
+   ============================================= */
+html,
+body {
+    height: 100%;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    color: var(--text-dark);
+    line-height: 1.6;
+    background: #fff;
+}
+
+/* =============================================
+   Utilities
+   ============================================= */
+.text-accent {
+    color: var(--accent-color) !important;
+}
+
+.bg-accent {
+    background-color: var(--accent-color) !important;
+}
+
+.section-heading {
+    color: var(--primary-color);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+/* =============================================
+   Buttons
+   ============================================= */
+.btn-accent {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: #212529;
+    font-weight: 700;
+    transition:
+        background-color var(--transition-speed) ease,
+        transform var(--transition-speed) ease,
+        box-shadow var(--transition-speed) ease;
+}
+
+.btn-accent:hover,
+.btn-accent:focus {
+    background-color: #d99700;
+    border-color: #d99700;
+    color: #212529;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(242, 169, 0, 0.35);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background-color: #245866;
+    border-color: #245866;
+}
+
+/* =============================================
+   Navbar (compatible with base.html)
+   ============================================= */
+#mainNavbar {
+    min-height: var(--navbar-height);
+    transition: all 0.25s ease;
+    z-index: 1030;
+}
+
+/* Home top state */
+body.is-home #mainNavbar.navbar-home-top {
+    background: transparent;
+    box-shadow: none;
+}
+
+body.is-home #mainNavbar.navbar-home-top .navbar-brand,
+body.is-home #mainNavbar.navbar-home-top .nav-link {
+    color: #fff !important;
+}
+
+/* Scrolled or interior pages */
+#mainNavbar.navbar-solid {
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+#mainNavbar.navbar-solid .navbar-brand,
+#mainNavbar.navbar-solid .nav-link {
+    color: var(--dark-color) !important;
+}
+
+#mainNavbar .nav-link {
+    font-weight: 600;
+    transition: color var(--transition-speed) ease, opacity var(--transition-speed) ease;
+}
+
+#mainNavbar .nav-link.active {
+    color: var(--primary-color) !important;
+}
+
+#mainNavbar .navbar-brand {
+    font-weight: 800;
+    font-size: 1.15rem;
+    letter-spacing: -0.2px;
+}
+
+#mainNavbar .navbar-toggler {
+    border: none;
+    box-shadow: none !important;
+}
+
+/* =============================================
+   Hero / Carousel Sections (Home Page)
+   ============================================= */
+.hero {
+    min-height: 75vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 0 60px;
+    background-size: cover;
+    background-position: center;
+}
+
+.hero-section {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #2a6496 100%);
+    color: #fff;
+    padding: 5rem 0;
+}
+
+/* =============================================
+   Hero Text Animations
+   ============================================= */
+.slide-up {
+    animation: slideUp 0.8s ease forwards;
+    opacity: 0;
+}
+
+.slide-up.delay-1,
+.delay-1 {
+    animation-delay: 0.2s;
+}
+
+.slide-up.delay-2,
+.delay-2 {
+    animation-delay: 0.4s;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+/* =========================
+   Hero Video Slide (Safar theme)
+   ========================= */
+/* Hero video slide */
+.hero-video-slide .hero-video-fallback {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-size: cover !important;
+    background-position: center !important;
+}
+
+.hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.hero-video-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+}
+
+.hero-video-overlay::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 50% 35%, rgba(255, 255, 255, 0.05), transparent 45%),
+        radial-gradient(circle at 50% 80%, rgba(0, 0, 0, 0.16), transparent 60%);
+    pointer-events: none;
+}
+
+.hero-video-slide .hero-overlay-pattern {
+    z-index: 2;
+    opacity: 0.85;
+}
+
+.hero-video-slide .hero-content-wrap {
+    z-index: 3;
+}
+
+.hero-video-slide h2,
+.hero-video-slide .hero-subtitle {
+    text-shadow: 0 4px 18px rgba(0, 0, 0, 0.22);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .hero-video {
+        display: none !important;
+    }
+}
+
+.hero-slide {
+    position: relative;
+    overflow: hidden;
+    min-height: clamp(620px, 88vh, 860px);
+}
+
+.hero-content-wrap {
+    position: relative;
+    z-index: 3;
+    /* above overlay + pattern + video */
+    min-height: inherit;
+    padding-top: 7.5rem;
+    padding-bottom: 3rem;
+}
+
+.hero-video-slide .hero-video-fallback {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    opacity: 1;
+    transition: opacity 0.4s ease;
+    pointer-events: none;
+    /* purely decorative */
+}
+
+/* Safar tinted overlay to keep text readable */
+.hero-video-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+        linear-gradient(rgba(43, 103, 119, 0.50), rgba(43, 103, 119, 0.78));
+}
+
+/* optional subtle vignette for premium look */
+.hero-video-overlay::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        radial-gradient(circle at 50% 35%, rgba(255, 255, 255, 0.06), transparent 45%),
+        radial-gradient(circle at 50% 80%, rgba(0, 0, 0, 0.18), transparent 60%);
+    pointer-events: none;
+}
+
+/* pattern layer above overlay, below content */
+.hero-overlay-pattern {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+    background-size: 18px 18px;
+    opacity: 0.85;
+    pointer-events: none;
+}
+
+/* Ensure hero text remains readable on video */
+.hero-video-slide .hero-subtitle {
+    max-width: 760px;
+    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+}
+
+.hero-video-slide h2 {
+    text-shadow: 0 4px 18px rgba(0, 0, 0, 0.28);
+}
+
+/* Smooth carousel fade with video */
+#heroCarousel.carousel-fade .carousel-item {
+    transition-property: opacity;
+}
+
+/* Better mobile behavior */
+@media (max-width: 991.98px) {
+    .hero-content-wrap {
+        padding-top: 7rem;
+        padding-bottom: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-slide {
+        min-height: 92vh;
+    }
+
+    .hero-content-wrap {
+        padding-top: 6.5rem;
+        padding-bottom: 1.5rem;
+    }
+
+    .hero-video {
+        object-position: center center;
+    }
+
+    .hero-video-slide h2 {
+        font-size: 2rem !important;
+        line-height: 1.15;
+    }
+
+    .hero-video-slide .lead {
+        font-size: 1rem;
+    }
+}
+
+/* Respect reduced motion users */
+@media (prefers-reduced-motion: reduce) {
+    .hero-video {
+        display: none;
+    }
+}
+
+/* =============================================
+   Cards: Experience / Listing
+   ============================================= */
+.experience-card {
+    border: none;
+    border-radius: var(--border-radius-card);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    transition:
+        transform var(--transition-speed) ease,
+        box-shadow var(--transition-speed) ease;
+    background: #fff;
+}
+
+.experience-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-hover);
+}
+
+.experience-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+}
+
+.glass-filter-bar .form-select,
+.glass-filter-bar .form-control {
+    min-height: 46px;
+    font-size: 0.95rem;
+}
+
+.testimonial-card {
+    transition: all 0.35s ease;
+}
+
+.testimonial-card:hover {
+    transform: translateY(-8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+
+.host-cta-new {
+    background: linear-gradient(145deg, #111827, #1f2937);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    transition: 0.3s ease;
+}
+
+.host-cta-new:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6);
+}
+
+
+/* Optional category cards */
+.category-card {
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+    border-radius: 1rem;
+}
+
+.category-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.08) !important;
+}
+
+/* =============================================
+   Booking Widget Card
+   ============================================= */
+.booking-card {
+    background: #fff;
+    border-radius: var(--border-radius-card);
+    box-shadow: var(--shadow-card);
+    padding: 2rem;
+    position: sticky;
+    top: 100px;
+}
+
+/* =============================================
+   Badges / Price
+   ============================================= */
+.badge.bg-accent {
+    background-color: var(--accent-color) !important;
+    color: #212529;
+}
+
+.price-badge {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--primary-color);
+}
+
+/* =============================================
+   Feature Section / Background helpers
+   ============================================= */
+.feature-section {
+    background-color: var(--bg-light);
+}
+
+/* =============================================
+   Forms
+   ============================================= */
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.2rem rgba(242, 169, 0, 0.25);
+}
+
+/* =============================================
+   Razorpay Payment Button Override (if generated)
+   ============================================= */
+.razorpay-payment-button {
+    width: 100%;
+    padding: 12px 24px;
+    background-color: var(--accent-color);
+    color: #212529;
+    border: none;
+    border-radius: 50rem;
+    font-weight: 700;
+    font-size: 1.05rem;
+    transition:
+        background-color var(--transition-speed) ease,
+        transform var(--transition-speed) ease,
+        box-shadow var(--transition-speed) ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.razorpay-payment-button:hover {
+    background-color: #d99700;
+    color: #212529;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* =============================================
+   Footer (scoped)
+   ============================================= */
+footer.site-footer {
+    background-color: #0f172a;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+footer.site-footer a {
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    transition: color var(--transition-speed) ease;
+}
+
+footer.site-footer a:hover {
+    color: var(--accent-color);
+}
+
+/* =============================================
+   Custom Scrollbar (Horizontal strips)
+   ============================================= */
+.custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-color) #f0f0f0;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    height: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(43, 103, 119, 0.55);
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(43, 103, 119, 0.75);
+}
+
+/* =============================================
+   Star Rating Widget (Leave Review page)
+   Recommended markup: inputs + labels in reverse order
+   ============================================= */
+.star-rating {
+    display: inline-flex;
+    flex-direction: row-reverse;
+    gap: 0.25rem;
+    font-size: 2rem;
+}
+
+.star-rating input {
+    display: none;
+}
+
+.star-rating label {
+    cursor: pointer;
+    color: #ddd;
+    transition: color 0.2s ease-in-out;
+    margin: 0;
+}
+
+/* Hover and checked behavior */
+.star-rating label:hover,
+.star-rating label:hover~label,
+.star-rating input:checked~label {
+    color: var(--accent-color);
+}
+
+/* =============================================
+   Responsive Helpers
+   ============================================= */
+@media (max-width: 991.98px) {
+    .hero {
+        min-height: 82vh;
+        padding-top: 110px;
+    }
+}
+
+@media (max-width: 768px) {
+    .booking-card {
+        position: static;
+        margin-top: 2rem;
+    }
+
+    .hero {
+        min-height: 88vh;
+        padding: 110px 0 40px;
+    }
+
+    #heroCarousel h1,
+    #heroCarousel h2 {
+        font-size: 2rem !important;
+    }
+
+    #heroCarousel .lead {
+        font-size: 1rem;
+    }
+}

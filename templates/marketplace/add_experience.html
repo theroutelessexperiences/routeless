@@ -1,0 +1,707 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Add Experience - Safar{% endblock %}
+
+{% block meta_description %}
+Create a new travel experience on Safar with detailed category-specific information, pricing, availability, and
+amenities.
+{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 100px; min-height: 80vh;">
+
+    <!-- Page Header -->
+    <div class="text-center mb-4 mb-lg-5">
+        <h1 class="fw-bold section-heading mb-2">{{ title|default:"Add New Experience" }}</h1>
+        <p class="text-muted mb-0">
+            Create a rich listing with category-specific details to help travelers understand exactly what theyâ€™re
+            booking.
+        </p>
+    </div>
+
+    <!-- Error Summary -->
+    {% if form.non_field_errors %}
+    <div class="alert alert-danger rounded-4 shadow-sm border-0 mb-4">
+        <div class="fw-semibold mb-1">Please fix the following errors:</div>
+        <ul class="mb-0 ps-3">
+            {% for err in form.non_field_errors %}
+            <li>{{ err }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" id="experienceForm" novalidate>
+        {% csrf_token %}
+
+        <div class="row g-4 align-items-start">
+            <!-- Main Column -->
+            <div class="col-12 col-xl-8">
+
+                <!-- 1) Basic Information -->
+                <div class="safar-form-card mb-4">
+                    <div class="card-header-lite">
+                        <div>
+                            <h4 class="mb-1">Basic Information</h4>
+                            <p class="text-muted small mb-0">Core listing details visible to travelers.</p>
+                        </div>
+                        <span class="step-badge">1</span>
+                    </div>
+
+                    <div class="row g-3">
+                        <!-- Title -->
+                        <div class="col-12">
+                            <label for="{{ form.title.id_for_label }}" class="form-label fw-semibold">
+                                {{ form.title.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.title }}
+                            {% if form.title.help_text %}<div class="form-help">{{ form.title.help_text }}</div>
+                            {% endif %}
+                            {% for err in form.title.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+                        </div>
+
+                        <!-- Slug -->
+                        <div class="col-12 col-md-6">
+                            <label for="{{ form.slug.id_for_label }}" class="form-label fw-semibold">
+                                {{ form.slug.label }}
+                            </label>
+                            {{ form.slug }}
+                            <div class="form-help">Leave blank to auto-generate from title.</div>
+                            {% for err in form.slug.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+                        </div>
+
+                        <!-- Category -->
+                        <div class="col-12 col-md-6">
+                            <label for="{{ form.category.id_for_label }}" class="form-label fw-semibold">
+                                {{ form.category.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.category }}
+                            <div class="form-help">Choosing a category will show detailed fields below.</div>
+                            {% for err in form.category.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+                        </div>
+
+                        <!-- Location -->
+                        <div class="col-12 col-md-6">
+                            <label for="{{ form.location.id_for_label }}" class="form-label fw-semibold">
+                                {{ form.location.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.location }}
+                            {% for err in form.location.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+                        </div>
+
+                        <!-- Price -->
+                        <div class="col-6 col-md-3">
+                            <label for="{{ form.price_per_person.id_for_label }}" class="form-label fw-semibold">
+                                {{ form.price_per_person.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.price_per_person }}
+                            {% for err in form.price_per_person.errors %}<div class="field-error">{{ err }}</div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Max Guests -->
+                        <div class="col-6 col-md-3">
+                            <label for="{{ form.max_guests.id_for_label }}" class="form-label fw-semibold">
+                                {{ form.max_guests.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.max_guests }}
+                            {% for err in form.max_guests.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+                        </div>
+
+                        <!-- Description -->
+                        <div class="col-12">
+                            <label for="{{ form.description.id_for_label }}" class="form-label fw-semibold">
+                                {{ form.description.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.description }}
+                            <div class="form-help">Write what travelers will do, whatâ€™s included, and key expectations.
+                            </div>
+                            {% for err in form.description.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+                        </div>
+
+                        <!-- Amenities -->
+                        {% if form.amenities %}
+                        <div class="col-12">
+                            <label class="form-label fw-semibold">{{ form.amenities.label }}</label>
+                            <div class="amenities-wrap">
+                                {{ form.amenities }}
+                            </div>
+                            {% if form.amenities.help_text %}<div class="form-help">{{ form.amenities.help_text }}</div>
+                            {% endif %}
+                            {% for err in form.amenities.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <!-- Images -->
+                        <div class="col-12">
+                            <label for="id_images" class="form-label fw-semibold">Experience Images</label>
+                            <input type="file" name="images" id="id_images" class="form-control" multiple
+                                accept="image/*">
+                            <div class="form-help">Upload multiple images. First image will be used as primary image.
+                            </div>
+                        </div>
+
+                        <!-- Listing Flags -->
+                        <div class="col-12">
+                            <div class="flag-grid">
+                                {% if form.is_active %}
+                                <div class="flag-item">
+                                    <div class="form-check m-0">
+                                        {{ form.is_active }}
+                                        <label class="form-check-label fw-semibold"
+                                            for="{{ form.is_active.id_for_label }}">
+                                            {{ form.is_active.label }}
+                                        </label>
+                                    </div>
+                                    <div class="small text-muted">Visible to users when enabled.</div>
+                                    {% for err in form.is_active.errors %}<div class="field-error">{{ err }}</div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+
+                                {% if form.is_featured %}
+                                <div class="flag-item">
+                                    <div class="form-check m-0">
+                                        {{ form.is_featured }}
+                                        <label class="form-check-label fw-semibold"
+                                            for="{{ form.is_featured.id_for_label }}">
+                                            {{ form.is_featured.label }}
+                                        </label>
+                                    </div>
+                                    <div class="small text-muted">Can be highlighted on the home page.</div>
+                                    {% for err in form.is_featured.errors %}<div class="field-error">{{ err }}</div>
+                                    {% endfor %}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2) Category Details Header -->
+                <div class="safar-form-card mb-4">
+                    <div class="card-header-lite">
+                        <div>
+                            <h4 class="mb-1">Category-Specific Details</h4>
+                            <p class="text-muted small mb-0">
+                                Fill the details for the selected category to make the listing more informative and
+                                professional.
+                            </p>
+                        </div>
+                        <span class="step-badge">2</span>
+                    </div>
+
+                    <div class="selected-category-banner" id="selectedCategoryBanner">
+                        <div class="d-flex align-items-center gap-2">
+                            <i class="bi bi-info-circle"></i>
+                            <span id="selectedCategoryText">Select a category above to show detailed fields.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trek Section -->
+                <div class="safar-form-card mb-4 category-section" data-category="Trek">
+                    <div class="category-section-head">
+                        <h5 class="mb-1"><i class="bi bi-signpost-split me-2"></i>Trek Details</h5>
+                        <p class="text-muted small mb-0">Distance, difficulty, altitude, guide, permits, logistics and
+                            packing notes.</p>
+                    </div>
+                    <div class="detail-grid">
+                        {% for field in form %}
+                        {% if "trek_" in field.name %}
+                        <div class="detail-field {% if field.name == 'trek_what_to_carry' or field.name == 'trek_medical_restrictions' or field.name == 'trek_terrain_notes' %}full-width{% endif %}"
+                            data-field-name="{{ field.name }}">
+                            <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
+                                {{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}<div class="form-help">{{ field.help_text }}</div>{% endif %}
+                            {% for err in field.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Homestay Section -->
+                <div class="safar-form-card mb-4 category-section" data-category="Homestay">
+                    <div class="category-section-head">
+                        <h5 class="mb-1"><i class="bi bi-house-heart me-2"></i>Homestay Details</h5>
+                        <p class="text-muted small mb-0">Room setup, amenities, check-in/out, meal plan, host rules and
+                            nearby attractions.</p>
+                    </div>
+                    <div class="detail-grid">
+                        {% for field in form %}
+                        {% if "home_" in field.name %}
+                        <div class="detail-field {% if field.name == 'home_house_rules' or field.name == 'home_nearby_attractions' %}full-width{% endif %}"
+                            data-field-name="{{ field.name }}">
+                            <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
+                                {{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}<div class="form-help">{{ field.help_text }}</div>{% endif %}
+                            {% for err in field.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Adventure Section -->
+                <div class="safar-form-card mb-4 category-section" data-category="Adventure">
+                    <div class="category-section-head">
+                        <h5 class="mb-1"><i class="bi bi-compass me-2"></i>Adventure Details</h5>
+                        <p class="text-muted small mb-0">Activity type, safety, difficulty, restrictions, reporting and
+                            batch slots.</p>
+                    </div>
+                    <div class="detail-grid">
+                        {% for field in form %}
+                        {% if "adv_" in field.name %}
+                        <div class="detail-field {% if field.name == 'adv_restrictions_notes' %}full-width{% endif %}"
+                            data-field-name="{{ field.name }}">
+                            <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
+                                {{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}<div class="form-help">{{ field.help_text }}</div>{% endif %}
+                            {% for err in field.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Spiritual Section -->
+                <div class="safar-form-card mb-4 category-section" data-category="Spiritual">
+                    <div class="category-section-head">
+                        <h5 class="mb-1"><i class="bi bi-flower1 me-2"></i>Spiritual Details</h5>
+                        <p class="text-muted small mb-0">Darshan/retreat information, dress code, spiritual sessions,
+                            accessibility and meeting instructions.</p>
+                    </div>
+                    <div class="detail-grid">
+                        {% for field in form %}
+                        {% if "spi_" in field.name %}
+                        <div class="detail-field {% if field.name == 'spi_dress_code_notes' or field.name == 'spi_special_instructions' %}full-width{% endif %}"
+                            data-field-name="{{ field.name }}">
+                            <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
+                                {{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}<div class="form-help">{{ field.help_text }}</div>{% endif %}
+                            {% for err in field.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Wildlife Section -->
+                <div class="safar-form-card mb-4 category-section" data-category="Wildlife">
+                    <div class="category-section-head">
+                        <h5 class="mb-1"><i class="bi bi-tree me-2"></i>Wildlife Details</h5>
+                        <p class="text-muted small mb-0">Safari type, park/zone, permits, guide/naturalist, reporting
+                            and wildlife conduct guidelines.</p>
+                    </div>
+                    <div class="detail-grid">
+                        {% for field in form %}
+                        {% if "wild_" in field.name %}
+                        <div class="detail-field {% if field.name == 'wild_sighting_focus' or field.name == 'wild_do_donts' %}full-width{% endif %}"
+                            data-field-name="{{ field.name }}">
+                            <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
+                                {{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}<div class="form-help">{{ field.help_text }}</div>{% endif %}
+                            {% for err in field.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Cultural Section -->
+                <div class="safar-form-card mb-4 category-section" data-category="Cultural">
+                    <div class="category-section-head">
+                        <h5 class="mb-1"><i class="bi bi-camera me-2"></i>Cultural Details</h5>
+                        <p class="text-muted small mb-0">Theme, format, materials, community-led aspects, accessibility
+                            and special notes.</p>
+                    </div>
+                    <div class="detail-grid">
+                        {% for field in form %}
+                        {% if "cul_" in field.name %}
+                        <div class="detail-field {% if field.name == 'cul_special_notes' %}full-width{% endif %}"
+                            data-field-name="{{ field.name }}">
+                            <label for="{{ field.id_for_label }}" class="form-label fw-semibold">
+                                {{ field.label }}</label>
+                            {{ field }}
+                            {% if field.help_text %}<div class="form-help">{{ field.help_text }}</div>{% endif %}
+                            {% for err in field.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-12 col-xl-4">
+                <div class="safar-form-card sticky-form-sidebar">
+                    <div class="card-header-lite mb-3">
+                        <div>
+                            <h5 class="mb-1">Publishing Tips</h5>
+                            <p class="text-muted small mb-0">Make your listing easier to trust and book.</p>
+                        </div>
+                    </div>
+
+                    <ul class="tips-list mb-4">
+                        <li>Use a clear title with location + experience type.</li>
+                        <li>Add realistic price per person and max guests.</li>
+                        <li>Mention what is included and not included in description.</li>
+                        <li>Fill category-specific details for better conversion.</li>
+                        <li>Upload 3â€“5 good quality images if possible.</li>
+                    </ul>
+
+                    <div class="preview-chip mb-3">
+                        <span class="small text-muted">Selected category</span>
+                        <div class="fw-semibold" id="sidebarCategoryLabel">Not selected</div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary rounded-pill py-2 fw-semibold">
+                            <i class="bi bi-check2-circle me-2"></i>Save Experience
+                        </button>
+                        <a href="{% url 'host_dashboard' %}" class="btn btn-outline-secondary rounded-pill py-2">
+                            <i class="bi bi-arrow-left me-2"></i>Back to Host Dashboard
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Card shell */
+    .safar-form-card {
+        background: #fff;
+        border: 1px solid rgba(15, 23, 42, 0.06);
+        border-radius: 1rem;
+        box-shadow: 0 10px 28px rgba(43, 103, 119, 0.06);
+        padding: 1rem;
+    }
+
+    .card-header-lite {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .card-header-lite h4,
+    .card-header-lite h5 {
+        color: var(--primary-color);
+        font-weight: 800;
+        letter-spacing: -0.2px;
+    }
+
+    .step-badge {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        background: rgba(43, 103, 119, 0.1);
+        color: var(--primary-color);
+        border: 1px solid rgba(43, 103, 119, 0.12);
+        flex-shrink: 0;
+    }
+
+    /* Form field styles */
+    .safar-form-card .form-control,
+    .safar-form-card .form-select,
+    .safar-form-card textarea {
+        border-radius: 0.8rem;
+        border: 1px solid rgba(43, 103, 119, 0.12);
+        min-height: 46px;
+    }
+
+    .safar-form-card textarea {
+        min-height: 110px;
+    }
+
+    .safar-form-card .form-control:focus,
+    .safar-form-card .form-select:focus,
+    .safar-form-card textarea:focus {
+        border-color: rgba(43, 103, 119, 0.35);
+        box-shadow: 0 0 0 0.2rem rgba(43, 103, 119, 0.12);
+    }
+
+    .form-help {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin-top: 0.35rem;
+        line-height: 1.35;
+    }
+
+    .field-error {
+        color: #dc3545;
+        font-size: 0.84rem;
+        margin-top: 0.35rem;
+    }
+
+    /* Banner */
+    .selected-category-banner {
+        border-radius: 0.9rem;
+        border: 1px dashed rgba(43, 103, 119, 0.2);
+        background: #f8fbfc;
+        color: var(--text-dark);
+        padding: 0.9rem 1rem;
+    }
+
+    /* Category sections */
+    .category-section {
+        display: none;
+        animation: fadeSlideIn 0.2s ease;
+    }
+
+    .category-section.active {
+        display: block;
+    }
+
+    .category-section-head {
+        margin-bottom: 1rem;
+        padding-bottom: 0.85rem;
+        border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+    }
+
+    .category-section-head h5 {
+        color: var(--primary-color);
+        font-weight: 800;
+    }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: repeat(12, minmax(0, 1fr));
+        gap: 0.9rem;
+    }
+
+    .detail-field {
+        grid-column: span 6;
+        background: #fff;
+        border: 1px solid rgba(15, 23, 42, 0.05);
+        border-radius: 0.85rem;
+        padding: 0.85rem;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    }
+
+    .detail-field.full-width {
+        grid-column: span 12;
+    }
+
+    .detail-field .form-label {
+        font-size: 0.9rem;
+        margin-bottom: 0.35rem;
+        color: var(--text-dark);
+    }
+
+    .detail-field textarea {
+        min-height: 90px;
+    }
+
+    /* Amenities wrapper (in case checkbox list renders plain) */
+    .amenities-wrap {
+        background: #fff;
+        border: 1px solid rgba(15, 23, 42, 0.06);
+        border-radius: 0.85rem;
+        padding: 0.75rem 0.9rem;
+    }
+
+    .amenities-wrap ul {
+        margin: 0;
+        padding-left: 1rem;
+    }
+
+    /* Flags */
+    .flag-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.75rem;
+    }
+
+    .flag-item {
+        border: 1px solid rgba(15, 23, 42, 0.06);
+        border-radius: 0.85rem;
+        padding: 0.8rem;
+        background: #fafcfd;
+    }
+
+    /* Sidebar */
+    .sticky-form-sidebar {
+        position: sticky;
+        top: 100px;
+    }
+
+    .tips-list {
+        margin: 0;
+        padding-left: 1rem;
+    }
+
+    .tips-list li {
+        margin-bottom: 0.5rem;
+        color: var(--text-dark);
+    }
+
+    .preview-chip {
+        border: 1px solid rgba(15, 23, 42, 0.06);
+        border-radius: 0.85rem;
+        background: #f8fafc;
+        padding: 0.8rem 0.9rem;
+    }
+
+    /* Hide conditional detail subfields by default (JS can show when needed) */
+    [data-field-name="adv_activity_custom_name"],
+    [data-field-name="spi_dress_code_notes"] {
+        display: none;
+    }
+
+    @keyframes fadeSlideIn {
+        from {
+            opacity: 0;
+            transform: translateY(6px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive */
+    @media (max-width: 1199.98px) {
+        .sticky-form-sidebar {
+            position: static;
+            top: auto;
+        }
+    }
+
+    @media (max-width: 991.98px) {
+        .detail-field {
+            grid-column: span 12;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .safar-form-card {
+            padding: 0.9rem;
+            border-radius: 0.9rem;
+        }
+
+        .flag-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .card-header-lite {
+            margin-bottom: 0.85rem;
+        }
+
+        .step-badge {
+            width: 30px;
+            height: 30px;
+            font-size: 0.85rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    (function () {
+        const form = document.getElementById("experienceForm");
+        if (!form) return;
+
+        const categorySelect = document.getElementById("id_category");
+        const titleInput = document.getElementById("id_title");
+        const slugInput = document.getElementById("id_slug");
+
+        const categorySections = document.querySelectorAll(".category-section");
+        const bannerText = document.getElementById("selectedCategoryText");
+        const sidebarCategoryLabel = document.getElementById("sidebarCategoryLabel");
+
+        const advActivitySelect = document.getElementById("id_adv_activity_type");
+        const advCustomFieldWrap = document.querySelector('[data-field-name="adv_activity_custom_name"]');
+
+        const spiDressCodeSelect = document.getElementById("id_spi_dress_code_required");
+        const spiDressNotesWrap = document.querySelector('[data-field-name="spi_dress_code_notes"]');
+
+        function slugifyText(text) {
+            return (text || "")
+                .toString()
+                .toLowerCase()
+                .trim()
+                .replace(/['"]/g, "")
+                .replace(/[^a-z0-9\s-]/g, "")
+                .replace(/\s+/g, "-")
+                .replace(/-+/g, "-")
+                .replace(/^-+|-+$/g, "");
+        }
+
+        function autoFillSlug() {
+            if (!titleInput || !slugInput) return;
+            // Only auto-fill if slug is empty OR untouched auto-like value
+            if (!slugInput.value.trim()) {
+                slugInput.value = slugifyText(titleInput.value);
+            }
+        }
+
+        function setCategorySection() {
+            const selected = categorySelect ? (categorySelect.value || "").trim() : "";
+
+            categorySections.forEach(section => {
+                const isMatch = section.dataset.category === selected;
+                section.classList.toggle("active", isMatch);
+            });
+
+            if (!selected) {
+                if (bannerText) bannerText.textContent = "Select a category above to show detailed fields.";
+                if (sidebarCategoryLabel) sidebarCategoryLabel.textContent = "Not selected";
+            } else {
+                if (bannerText) bannerText.textContent = `Showing detailed fields for: ${selected}`;
+                if (sidebarCategoryLabel) sidebarCategoryLabel.textContent = selected;
+            }
+
+            toggleAdventureCustomField();
+            toggleSpiritualDressNotes();
+        }
+
+        function toggleAdventureCustomField() {
+            if (!advCustomFieldWrap || !advActivitySelect) return;
+            const show = advActivitySelect.value === "Other";
+            advCustomFieldWrap.style.display = show ? "" : "none";
+        }
+
+        function toggleSpiritualDressNotes() {
+            if (!spiDressNotesWrap || !spiDressCodeSelect) return;
+            const show = spiDressCodeSelect.value === "Yes";
+            spiDressNotesWrap.style.display = show ? "" : "none";
+        }
+
+        // Events
+        if (categorySelect) categorySelect.addEventListener("change", setCategorySection);
+        if (titleInput) titleInput.addEventListener("input", autoFillSlug);
+
+        if (advActivitySelect) advActivitySelect.addEventListener("change", toggleAdventureCustomField);
+        if (spiDressCodeSelect) spiDressCodeSelect.addEventListener("change", toggleSpiritualDressNotes);
+
+        // Initial state on page load (important for edit mode too)
+        setCategorySection();
+
+        // If category-specific fields contain server-side errors, ensure that section is visible
+        const anyErrorField = document.querySelector(".field-error");
+        if (anyErrorField && categorySelect) {
+            setCategorySection();
+        }
+    })();
+</script>
+{% endblock %}

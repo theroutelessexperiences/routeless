@@ -1,0 +1,1147 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Host Dashboard - Safar{% endblock %}
+
+{% block meta_description %}
+Manage your hosted experiences, track bookings, update booking status, and monitor earnings on Safar.
+{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 100px; min-height: 80vh;">
+
+    <!-- Header -->
+    <div class="host-hero mb-4">
+        <div class="row g-3 align-items-center">
+            <div class="col-12 col-lg-8">
+                <div class="d-flex align-items-center gap-3 mb-2">
+                    <div class="host-icon-wrap">
+                        <i class="bi bi-shop"></i>
+                    </div>
+                    <div>
+                        <h1 class="fw-bold section-heading mb-1">Host Dashboard</h1>
+                        <p class="text-muted mb-0">
+                            Manage your experiences, booking requests, guest stays, and earnings in one place.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-4">
+                <div class="d-flex flex-wrap justify-content-lg-end gap-2">
+                    <a href="{% url 'add_experience' %}" class="btn btn-accent rounded-pill px-4 fw-bold">
+                        <i class="bi bi-plus-circle me-1"></i>Add Experience
+                    </a>
+                    <a href="{% url 'listing_list' %}" class="btn btn-outline-primary rounded-pill px-4 fw-semibold">
+                        <i class="bi bi-compass me-1"></i>Browse Site
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard Tabs -->
+    <ul class="nav nav-pills mb-4" id="hostDashboardTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="overview-tab" data-bs-toggle="pill" data-bs-target="#overview" type="button" role="tab" aria-controls="overview" aria-selected="true">Overview</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="calendar-tab" data-bs-toggle="pill" data-bs-target="#calendar" type="button" role="tab" aria-controls="calendar" aria-selected="false">Availability Calendar</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="payouts-tab" data-bs-toggle="pill" data-bs-target="#payouts" type="button" role="tab" aria-controls="payouts" aria-selected="false">Earnings & Payouts</button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="hostDashboardTabsContent">
+        <!-- Dashboard Overview Tab -->
+        <div class="tab-pane fade show active" id="overview" role="tabpanel" aria-labelledby="overview-tab">
+
+
+    <!-- Analytics -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="stat-card">
+                <div class="stat-icon bg-soft-primary"><i class="bi bi-grid-3x3-gap"></i></div>
+                <div class="stat-label">Listings</div>
+                <div class="stat-value">{{ analytics.total_listings|default:0 }}</div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="stat-card">
+                <div class="stat-icon bg-soft-indigo"><i class="bi bi-calendar-check"></i></div>
+                <div class="stat-label">Bookings</div>
+                <div class="stat-value">{{ analytics.total_bookings|default:0 }}</div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="stat-card">
+                <div class="stat-icon bg-soft-success"><i class="bi bi-patch-check"></i></div>
+                <div class="stat-label">Confirmed</div>
+                <div class="stat-value">{{ analytics.confirmed_bookings|default:0 }}</div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="stat-card">
+                <div class="stat-icon bg-soft-info"><i class="bi bi-flag"></i></div>
+                <div class="stat-label">Completed</div>
+                <div class="stat-value">{{ analytics.completed_bookings|default:0 }}</div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="stat-card">
+                <div class="stat-icon bg-soft-warning"><i class="bi bi-hourglass-split"></i></div>
+                <div class="stat-label">Upcoming</div>
+                <div class="stat-value">{{ analytics.upcoming_checkins|default:0 }}</div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="stat-card">
+                <div class="stat-icon bg-soft-accent"><i class="bi bi-currency-rupee"></i></div>
+                <div class="stat-label">Earnings</div>
+                <div class="stat-value stat-money">â‚¹{{ analytics.total_earnings|default:0|floatformat:0 }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overview Row -->
+    <div class="row g-4 mb-4">
+        <!-- Status breakdown -->
+        <div class="col-12 col-lg-5">
+            <div class="panel-card h-100">
+                <div class="panel-card-header">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="bi bi-pie-chart me-2"></i>Booking Status Breakdown
+                    </h5>
+                </div>
+                <div class="panel-card-body">
+                    {% if status_counts %}
+                    <div class="status-list">
+                        {% for row in status_counts %}
+                        <div class="status-list-item">
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="status-dot
+                                        {% if row.status == 'Confirmed' %}dot-success
+                                        {% elif row.status == 'Completed' %}dot-primary
+                                        {% elif row.status == 'Cancelled' %}dot-danger
+                                        {% elif row.status == 'Pending' %}dot-warning
+                                        {% else %}dot-muted{% endif %}">
+                                </span>
+                                <span class="fw-semibold">{{ row.status }}</span>
+                            </div>
+                            <span class="status-count">{{ row.count }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <div class="text-center py-4 text-muted">
+                        <i class="bi bi-bar-chart-line fs-3 d-block mb-2"></i>
+                        No booking status data yet.
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Host quick panel -->
+        <div class="col-12 col-lg-7">
+            <div class="panel-card h-100">
+                <div class="panel-card-header">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="bi bi-lightning-charge me-2"></i>Host Overview
+                    </h5>
+                </div>
+                <div class="panel-card-body">
+                    <div class="row g-3">
+                        <div class="col-12 col-md-6">
+                            <div class="mini-info-card">
+                                <div class="mini-info-title">Active Hosting Status</div>
+                                <div class="d-flex align-items-center gap-2 mt-1">
+                                    <span class="chip chip-success">
+                                        <i class="bi bi-check-circle me-1"></i>Verified Host
+                                    </span>
+                                </div>
+                                <p class="text-muted small mb-0 mt-2">
+                                    You can create listings and manage all guest bookings from this dashboard.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="col-12 col-md-6">
+                            <div class="mini-info-card">
+                                <div class="mini-info-title">Quick Actions</div>
+                                <div class="d-grid gap-2 mt-2">
+                                    <a href="{% url 'add_experience' %}"
+                                        class="btn btn-sm btn-outline-primary rounded-pill">
+                                        <i class="bi bi-plus-lg me-1"></i>Create New Experience
+                                    </a>
+                                    <a href="{% url 'profile' %}" class="btn btn-sm btn-outline-secondary rounded-pill">
+                                        <i class="bi bi-person-circle me-1"></i>Edit Profile
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="mini-info-card soft">
+                                <div class="d-flex flex-wrap align-items-center justify-content-between gap-2">
+                                    <div>
+                                        <div class="mini-info-title mb-1">Hosting Tip</div>
+                                        <p class="text-muted small mb-0">
+                                            Confirm bookings promptly and complete them only after check-out to keep
+                                            your dashboard accurate.
+                                        </p>
+                                    </div>
+                                    <span class="chip chip-category">
+                                        <i class="bi bi-stars me-1"></i>Best Practice
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Trust & Reputation Panel -->
+        <div class="col-12 col-lg-12">
+            <div class="panel-card mt-0">
+                <div class="panel-card-header">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="bi bi-shield-check me-2"></i>Trust & Reputation
+                    </h5>
+                </div>
+                <div class="panel-card-body">
+                    <div class="row g-3">
+                        <div class="col-12 col-md-4">
+                            <div class="mini-info-card text-center">
+                                <i class="bi bi-star-fill text-warning fs-1 mb-2"></i>
+                                <h3 class="fw-bold mb-0">{{ request.user.userprofile.average_rating|default:"New" }}</h3>
+                                <p class="text-muted small">Average Rating</p>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="mini-info-card text-center">
+                                <i class="bi bi-chat-text-fill text-primary fs-1 mb-2"></i>
+                                <h3 class="fw-bold mb-0">{{ request.user.userprofile.total_reviews|default:0 }}</h3>
+                                <p class="text-muted small">Total Reviews</p>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-4">
+                            <div class="mini-info-card text-center">
+                                <i class="bi bi-envelope-open-fill text-info fs-1 mb-2"></i>
+                                <h3 class="fw-bold mb-0">Inbox</h3>
+                                <p class="text-muted small"><a href="{% url 'inbox' %}" class="text-decoration-none">View Messages</a></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analytics Charts Row -->
+    <div class="row g-4 mb-4">
+        <div class="col-12 col-lg-6">
+            <div class="panel-card h-100">
+                <div class="panel-card-header">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-graph-up me-2"></i>Bookings Trend</h5>
+                </div>
+                <div class="panel-card-body" style="position: relative; height:280px;">
+                    <canvas id="bookingsChart"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-6">
+            <div class="panel-card h-100">
+                <div class="panel-card-header">
+                    <h5 class="mb-0 fw-bold"><i class="bi bi-cash-stack me-2"></i>Revenue Trend</h5>
+                </div>
+                <div class="panel-card-body" style="position: relative; height:280px;">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Listings -->
+    <div class="panel-card mb-4">
+        <div class="panel-card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <h5 class="mb-0 fw-bold">
+                <i class="bi bi-collection me-2"></i>My Experiences
+            </h5>
+            <a href="{% url 'add_experience' %}" class="btn btn-sm btn-primary rounded-pill px-3">
+                <i class="bi bi-plus-circle me-1"></i>Add Experience
+            </a>
+        </div>
+
+        <div class="panel-card-body">
+            {% if listings %}
+            <div class="row g-3">
+                {% for listing in listings %}
+                <div class="col-12 col-md-6 col-xl-4">
+                    <div class="host-listing-card h-100">
+                        <div class="d-flex align-items-start justify-content-between gap-2 mb-2">
+                            <span class="chip chip-category">{{ listing.category }}</span>
+
+                            <div class="d-flex flex-wrap gap-2 justify-content-end">
+                                {% if listing.status == "pending" %}
+                                <span class="chip chip-warning">
+                                    <i class="bi bi-hourglass-split me-1"></i>Awaiting Verification
+                                </span>
+                                {% elif listing.status == "approved" %}
+                                <span class="chip chip-success">
+                                    <i class="bi bi-patch-check me-1"></i>Approved
+                                </span>
+                                {% elif listing.status == "rejected" %}
+                                <span class="chip chip-danger">
+                                    <i class="bi bi-x-circle me-1"></i>Rejected
+                                </span>
+                                {% endif %}
+
+                                {% if listing.is_active %}
+                                <span class="chip chip-success">Active</span>
+                                {% else %}
+                                <span class="chip chip-muted">Inactive</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <h6 class="fw-bold mb-1 listing-name">
+                            <a href="{% url 'listing_detail' listing.slug %}" class="text-decoration-none text-dark">
+                                {{ listing.title }}
+                            </a>
+                        </h6>
+
+                        <p class="text-muted small mb-2">
+                            <i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ listing.location }}
+                        </p>
+
+                        <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top">
+                            <div class="small text-muted">Price</div>
+                            <div class="fw-bold" style="color: var(--primary-color);">
+                                â‚¹{{ listing.price_per_person }}/person</div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state-panel text-center py-4">
+                <i class="bi bi-bag-plus fs-3 mb-2 d-block"></i>
+                <h6 class="fw-bold mb-1">No experiences added yet</h6>
+                <p class="text-muted small mb-3">Start hosting by creating your first experience listing.</p>
+                <a href="{% url 'add_experience' %}" class="btn btn-primary rounded-pill px-4">
+                    Add Your First Experience
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Dynamic Pricing Rules -->
+    <div class="panel-card mb-4">
+        <div class="panel-card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <h5 class="mb-0 fw-bold">
+                <i class="bi bi-tags me-2"></i>Dynamic Pricing Rules
+            </h5>
+            <button class="btn btn-sm btn-outline-primary rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#addPricingRuleModal">
+                <i class="bi bi-plus-circle me-1"></i>Add Rule
+            </button>
+        </div>
+        <div class="panel-card-body">
+            {% if pricing_rules %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th class="small text-muted fw-bold">EXPERIENCE</th>
+                            <th class="small text-muted fw-bold">RULE TYPE</th>
+                            <th class="small text-muted fw-bold">MULTIPLIER</th>
+                            <th class="small text-muted fw-bold">DATE RANGE</th>
+                            <th class="small text-muted fw-bold text-end">STATUS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for rule in pricing_rules %}
+                        <tr>
+                            <td class="fw-semibold text-dark">{{ rule.experience.title }}</td>
+                            <td>
+                                <span class="badge bg-gradient bg-secondary rounded-pill py-1 px-2">{{ rule.get_rule_type_display }}</span>
+                            </td>
+                            <td class="fw-bold fs-6" style="color: var(--primary-color);">{{ rule.multiplier }}x</td>
+                            <td class="small text-muted">
+                                {% if rule.start_date and rule.end_date %}
+                                    <i class="bi bi-calendar-range me-1"></i>{{ rule.start_date|date:"d M Y" }} - {{ rule.end_date|date:"d M Y" }}
+                                {% elif rule.start_date %}
+                                    <i class="bi bi-calendar-event me-1"></i>From {{ rule.start_date|date:"d M Y" }}
+                                {% elif rule.end_date %}
+                                    <i class="bi bi-calendar-event me-1"></i>Until {{ rule.end_date|date:"d M Y" }}
+                                {% else %}
+                                    <i class="bi bi-infinity me-1"></i>Always Active
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                {% if rule.active %}
+                                    <span class="text-success small fw-bold"><i class="bi bi-circle-fill me-1" style="font-size:0.5rem;"></i>Active</span>
+                                {% else %}
+                                    <span class="text-muted small fw-bold"><i class="bi bi-circle-fill me-1" style="font-size:0.5rem;"></i>Disabled</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state-panel text-center py-4">
+                <div class="mb-3">
+                    <div class="d-inline-flex align-items-center justify-content-center bg-light rounded-circle" style="width:60px; height:60px;">
+                        <i class="bi bi-tag fs-3 text-secondary"></i>
+                    </div>
+                </div>
+                <h6 class="fw-bold mb-1">No pricing rules found</h6>
+                <p class="text-muted small mb-0">Add rules to automatically adjust your prices for weekends, holidays, or low demand.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Bookings Management -->
+    <div class="panel-card mb-5">
+        <div class="panel-card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <h5 class="mb-0 fw-bold">
+                <i class="bi bi-calendar2-week me-2"></i>Booking Management
+            </h5>
+            <span class="small text-muted">
+                Total: <span class="fw-semibold text-dark">{{ analytics.total_bookings|default:0 }}</span>
+            </span>
+        </div>
+
+        <div class="panel-card-body">
+            {% if bookings_with_transitions %}
+            <div class="booking-host-list d-grid gap-3">
+                {% for booking, allowed_transitions in bookings_with_transitions %}
+                <div class="host-booking-card">
+                    <div class="row g-3 align-items-start">
+                        <!-- Booking info -->
+                        <div class="col-12 col-xl-7">
+                            <div class="d-flex flex-wrap gap-2 mb-2">
+                                <span class="chip chip-category">{{ booking.experience.category }}</span>
+
+                                <span class="chip
+                                    {% if booking.status == 'Confirmed' %}chip-success
+                                    {% elif booking.status == 'Completed' %}chip-primary
+                                    {% elif booking.status == 'Cancelled' %}chip-danger
+                                    {% elif booking.status == 'Pending' %}chip-warning
+                                    {% else %}chip-muted{% endif %}">
+                                    {{ booking.status }}
+                                </span>
+
+                                <span class="chip
+                                    {% if booking.payment_status == 'Paid' %}chip-success
+                                    {% elif booking.payment_status == 'Refunded' %}chip-primary
+                                    {% elif booking.payment_status == 'Failed' %}chip-danger
+                                    {% else %}chip-muted{% endif %}">
+                                    Payment: {{ booking.payment_status }}
+                                </span>
+                            </div>
+
+                            <h6 class="fw-bold mb-1">
+                                <a href="{% url 'listing_detail' booking.experience.slug %}"
+                                    class="text-decoration-none text-dark">
+                                    {{ booking.experience.title }}
+                                </a>
+                            </h6>
+
+                            <p class="text-muted small mb-2">
+                                <i class="bi bi-person me-1"></i>
+                                {% if booking.traveler_name %}{{ booking.traveler_name }}
+                                {% elif booking.user %}
+                                {{ booking.user.username }}
+                                {% else %}Guest{% endif %}
+                                {% if booking.traveler_email %}
+                                <span class="mx-1">â€¢</span><i class="bi bi-envelope me-1"></i>
+                                {{ booking.traveler_email }}
+                                {% endif %}
+                            </p>
+
+                            <div class="host-booking-meta">
+                                <div class="meta-chip">
+                                    <i class="bi bi-geo-alt me-1 text-danger"></i>{{ booking.experience.location }}
+                                </div>
+                                <div class="meta-chip">
+                                    <i class="bi bi-box-arrow-in-right me-1"></i>
+                                    {{ booking.check_in_date|date:"d M Y" }}
+                                </div>
+                                <div class="meta-chip">
+                                    <i class="bi bi-box-arrow-right me-1"></i>{{ booking.check_out_date|date:"d M Y" }}
+                                </div>
+                                <div class="meta-chip">
+                                    <i class="bi bi-people me-1"></i>{{ booking.guests_count }}
+                                    guest{{ booking.guests_count|pluralize }}
+                                </div>
+                                <div class="meta-chip">
+                                    <i class="bi bi-currency-rupee me-1"></i>{{ booking.total_price|floatformat:2 }}
+                                </div>
+                            </div>
+
+                            {% if booking.message %}
+                            <div class="booking-message mt-2">
+                                <span class="small fw-semibold" style="color: var(--primary-color);">
+                                    <i class="bi bi-chat-left-text me-1"></i>Guest Message:
+                                </span>
+                                <span class="small text-muted">{{ booking.message|truncatechars:150 }}</span>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Status action -->
+                        <div class="col-12 col-xl-5">
+                            <div class="action-panel">
+                                <div class="small fw-semibold mb-2" style="color: var(--primary-color);">
+                                    Update Booking Status
+                                </div>
+
+                                {% if allowed_transitions %}
+                                <form method="post" class="row g-2 align-items-end">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="booking_id" value="{{ booking.id }}">
+
+                                    <div class="col-12">
+                                        <label class="form-label small text-muted mb-1">Allowed transitions</label>
+                                        <select name="status" class="form-select form-select-sm action-select" required>
+                                            <option value="">Select new status</option>
+                                            {% for s in allowed_transitions %}
+                                            <option value="{{ s }}">{{ s }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+
+                                    <div class="col-12 d-grid">
+                                        <button type="submit" class="btn btn-sm btn-primary rounded-pill fw-semibold">
+                                            <i class="bi bi-arrow-repeat me-1"></i>Update Status
+                                        </button>
+                                    </div>
+                                </form>
+                                {% else %}
+                                <div class="small text-muted mb-2">
+                                    No further transitions allowed for this booking.
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill w-100"
+                                    disabled>
+                                    Status Locked
+                                </button>
+                                {% endif %}
+
+                                <div class="small text-muted mt-3">
+                                    <i class="bi bi-clock-history me-1"></i>
+                                    Created {{ booking.created_at|date:"d M Y, h:i A" }}
+                                </div>
+
+                                {% if booking.payment_id %}
+                                <div class="small text-muted mt-1">
+                                    <i class="bi bi-receipt me-1"></i>Payment Ref: {{ booking.payment_id }}
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state-panel text-center py-4">
+                <i class="bi bi-calendar-x fs-3 mb-2 d-block"></i>
+                <h6 class="fw-bold mb-1">No bookings yet</h6>
+                <p class="text-muted small mb-0">When guests book your experiences, they will appear here.</p>
+            </div>
+            {% endif %}
+        </div>
+    </div> <!-- End Overview Tab -->
+
+    <!-- Calendar Tab -->
+    <div class="tab-pane fade" id="calendar" role="tabpanel" aria-labelledby="calendar-tab">
+        <div class="panel-card mb-4">
+            <div class="panel-card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0 fw-bold">
+                    <i class="bi bi-calendar3 me-2"></i>Availability Calendar
+                </h5>
+                <button class="btn btn-sm btn-accent" data-bs-toggle="modal" data-bs-target="#addSlotModal">
+                    <i class="bi bi-plus"></i> Add Slots
+                </button>
+            </div>
+            <div class="panel-card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Experience</th>
+                                <th>Date</th>
+                                <th>Time</th>
+                                <th>Capacity</th>
+                                <th>Booked</th>
+                                <th>Available</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for slot in availability_slots %}
+                            <tr>
+                                <td><span class="fw-semibold">{{ slot.experience.title }}</span></td>
+                                <td>{{ slot.date|date:"M d, Y" }}</td>
+                                <td>{% if slot.start_time %}{{ slot.start_time|time:"g:i A" }}{% else %}All Day{% endif %}</td>
+                                <td>{{ slot.capacity }}</td>
+                                <td><span class="badge bg-secondary">{{ slot.booked_count }}</span></td>
+                                <td>
+                                    {% if slot.is_available %}
+                                        <span class="badge bg-success">Yes</span>
+                                    {% else %}
+                                        <span class="badge bg-danger" style="background-color: #dc3545 !important;">Full / Blocked</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <form method="POST" action="{% url 'toggle_slot_availability' slot.id %}">
+                                        {% csrf_token %}
+                                        {% if slot.is_available %}
+                                        <button type="submit" class="btn btn-sm btn-outline-danger">Block</button>
+                                        {% else %}
+                                        <button type="submit" class="btn btn-sm btn-outline-success">Unblock</button>
+                                        {% endif %}
+                                    </form>
+                                </td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center py-4 text-muted">
+                                    <i class="bi bi-calendar-x fs-3 d-block mb-2"></i>
+                                    No availability slots defined yet.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div> <!-- End Calendar Tab -->
+</div> <!-- End Tab Content -->
+
+<!-- Add Slot Modal -->
+<div class="modal fade" id="addSlotModal" tabindex="-1" aria-labelledby="addSlotModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="{% url 'add_availability_slots' %}">
+          {% csrf_token %}
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold" id="addSlotModalLabel">Add Availability Slots</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <div class="mb-3">
+                  <label class="form-label fw-bold">Experience</label>
+                  <select name="experience_id" class="form-select" required>
+                      <option value="">Select an experience...</option>
+                      {% for exp in my_experiences %}
+                      <option value="{{ exp.id }}">{{ exp.title }} (Max: {{ exp.max_guests }})</option>
+                      {% endfor %}
+                  </select>
+              </div>
+              <div class="row mb-3">
+                  <div class="col-6">
+                      <label class="form-label fw-bold">Start Date</label>
+                      <input type="date" name="start_date" class="form-control" required>
+                  </div>
+                  <div class="col-6">
+                      <label class="form-label fw-bold">End Date (optional)</label>
+                      <input type="date" name="end_date" class="form-control">
+                  </div>
+              </div>
+              <div class="mb-3">
+                  <label class="form-label fw-bold">Start Time (optional)</label>
+                  <input type="time" name="start_time" class="form-control">
+                  <small class="text-muted">Leave blank for all-day experiences.</small>
+              </div>
+              <div class="mb-3">
+                  <label class="form-label fw-bold">Capacity</label>
+                  <input type="number" name="capacity" class="form-control" min="1" required>
+                  <small class="text-muted">How many people can book this specific slot?</small>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-accent px-4 fw-bold">Save Slots</button>
+          </div>
+      </form>
+    </div>
+</div>
+
+<!-- Add Pricing Rule Modal -->
+<div class="modal fade" id="addPricingRuleModal" tabindex="-1" aria-labelledby="addPricingRuleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="{% url 'add_pricing_rule' %}">
+          {% csrf_token %}
+          <div class="modal-header">
+            <h5 class="modal-title fw-bold" id="addPricingRuleModalLabel">Add Dynamic Pricing Rule</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <div class="mb-3">
+                  <label class="form-label fw-bold">Experience</label>
+                  <select name="experience_id" class="form-select" required>
+                      <option value="">Select an experience...</option>
+                      {% for exp in my_experiences %}
+                      <option value="{{ exp.id }}">{{ exp.title }} (₹{{ exp.price_per_person }}/person)</option>
+                      {% endfor %}
+                  </select>
+              </div>
+              <div class="mb-3">
+                  <label class="form-label fw-bold">Rule Type</label>
+                  <select name="rule_type" class="form-select" required>
+                      <option value="">Select rule type...</option>
+                      <option value="WEEKEND">Weekend Premium</option>
+                      <option value="HOLIDAY">Holiday Premium</option>
+                      <option value="SURGE">High Demand Surge</option>
+                      <option value="DISCOUNT">Low Demand Discount</option>
+                  </select>
+              </div>
+              <div class="mb-3">
+                  <label class="form-label fw-bold">Price Multiplier</label>
+                  <input type="number" name="multiplier" class="form-control" step="0.01" min="0.5" max="3.0" placeholder="e.g. 1.25 for a 25% increase, 0.8 for a 20% discount" required>
+                  <small class="text-muted">Final Price = Base Price &times; Multiplier</small>
+              </div>
+              <div class="row mb-3">
+                  <div class="col-6">
+                      <label class="form-label fw-bold">Start Date (optional)</label>
+                      <input type="date" name="start_date" class="form-control">
+                  </div>
+                  <div class="col-6">
+                      <label class="form-label fw-bold">End Date (optional)</label>
+                      <input type="date" name="end_date" class="form-control">
+                  </div>
+              </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-accent px-4 fw-bold">Save Rule</button>
+          </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Hero */
+    .host-hero {
+        background: linear-gradient(180deg, rgba(43, 103, 119, 0.05), rgba(43, 103, 119, 0.02));
+        border: 1px solid rgba(43, 103, 119, 0.08);
+        border-radius: 1rem;
+        padding: 1rem 1.1rem;
+    }
+
+    .host-icon-wrap {
+        width: 52px;
+        height: 52px;
+        border-radius: 14px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(43, 103, 119, 0.10);
+        color: var(--primary-color);
+        font-size: 1.35rem;
+        border: 1px solid rgba(43, 103, 119, 0.12);
+        flex-shrink: 0;
+    }
+
+    /* Shared panel */
+    .panel-card {
+        background: #fff;
+        border: 1px solid rgba(15, 23, 42, 0.06);
+        border-radius: 1rem;
+        box-shadow: 0 10px 28px rgba(43, 103, 119, 0.07);
+        overflow: hidden;
+    }
+
+    .panel-card-header {
+        padding: 0.9rem 1rem;
+        border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+        background: #fff;
+    }
+
+    .panel-card-body {
+        padding: 1rem;
+    }
+
+    /* Stat cards */
+    .stat-card {
+        background: #fff;
+        border: 1px solid rgba(15, 23, 42, 0.06);
+        border-radius: 1rem;
+        padding: 0.9rem;
+        box-shadow: 0 8px 22px rgba(43, 103, 119, 0.06);
+        height: 100%;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 26px rgba(43, 103, 119, 0.10);
+    }
+
+    .stat-icon {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        margin-bottom: 0.6rem;
+        border: 1px solid rgba(15, 23, 42, 0.04);
+    }
+
+    .stat-label {
+        font-size: 0.78rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        font-weight: 700;
+        color: var(--text-muted);
+        margin-bottom: 0.2rem;
+    }
+
+    .stat-value {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: var(--text-dark);
+        line-height: 1.1;
+        word-break: break-word;
+    }
+
+    .stat-money {
+        color: var(--primary-color);
+        font-size: 1rem;
+    }
+
+    .bg-soft-primary {
+        background: rgba(43, 103, 119, 0.10);
+        color: var(--primary-color);
+    }
+
+    .bg-soft-indigo {
+        background: rgba(79, 70, 229, 0.10);
+        color: #4338ca;
+    }
+
+    .bg-soft-success {
+        background: rgba(16, 185, 129, 0.10);
+        color: #047857;
+    }
+
+    .bg-soft-info {
+        background: rgba(59, 130, 246, 0.10);
+        color: #1d4ed8;
+    }
+
+    .bg-soft-warning {
+        background: rgba(245, 158, 11, 0.10);
+        color: #b45309;
+    }
+
+    .bg-soft-accent {
+        background: rgba(242, 169, 0, 0.14);
+        color: #b45309;
+    }
+
+    /* Chips */
+    .chip {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        padding: 0.38rem 0.7rem;
+        font-size: 0.78rem;
+        font-weight: 700;
+        border: 1px solid transparent;
+        line-height: 1;
+    }
+
+    .chip-category {
+        background: rgba(43, 103, 119, 0.08);
+        color: var(--primary-color);
+        border-color: rgba(43, 103, 119, 0.12);
+    }
+
+    .chip-success {
+        background: rgba(16, 185, 129, 0.10);
+        color: #047857;
+        border-color: rgba(16, 185, 129, 0.15);
+    }
+
+    .chip-primary {
+        background: rgba(59, 130, 246, 0.10);
+        color: #1d4ed8;
+        border-color: rgba(59, 130, 246, 0.15);
+    }
+
+    .chip-danger {
+        background: rgba(239, 68, 68, 0.10);
+        color: #b91c1c;
+        border-color: rgba(239, 68, 68, 0.15);
+    }
+
+    .chip-warning {
+        background: rgba(245, 158, 11, 0.10);
+        color: #b45309;
+        border-color: rgba(245, 158, 11, 0.15);
+    }
+
+    .chip-muted {
+        background: rgba(107, 114, 128, 0.10);
+        color: #4b5563;
+        border-color: rgba(107, 114, 128, 0.15);
+    }
+
+    /* Status breakdown */
+    .status-list {
+        display: grid;
+        gap: 0.65rem;
+    }
+
+    .status-list-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        padding: 0.7rem 0.85rem;
+        border-radius: 0.8rem;
+        border: 1px solid rgba(15, 23, 42, 0.05);
+        background: #fbfdff;
+    }
+
+    .status-count {
+        min-width: 36px;
+        text-align: center;
+        padding: 0.2rem 0.5rem;
+        border-radius: 999px;
+        background: rgba(15, 23, 42, 0.04);
+        font-weight: 700;
+        color: var(--text-dark);
+    }
+
+    .status-dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .dot-success {
+        background: #10b981;
+    }
+
+    .dot-primary {
+        background: #3b82f6;
+    }
+
+    .dot-danger {
+        background: #ef4444;
+    }
+
+    .dot-warning {
+        background: #f59e0b;
+    }
+
+    .dot-muted {
+        background: #9ca3af;
+    }
+
+    /* Mini info cards */
+    .mini-info-card {
+        border: 1px solid rgba(15, 23, 42, 0.06);
+        border-radius: 0.9rem;
+        padding: 0.85rem;
+        background: #fff;
+        height: 100%;
+    }
+
+    .mini-info-card.soft {
+        background: rgba(43, 103, 119, 0.03);
+        border-color: rgba(43, 103, 119, 0.08);
+    }
+
+    .mini-info-title {
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        font-weight: 700;
+        color: var(--text-muted);
+    }
+
+    /* Listing cards */
+    .host-listing-card {
+        border: 1px solid rgba(15, 23, 42, 0.06);
+        border-radius: 0.95rem;
+        padding: 0.9rem;
+        background: #fff;
+        box-shadow: 0 6px 16px rgba(43, 103, 119, 0.04);
+        display: flex;
+        flex-direction: column;
+    }
+
+    .listing-name a:hover {
+        color: var(--primary-color) !important;
+    }
+
+    /* Bookings */
+    .booking-host-list {
+        display: grid;
+        gap: 0.9rem;
+    }
+
+    .host-booking-card {
+        border: 1px solid rgba(15, 23, 42, 0.06);
+        border-radius: 0.95rem;
+        padding: 0.95rem;
+        background: #fff;
+        box-shadow: 0 6px 16px rgba(43, 103, 119, 0.04);
+        transition: box-shadow 0.2s ease, transform 0.2s ease;
+    }
+
+    .host-booking-card:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 20px rgba(43, 103, 119, 0.08);
+    }
+
+    .host-booking-meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .meta-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.2rem;
+        padding: 0.35rem 0.6rem;
+        border-radius: 999px;
+        font-size: 0.78rem;
+        background: #f8fafc;
+        border: 1px solid rgba(15, 23, 42, 0.05);
+        color: var(--text-dark);
+    }
+
+    .booking-message {
+        background: rgba(43, 103, 119, 0.04);
+        border: 1px solid rgba(43, 103, 119, 0.08);
+        border-radius: 0.75rem;
+        padding: 0.6rem 0.75rem;
+    }
+
+    .action-panel {
+        border: 1px solid rgba(43, 103, 119, 0.08);
+        background: #fbfdff;
+        border-radius: 0.9rem;
+        padding: 0.85rem;
+        height: 100%;
+    }
+
+    .action-select {
+        border-radius: 0.75rem;
+        min-height: 40px;
+        border: 1px solid rgba(43, 103, 119, 0.12);
+    }
+
+    .action-select:focus {
+        border-color: rgba(43, 103, 119, 0.35);
+        box-shadow: 0 0 0 0.2rem rgba(43, 103, 119, 0.10);
+    }
+
+    /* Empty states */
+    .empty-state-panel {
+        border: 1px dashed rgba(43, 103, 119, 0.22);
+        border-radius: 0.95rem;
+        background: #fff;
+        color: var(--primary-color);
+    }
+
+    /* Responsive */
+    @media (max-width: 991.98px) {
+        .host-hero {
+            padding: 0.9rem;
+        }
+
+        .panel-card-body {
+            padding: 0.9rem;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .host-icon-wrap {
+            width: 46px;
+            height: 46px;
+            font-size: 1.15rem;
+            border-radius: 12px;
+        }
+
+        .stat-card {
+            padding: 0.8rem;
+        }
+
+        .stat-value {
+            font-size: 1.05rem;
+        }
+
+        .host-booking-card {
+            padding: 0.85rem;
+        }
+
+        .action-panel {
+            padding: 0.75rem;
+        }
+    }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const chartData = {{ chart_data|safe }};
+    
+    new Chart(document.getElementById('bookingsChart'), {
+        type: 'line',
+        data: {
+            labels: chartData.labels,
+            datasets: [{
+                label: 'Confirmed & Completed Bookings',
+                data: chartData.bookings,
+                borderColor: '#2b6777',
+                backgroundColor: 'rgba(43, 103, 119, 0.1)',
+                tension: 0.3,
+                fill: true
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
+
+    new Chart(document.getElementById('revenueChart'), {
+        type: 'bar',
+        data: {
+            labels: chartData.labels,
+            datasets: [{
+                label: 'Revenue (₹)',
+                data: chartData.revenue,
+                backgroundColor: '#f2a900',
+                borderRadius: 4
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
+});
+</script>
+{% endblock %}

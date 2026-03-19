@@ -1,0 +1,1488 @@
+{% extends "base.html" %}
+{% load static cache %}
+
+{% block title %}Safar - Discover Curated Travel Experiences{% endblock %}
+
+{% block meta_description %}Find the best homestays, thrilling adventures, and curated local travel experiences. Book
+securely with verified hosts on Safar.{% endblock %}
+
+{% block og_tags %}
+<meta property="og:site_name" content="Safar" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Safar - Discover Curated Travel Experiences" />
+<meta property="og:description"
+    content="Find the best homestays, thrilling adventures, and curated local travel experiences. Book securely with verified hosts on Safar." />
+<meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'home' %}" />
+<meta property="og:image"
+    content="{{ request.scheme }}://{{ request.get_host }}{% static 'img/safar-og-default.jpg' %}" />
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero Carousel -->
+{% if hero_slides %}
+<div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000"
+    data-bs-touch="true" aria-label="Safar hero carousel">
+
+    <!-- Indicators -->
+    <div class="carousel-indicators mb-4">
+        {% for slide in hero_slides %}
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="{{ forloop.counter0 }}"
+            class="{% if forloop.first %}active{% endif %}" {% if forloop.first %}aria-current="true" {% endif %}
+            aria-label="Slide {{ forloop.counter }}">
+        </button>
+        {% endfor %}
+    </div>
+
+    <div class="carousel-inner">
+        {% for slide in hero_slides %}
+        <div class="carousel-item {% if forloop.first %}active{% endif %}" data-bs-interval="{{ slide.interval_ms }}">
+
+            {% if slide.media_type == 'video' %}
+            <!-- VIDEO SLIDE -->
+            <div class="hero position-relative hero-slide hero-video-slide overflow-hidden">
+
+                <div class="hero-video-fallback" style="background:
+                    linear-gradient(rgba(43, 103, 119, {{ slide.overlay_opacity_top|default:'0.55' }}), rgba(43, 103, 119, {{ slide.overlay_opacity_bottom|default:'0.82' }})){% if slide.video_poster %}, url('{{ slide.video_poster.url }}') center/cover{% endif %};">
+                </div>
+
+                <video class="hero-video" muted loop playsinline preload="metadata"
+                    {% if slide.video_poster %}poster="{{ slide.video_poster.url }}"{% endif %}
+                    aria-hidden="true">
+                    <source src="{{ slide.video.url }}" type="{{ slide.video_mime_type|default:'video/mp4' }}">
+                </video>
+
+                <div class="hero-video-overlay"
+                    style="background: linear-gradient(rgba(43, 103, 119, {{ slide.overlay_opacity_top|default:'0.55' }}), rgba(43, 103, 119, {{ slide.overlay_opacity_bottom|default:'0.82' }}));">
+                </div>
+
+                <div class="hero-overlay-pattern"></div>
+
+                <div
+                    class="container d-flex align-items-center justify-content-center text-center text-white position-relative hero-content-wrap">
+                    <div class="col-lg-9">
+                        {% if slide.badge_text %}
+                        <span class="badge rounded-pill px-3 py-2 mb-3 glass-badge">
+                            {% if slide.badge_icon %}<i class="bi {{ slide.badge_icon }} me-1"></i>{% endif %}
+                            {{ slide.badge_text }}
+                        </span>
+                        {% endif %}
+
+                        <h2 class="display-4 fw-bold mb-3">{{ slide.title }}</h2>
+
+                        {% if slide.subtitle %}
+                        <p class="lead mb-4 text-white-50 hero-subtitle mx-auto">
+                            {{ slide.subtitle }}
+                        </p>
+                        {% endif %}
+
+                        {% if slide.cta_primary_label or slide.cta_secondary_label %}
+                        <div class="d-flex justify-content-center gap-3 flex-wrap">
+                            {% if slide.cta_primary_label and slide.cta_primary_url %}
+                            <a href="{{ slide.cta_primary_url }}"
+                                class="btn btn-accent rounded-pill px-5 py-3 fs-5 fw-bold shadow">
+                                {{ slide.cta_primary_label }}
+                            </a>
+                            {% endif %}
+
+                            {% if slide.cta_secondary_label and slide.cta_secondary_url %}
+                            <a href="{{ slide.cta_secondary_url }}"
+                                class="btn btn-outline-light rounded-pill px-4 py-3 fw-bold">
+                                {{ slide.cta_secondary_label }}
+                            </a>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {% else %}
+            <!-- IMAGE SLIDE -->
+            <div class="hero position-relative hero-slide" style="background:
+                linear-gradient(
+                    rgba(43, 103, 119, {{ slide.overlay_opacity_top|default:'0.55' }}),
+                    rgba(43, 103, 119, {{ slide.overlay_opacity_bottom|default:'0.82' }})
+                ),
+                {% if slide.image %}url('{{ slide.image.url }}'){% endif %} center/cover;">
+
+                <div class="hero-overlay-pattern"></div>
+
+                <div class="container d-flex align-items-center position-relative hero-content-wrap">
+                    <div class="row w-100 justify-content-center">
+                        <div class="col-lg-10 text-center text-white">
+
+                            {% if slide.badge_text %}
+                            <span class="badge rounded-pill px-3 py-2 mb-3 glass-badge">
+                                {% if slide.badge_icon %}<i class="bi {{ slide.badge_icon }} me-1"></i>{% endif %}
+                                {{ slide.badge_text }}
+                            </span>
+                            {% endif %}
+
+                            {% if forloop.first %}
+                            <h1 class="display-3 fw-bold mb-3 slide-up">{{ slide.title }}</h1>
+                            {% else %}
+                            <h2 class="display-4 fw-bold mb-3">{{ slide.title }}</h2>
+                            {% endif %}
+
+                            {% if slide.subtitle %}
+                            <p
+                                class="lead mb-4 {% if forloop.first %}slide-up delay-1{% endif %} text-white-50 mx-auto hero-subtitle">
+                                {{ slide.subtitle }}
+                            </p>
+                            {% endif %}
+
+                            {% if slide.cta_primary_label or slide.cta_secondary_label %}
+                            <div
+                                class="d-flex justify-content-center gap-3 flex-wrap mb-4 {% if forloop.first %}slide-up delay-2{% endif %}">
+                                {% if slide.cta_primary_label and slide.cta_primary_url %}
+                                <a href="{{ slide.cta_primary_url }}"
+                                    class="btn btn-accent rounded-pill px-5 py-3 fs-5 fw-bold shadow">
+                                    {{ slide.cta_primary_label }}
+                                </a>
+                                {% endif %}
+
+                                {% if slide.cta_secondary_label and slide.cta_secondary_url %}
+                                <a href="{{ slide.cta_secondary_url }}"
+                                    class="btn btn-outline-light rounded-pill px-4 py-3 fw-bold">
+                                    {{ slide.cta_secondary_label }}
+                                </a>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+
+                            {% if slide.show_search_card %}
+                            <div
+                                class="bg-white rounded-4 shadow-lg p-3 p-md-4 text-start mx-auto {% if forloop.first %}slide-up delay-2{% endif %} hero-search-card">
+                                <form method="get" action="{% url 'listing_list' %}">
+                                    <div class="row g-2 align-items-end">
+                                        <div class="col-md-4">
+                                            <label class="form-label small fw-bold text-muted mb-1">Location</label>
+                                            <input type="text" name="location"
+                                                class="form-control form-control-lg border-0 bg-light"
+                                                placeholder="e.g., Manali / Rishikesh">
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <label class="form-label small fw-bold text-muted mb-1">Category</label>
+                                            <select name="category"
+                                                class="form-select form-select-lg border-0 bg-light">
+                                                <option value="">All categories</option>
+                                                {% for category in categories %}
+                                                <option value="{{ category|slugify }}">{{ category|title }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            <label class="form-label small fw-bold text-muted mb-1">Min Price</label>
+                                            <input type="number" name="min_price" min="0" step="1"
+                                                class="form-control form-control-lg border-0 bg-light" placeholder="0">
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            <label class="form-label small fw-bold text-muted mb-1">Max Price</label>
+                                            <input type="number" name="max_price" min="0" step="1"
+                                                class="form-control form-control-lg border-0 bg-light"
+                                                placeholder="5000">
+                                        </div>
+
+                                        <div class="col-12 col-md-1 d-grid">
+                                            <button type="submit" class="btn btn-accent btn-lg rounded-3"
+                                                aria-label="Search experiences">
+                                                <i class="bi bi-search"></i>
+                                                <span class="d-md-none ms-1">Search</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            {% endif %}
+
+                            {% if slide.show_trust_chips %}
+                            <div class="d-flex flex-wrap justify-content-center gap-2 mt-4"
+                                style="padding-bottom: 20px;">
+                                <span class="badge rounded-pill px-3 py-2 bg-light text-dark shadow-sm">
+                                    <i class="bi bi-shield-check me-1"></i> Verified Hosts
+                                </span>
+                                <span class="badge rounded-pill px-3 py-2 bg-light text-dark shadow-sm">
+                                    <i class="bi bi-credit-card me-1"></i> Secure Payments
+                                </span>
+                                <span class="badge rounded-pill px-3 py-2 bg-light text-dark shadow-sm">
+                                    <i class="bi bi-arrow-repeat me-1"></i> Easy Cancellation
+                                </span>
+                            </div>
+                            {% endif %}
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+        {% endfor %}
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev"
+        aria-label="Previous slide">
+        <span class="carousel-control-prev-icon bg-dark rounded-circle p-3 shadow" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next"
+        aria-label="Next slide">
+        <span class="carousel-control-next-icon bg-dark rounded-circle p-3 shadow" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+{% endif %}
+
+<!-- Stats / Trust Strip -->
+<section class="py-4 border-bottom bg-white">
+    <div class="container">
+        <div class="row text-center g-3">
+            <div class="col-6 col-md-3">
+                <div class="p-3 rounded-4 bg-light h-100 stats-card">
+                    <div class="fw-bold fs-4" style="color: var(--primary-color);">{{ featured_listings|length }}+</div>
+                    <div class="small text-muted">Featured Experiences</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-3 rounded-4 bg-light h-100 stats-card">
+                    <div class="fw-bold fs-4" style="color: var(--primary-color);">{{ categories|length }}+</div>
+                    <div class="small text-muted">Categories</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-3 rounded-4 bg-light h-100 stats-card">
+                    <div class="fw-bold fs-4" style="color: var(--primary-color);">{{ locations|length }}+</div>
+                    <div class="small text-muted">Destinations</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-3 rounded-4 bg-light h-100 stats-card">
+                    <div class="fw-bold fs-4 text-success"><i class="bi bi-shield-check"></i></div>
+                    <div class="small text-muted">Secure Booking Flow</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Explore by Category -->
+{% cache 3600 homepage_categories_section %}
+<section id="explore-categories" class="py-5 mt-2">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <div class="section-kicker">Discover</div>
+                <h2 class="fw-bold mb-1" style="color: var(--primary-color);">Explore by Category</h2>
+                <p class="text-muted mb-0">Pick how you want to travel today.</p>
+            </div>
+            <a href="{% url 'categories' %}" class="text-accent fw-bold text-decoration-none d-none d-md-block">
+                View All Categories <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="row row-cols-2 row-cols-md-4 g-4">
+            {% for category in categories|slice:":8" %}
+            <div class="col">
+                <a href="{% url 'listing_list' %}?category={{ category|slugify }}" class="text-decoration-none">
+                    <div class="card experience-card h-100 border-0 text-center p-4 category-card shadow-sm">
+                        <div class="mb-3">
+                            {% with cat=category|lower %}
+                            {% if "adventure" in cat %}
+                            <i class="bi bi-compass-fill" style="font-size: 2.5rem; color: var(--accent-color);"></i>
+                            {% elif "homestay" in cat %}
+                            <i class="bi bi-house-heart-fill"
+                                style="font-size: 2.5rem; color: var(--accent-color);"></i>
+                            {% elif "trek" in cat %}
+                            <i class="bi bi-signpost-split-fill"
+                                style="font-size: 2.5rem; color: var(--accent-color);"></i>
+                            {% elif "camp" in cat %}
+                            <i class="bi bi-tree-fill" style="font-size: 2.5rem; color: var(--accent-color);"></i>
+                            {% elif "food" in cat %}
+                            <i class="bi bi-cup-hot-fill" style="font-size: 2.5rem; color: var(--accent-color);"></i>
+                            {% elif "wildlife" in cat %}
+                            <i class="bi bi-binoculars-fill" style="font-size: 2.5rem; color: var(--accent-color);"></i>
+                            {% elif "spiritual" in cat %}
+                            <i class="bi bi-brightness-high-fill"
+                                style="font-size: 2.5rem; color: var(--accent-color);"></i>
+                            {% elif "cultural" in cat %}
+                            <i class="bi bi-palette-fill" style="font-size: 2.5rem; color: var(--accent-color);"></i>
+                            {% else %}
+                            <i class="bi bi-tag-fill" style="font-size: 2.5rem; color: var(--accent-color);"></i>
+                            {% endif %}
+                            {% endwith %}
+                        </div>
+                        <h5 class="fw-bold text-dark mb-1">{{ category|title }}</h5>
+                        <p class="small text-muted mb-0">Discover options</p>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <div class="col-12">
+                <p class="text-muted">No categories available yet.</p>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-4 d-md-none">
+            <a href="{% url 'categories' %}" class="btn btn-outline-primary rounded-pill px-4">View All Categories</a>
+        </div>
+    </div>
+</section>
+{% endcache %}
+
+<!-- Top Destinations -->
+{% cache 3600 homepage_destinations_section %}
+<section id="top-destinations" class="py-5 bg-light feature-section">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <div class="section-kicker">Places</div>
+                <h2 class="fw-bold mb-1" style="color: var(--primary-color);">Top Destinations</h2>
+                <p class="text-muted mb-0">Popular places travelers are exploring right now.</p>
+            </div>
+            <a href="{% url 'locations' %}" class="text-accent fw-bold text-decoration-none d-none d-md-block">
+                View All Locations <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="d-flex overflow-auto pb-3 custom-scrollbar" style="gap: 20px; scroll-snap-type: x mandatory;">
+            {% for loc in locations %}
+            <div class="card experience-card border-0 shadow-sm flex-shrink-0 rounded-4 overflow-hidden destination-card"
+                style="width: 290px; scroll-snap-align: start;">
+
+                {% if loc.image %}
+                <img src="{{ loc.image.url }}" alt="{{ loc.name }}" loading="lazy" width="290" height="190"
+                    style="height: 190px; width: 100%; object-fit: cover;"
+                    onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=290&q=80';">
+                {% else %}
+                <div class="d-flex align-items-center justify-content-center text-white destination-placeholder"
+                    style="height: 190px; background: linear-gradient(45deg, var(--primary-color), var(--accent-color));">
+                    <div class="text-center px-3">
+                        <i class="bi bi-geo-alt-fill fs-2 d-block mb-1"></i>
+                        <h4 class="fw-bold m-0">
+                            {% if loc.name %}{{ loc.name }}{% else %}{{ loc|title }}{% endif %}
+                        </h4>
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="card-body p-3">
+                    <h5 class="fw-bold mb-1 text-dark">
+                        {% if loc.name %}{{ loc.name }}{% else %}{{ loc|title }}{% endif %}
+                    </h5>
+                    <p class="small text-muted mb-2">
+                        {% if loc.state %}{{ loc.state }}{% else %}Mountain Destination{% endif %}
+                    </p>
+
+                    {% if loc.slug %}
+                    <a href="{% url 'listing_list' %}?location={{ loc.slug }}"
+                        class="stretched-link text-decoration-none text-accent small fw-bold">
+                        Explore Listings <i class="bi bi-chevron-right"></i>
+                    </a>
+                    {% else %}
+                    <a href="{% url 'listing_list' %}?location={{ loc|lower }}"
+                        class="stretched-link text-decoration-none text-accent small fw-bold">
+                        Explore Listings <i class="bi bi-chevron-right"></i>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-muted">No locations available yet.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endcache %}
+
+<!-- Personalized Recommendations -->
+{% if recommended_listings %}
+<section id="recommended-experiences" class="py-5 bg-white border-top">
+    <div class="container my-3">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <div class="section-kicker text-success"><i class="bi bi-stars"></i> Just For You</div>
+                <h2 class="fw-bold mb-1" style="color: var(--primary-color);">Recommended for You</h2>
+                <p class="text-muted mb-0">Based on your recent activity and preferences.</p>
+            </div>
+        </div>
+
+        <div class="row g-4 flex-nowrap overflow-auto custom-scrollbar pb-3" style="scroll-snap-type: x mandatory;">
+            {% for listing in recommended_listings %}
+            <div class="col-10 col-md-5 col-lg-4" style="scroll-snap-align: start;">
+                <div class="card experience-card h-100 border-0 shadow-sm rounded-4 overflow-hidden featured-card">
+                    <div class="position-relative">
+                        <span class="position-absolute top-0 end-0 m-3 badge bg-success text-white rounded-pill px-3 py-2 z-1 shadow-sm">
+                            Match
+                        </span>
+
+                        {% if listing.main_image and listing.main_image.name %}
+                        <img src="{{ listing.main_image.url }}"
+                            alt="{{ listing.title }}"
+                            loading="lazy"
+                            width="400"
+                            height="240"
+                            style="height: 240px; width: 100%; object-fit: cover;"
+                            onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=400&q=80';">
+                        {% else %}
+                        <img src="https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=400&q=80"
+                            alt="No image available for {{ listing.title }}"
+                            loading="lazy"
+                            width="400"
+                            height="240"
+                            style="height: 240px; width: 100%; object-fit: cover;">
+                        {% endif %}
+                    </div>
+
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                            <div class="text-muted small line-clamp-1">
+                                <i class="bi bi-geo-alt me-1"></i>
+                                {{ listing.display_location|default:listing.location }}
+                            </div>
+                            {% if listing.review_count > 0 %}
+                            <div class="small fw-bold text-warning text-nowrap">
+                                <i class="bi bi-star-fill"></i> {{ listing.avg_rating|floatformat:1 }}
+                                <span class="text-muted fw-normal">({{ listing.review_count }})</span>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <h5 class="card-title mb-2 line-clamp-2">{{ listing.title }}</h5>
+                        <p class="text-muted small mb-3 line-clamp-1">
+                            Hosted by {{ listing.host.username|default:"Safar Host" }}
+                        </p>
+
+                        <div class="mt-auto d-flex justify-content-between align-items-center pt-3 border-top">
+                            <div>
+                                <span class="fw-bold fs-5" style="color: var(--accent-color);">
+                                    &#8377;{{ listing.price_per_person|floatformat:2 }}</span>
+                                <span class="fs-6 fw-normal text-muted">/ person</span>
+                            </div>
+                            <a href="{% url 'listing_detail' listing.slug %}"
+                                class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-medium">
+                                View
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Featured Experiences -->
+<section id="featured-experiences" class="py-5 bg-light border-top">
+    <div class="container my-3">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <div class="section-kicker">Handpicked</div>
+                <h2 class="fw-bold mb-1" style="color: var(--primary-color);">Featured Experiences</h2>
+                <p class="text-muted mb-0">Handpicked stays and activities for your next trip.</p>
+            </div>
+            <a href="{% url 'listing_list' %}" class="text-accent fw-bold text-decoration-none d-none d-md-block">
+                View All <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="row g-4">
+            {% for listing in featured_listings %}
+            <div class="col-md-6 col-lg-4">
+                <div class="card experience-card h-100 border-0 shadow-sm rounded-4 overflow-hidden featured-card">
+                    <div class="position-relative">
+                        <span
+                            class="position-absolute top-0 end-0 m-3 badge bg-white text-dark rounded-pill px-3 py-2 z-1 shadow-sm">
+                            {{ listing.category|title }}
+                        </span>
+
+                        {% if listing.main_image and listing.main_image.name %}
+                        <img src="{{ listing.main_image.url }}"
+                            alt="{{ listing.title }}"
+                            loading="lazy"
+                            width="400"
+                            height="240"
+                            style="height: 240px; width: 100%; object-fit: cover;"
+                            onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=400&q=80';">
+                        {% else %}
+                        <img src="https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=400&q=80"
+                            alt="No image available for {{ listing.title }}"
+                            loading="lazy"
+                            width="400"
+                            height="240"
+                            style="height: 240px; width: 100%; object-fit: cover;">
+                        {% endif %}
+                    </div>
+
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                            <div class="text-muted small line-clamp-1">
+                                <i class="bi bi-geo-alt me-1"></i>
+                                {{ listing.display_location|default:listing.location }}
+                            </div>
+                            {% if listing.review_count > 0 %}
+                            <div class="small fw-bold text-warning text-nowrap">
+                                <i class="bi bi-star-fill"></i> {{ listing.avg_rating|floatformat:1 }}
+                                <span class="text-muted fw-normal">({{ listing.review_count }})</span>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <h5 class="card-title mb-2 line-clamp-2">{{ listing.title }}</h5>
+                        <p class="text-muted small mb-3 line-clamp-1">
+                            Hosted by {{ listing.host.username|default:"Safar Host" }}
+                        </p>
+
+                        <div class="mt-auto d-flex justify-content-between align-items-center pt-3 border-top">
+                            <div>
+                                <span class="fw-bold fs-5" style="color: var(--accent-color);">
+                                    &#8377;{{ listing.price_per_person|floatformat:2 }}</span>
+                                <span class="fs-6 fw-normal text-muted">/ person</span>
+                            </div>
+                            <a href="{% url 'listing_detail' listing.slug %}"
+                                class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-medium">
+                                View
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center">
+                <div class="bg-light rounded-4 p-5">
+                    <i class="bi bi-stars fs-1 text-muted d-block mb-3"></i>
+                    <h5 class="fw-bold">No featured experiences right now</h5>
+                    <p class="text-muted mb-3">Check back soon for fresh listings.</p>
+                    <a href="{% url 'listing_list' %}" class="btn btn-primary rounded-pill px-4">
+                        Browse All Experiences
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if featured_listings %}
+        <div class="text-center mt-5">
+            <a href="{% url 'listing_list' %}" class="btn btn-primary rounded-pill px-5 py-3 fs-5 fw-bold shadow-sm">
+                View All Experiences
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Trending Experiences (Dynamic Intelligence) -->
+{% if trending_listings %}
+<section id="trending-experiences" class="py-5 bg-light border-top">
+    <div class="container my-3">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <div class="section-kicker text-danger"><i class="bi bi-fire"></i> Hot Right Now</div>
+                <h2 class="fw-bold mb-1" style="color: var(--primary-color);">Trending This Week</h2>
+                <p class="text-muted mb-0">Experiences getting the most love from our community.</p>
+            </div>
+        </div>
+
+        <div class="row g-4 flex-nowrap overflow-auto custom-scrollbar pb-3" style="scroll-snap-type: x mandatory;">
+            {% for listing in trending_listings %}
+            <div class="col-10 col-md-5 col-lg-4" style="scroll-snap-align: start;">
+                <div class="card experience-card h-100 border-0 shadow-sm rounded-4 overflow-hidden featured-card">
+                    <div class="position-relative">
+                        <span class="position-absolute top-0 end-0 m-3 badge bg-danger text-white rounded-pill px-3 py-2 z-1 shadow-sm">
+                            Trending #{{ forloop.counter }}
+                        </span>
+
+                        {% if listing.main_image and listing.main_image.name %}
+                        <img src="{{ listing.main_image.url }}"
+                            alt="{{ listing.title }}"
+                            loading="lazy"
+                            width="400"
+                            height="240"
+                            style="height: 240px; width: 100%; object-fit: cover;"
+                            onerror="this.onerror=null; this.src='https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=400&q=80';">
+                        {% else %}
+                        <img src="https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=400&q=80"
+                            alt="No image available for {{ listing.title }}"
+                            loading="lazy"
+                            width="400"
+                            height="240"
+                            style="height: 240px; width: 100%; object-fit: cover;">
+                        {% endif %}
+                    </div>
+
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                            <div class="text-muted small line-clamp-1">
+                                <i class="bi bi-geo-alt me-1"></i>
+                                {{ listing.display_location|default:listing.location }}
+                            </div>
+                            {% if listing.review_count > 0 %}
+                            <div class="small fw-bold text-warning text-nowrap">
+                                <i class="bi bi-star-fill"></i> {{ listing.avg_rating|floatformat:1 }}
+                                <span class="text-muted fw-normal">({{ listing.review_count }})</span>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <h5 class="card-title mb-2 line-clamp-2">{{ listing.title }}</h5>
+                        <p class="text-muted small mb-3 line-clamp-1">
+                            Hosted by {{ listing.host.username|default:"Safar Host" }}
+                        </p>
+
+                        <div class="mt-auto d-flex justify-content-between align-items-center pt-3 border-top">
+                            <div>
+                                <span class="fw-bold fs-5" style="color: var(--accent-color);">
+                                    &#8377;{{ listing.price_per_person|floatformat:2 }}</span>
+                                <span class="fs-6 fw-normal text-muted">/ person</span>
+                            </div>
+                            <a href="{% url 'listing_detail' listing.slug %}"
+                                class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-medium">
+                                View
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- How It Works -->
+<section id="how-it-works" class="py-5 bg-white border-top">
+    <div class="container">
+        <div class="text-center mb-5">
+            <div class="section-kicker">Simple Process</div>
+            <h2 class="fw-bold" style="color: var(--primary-color);">How Safar Works</h2>
+            <p class="text-muted mb-0">A simple, trusted way to discover and book local experiences.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center how-card">
+                    <div class="mb-3">
+                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle"
+                            style="width: 64px; height: 64px; background: rgba(242, 169, 0, 0.12); color: var(--accent-color);">
+                            <i class="bi bi-search fs-3"></i>
+                        </span>
+                    </div>
+                    <h5 class="fw-bold">1. Discover</h5>
+                    <p class="text-muted mb-0">Browse stays and activities by destination, category, and budget.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center how-card">
+                    <div class="mb-3">
+                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle"
+                            style="width: 64px; height: 64px; background: rgba(43, 103, 119, 0.12); color: var(--primary-color);">
+                            <i class="bi bi-calendar-check fs-3"></i>
+                        </span>
+                    </div>
+                    <h5 class="fw-bold">2. Book</h5>
+                    <p class="text-muted mb-0">Choose dates, guests, and send a booking request in a few clicks.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center how-card">
+                    <div class="mb-3">
+                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle"
+                            style="width: 64px; height: 64px; background: rgba(25, 135, 84, 0.12); color: #198754;">
+                            <i class="bi bi-geo-alt fs-3"></i>
+                        </span>
+                    </div>
+                    <h5 class="fw-bold">3. Experience</h5>
+                    <p class="text-muted mb-0">Travel confidently with verified hosts and curated local experiences.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Recent Activity Feed -->
+{% if recent_activities %}
+<section id="recent-activity" class="py-5 bg-white border-top">
+    <div class="container">
+        <div class="text-center mb-5">
+            <div class="section-kicker text-primary"><i class="bi bi-activity"></i> Live Platform Activity</div>
+            <h2 class="fw-bold" style="color: var(--primary-color);">Recently Booked</h2>
+            <p class="text-muted mb-0">See where other travelers are heading next.</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="list-group">
+                    {% for activity in recent_activities %}
+                    <div class="list-group-item border-0 border-bottom py-3 px-0 bg-transparent">
+                        <div class="d-flex align-items-center">
+                            <div class="flex-shrink-0">
+                                {% if activity.user.userprofile.avatar %}
+                                <img src="{{ activity.user.userprofile.avatar.url }}" alt="Avatar" class="rounded-circle shadow-sm" style="width: 48px; height: 48px; object-fit: cover;">
+                                {% else %}
+                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center shadow-sm" style="width: 48px; height: 48px; font-weight: bold;">
+                                    {{ activity.user.username|make_list|first|upper }}
+                                </div>
+                                {% endif %}
+                            </div>
+                            <div class="flex-grow-1 ms-3">
+                                <h6 class="mb-1 fw-bold text-dark">{{ activity.action_text }}</h6>
+                                <p class="mb-0 text-muted small">
+                                    <i class="bi bi-clock me-1"></i> {{ activity.created_at|timesince }} ago
+                                    {% if activity.experience.location %}
+                                    <span class="mx-1">•</span> <i class="bi bi-geo-alt me-1"></i> {{ activity.experience.display_location|default:activity.experience.location }}
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="flex-shrink-0 ms-2 d-none d-sm-block">
+                                <a href="{% url 'listing_detail' activity.experience.slug %}" class="btn btn-sm btn-outline-primary rounded-pill px-3">View</a>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endif %}
+
+<!-- Why Choose Safar & Testimonials -->
+<section class="bg-dark text-white" style="padding-top: 6rem; padding-bottom: 6rem;">
+    <div class="container">
+        <div class="row g-5 align-items-start">
+
+            <!-- Why Choose Safar -->
+            <div class="col-lg-5">
+
+                <div class="section-kicker text-warning">Why Safar</div>
+                <h2 class="fw-bold mb-4 text-warning">Why Choose Safar?</h2>
+
+                <p class="lead mb-5" style="color: rgba(255,255,255,0.75);">
+                    We're building a trusted travel marketplace for meaningful, local-first journeys.
+                </p>
+
+                <ul class="list-unstyled">
+
+                    <li class="mb-4 d-flex">
+                        <i class="bi bi-patch-check-fill fs-3 text-warning me-3"></i>
+                        <div>
+                            <h5 class="fw-semibold mb-1">Verified Hosts</h5>
+                            <p class="mb-0" style="color: rgba(255,255,255,0.65);">
+                                Hosts are screened for safety, reliability, and experience quality.
+                            </p>
+                        </div>
+                    </li>
+
+                    <li class="mb-4 d-flex">
+                        <i class="bi bi-shield-check fs-3 text-warning me-3"></i>
+                        <div>
+                            <h5 class="fw-semibold mb-1">Secure Booking Flow</h5>
+                            <p class="mb-0" style="color: rgba(255,255,255,0.65);">
+                                Clear pricing, secure checkout, and booking tracking in one place.
+                            </p>
+                        </div>
+                    </li>
+
+                    <li class="mb-5 d-flex">
+                        <i class="bi bi-globe-central-south-asia fs-3 text-warning me-3"></i>
+                        <div>
+                            <h5 class="fw-semibold mb-1">Local Impact</h5>
+                            <p class="mb-0" style="color: rgba(255,255,255,0.65);">
+                                Your bookings support local communities and small businesses directly.
+                            </p>
+                        </div>
+                    </li>
+
+                </ul>
+
+                <a href="{% url 'listing_list' %}" class="btn rounded-pill px-4 py-2 fw-bold"
+                    style="background: #f4b400; color: #000;">
+                    Start Exploring
+                </a>
+
+            </div>
+
+            <!-- Testimonials -->
+            <div class="col-lg-6 offset-lg-1">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="fw-bold mb-0">What Our Travelers Say</h3>
+
+                    <span class="badge rounded-pill px-3 py-2" style="
+                            background: rgba(255,255,255,0.08);
+                            border: 1px solid rgba(255,255,255,0.15);
+                            color: #fff;">
+                        Trusted by early users
+                    </span>
+                </div>
+
+                <!-- Testimonial Card 1 -->
+                <div class="card p-4 mb-4 rounded-4 position-relative testimonial-card" style="
+                        background: linear-gradient(145deg, #141414, #1a1a1a);
+                        border: 1px solid rgba(255,255,255,0.08);
+                        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+                        overflow: hidden;">
+
+                    <i class="bi bi-quote" style="
+                            position: absolute;
+                            top: 20px;
+                            left: 25px;
+                            font-size: 3.5rem;
+                            color: rgba(255,255,255,0.06);">
+                    </i>
+
+                    <div style="position: relative; z-index: 2; padding-top: 10px;">
+                        <p class="fs-5 fst-italic mb-4 text-white" style="line-height: 1.6;">
+                            “Safar made finding a homestay in Kasol incredibly easy.
+                            The host was warm, the place was beautiful,
+                            and the whole experience felt authentic.”
+                        </p>
+
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold"
+                                style="width: 44px; height: 44px; background: #f4b400; color: #000;">
+                                P
+                            </div>
+
+                            <div class="ms-3">
+                                <h6 class="fw-semibold mb-0 text-white">Priya K.</h6>
+                                <small style="color: rgba(255,255,255,0.6);">
+                                    Traveled to Kasol
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial Card 2 -->
+                <div class="card p-4 rounded-4 position-relative testimonial-card" style="
+                        background: linear-gradient(145deg, #141414, #1a1a1a);
+                        border: 1px solid rgba(255,255,255,0.08);
+                        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+                        overflow: hidden;">
+
+                    <i class="bi bi-quote" style="
+                            position: absolute;
+                            top: 20px;
+                            left: 25px;
+                            font-size: 3.5rem;
+                            color: rgba(255,255,255,0.06);">
+                    </i>
+
+                    <div style="position: relative; z-index: 2; padding-top: 10px;">
+                        <p class="fs-5 fst-italic mb-4 text-white" style="line-height: 1.6;">
+                            “I usually struggle to find good trekking guides,
+                            but Safar helped me book a perfect guided experience.
+                            Smooth process and great communication.”
+                        </p>
+
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold"
+                                style="width: 44px; height: 44px; background: #0d6efd; color: #fff;">
+                                R
+                            </div>
+
+                            <div class="ms-3">
+                                <h6 class="fw-semibold mb-0 text-white">Rahul S.</h6>
+                                <small style="color: rgba(255,255,255,0.6);">
+                                    Traveled to Rishikesh
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Host CTA Section -->
+<section class="py-5" style="background-color: #0f172a;">
+    <div class="container">
+
+        <div class="host-cta-new rounded-4 p-4 p-md-5">
+
+            <div class="row align-items-center">
+
+                <!-- Left Content -->
+                <div class="col-lg-7 mb-4 mb-lg-0">
+                    <div class="section-kicker text-warning">For Creators & Hosts</div>
+                    <h2 class="fw-bold mb-3 text-white">
+                        Become a Host on <span class="text-warning">Safar</span>
+                    </h2>
+
+                    <p class="text-light opacity-75 fs-5 mb-0">
+                        Share your homestay, trek, workshop, or unique local experience.
+                        Earn income, grow your community, and showcase authentic stories.
+                    </p>
+                </div>
+
+                <!-- Right Buttons -->
+                <div class="col-lg-5 text-lg-end">
+
+                    {% if user.is_authenticated %}
+                        {% if user.userprofile.is_host %}
+                        <a href="{% url 'add_experience' %}"
+                            class="btn btn-warning rounded-pill px-4 py-3 fw-semibold me-2 mb-2 mb-lg-0 shadow-sm">
+                            <i class="bi bi-plus-circle me-1"></i> List Experience
+                        </a>
+
+                        <a href="{% url 'host_dashboard' %}"
+                            class="btn btn-outline-light rounded-pill px-4 py-3 fw-semibold">
+                            Host Dashboard
+                        </a>
+                        {% else %}
+                        <a href="{% url 'listing_list' %}"
+                            class="btn btn-warning rounded-pill px-4 py-3 fw-semibold me-2 mb-2 mb-lg-0 shadow-sm">
+                            <i class="bi bi-compass me-1"></i> Explore
+                        </a>
+
+                        <a href="{% url 'become_host' %}" class="btn btn-outline-light rounded-pill px-4 py-3 fw-semibold">
+                            Become a Host
+                        </a>
+                        {% endif %}
+                    {% else %}
+                    <a href="{% url 'account_signup' %}"
+                        class="btn btn-warning rounded-pill px-4 py-3 fw-semibold me-2 mb-2 mb-lg-0 shadow-sm">
+                        <i class="bi bi-person-plus me-1"></i> Create Account
+                    </a>
+
+                    <a href="{% url 'become_host' %}" class="btn btn-outline-light rounded-pill px-4 py-3 fw-semibold">
+                        Become a Host
+                    </a>
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    :root {
+        --safar-radius-lg: 1.25rem;
+        --safar-radius-md: 1rem;
+        --safar-shadow-sm: 0 8px 20px rgba(15, 23, 42, 0.06);
+        --safar-shadow-md: 0 14px 30px rgba(15, 23, 42, 0.10);
+        --safar-shadow-lg: 0 24px 50px rgba(15, 23, 42, 0.16);
+    }
+
+    .line-clamp-1 {
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .section-kicker {
+        color: var(--accent-color);
+        font-weight: 700;
+        font-size: 0.82rem;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        margin-bottom: .35rem;
+    }
+
+    #heroCarousel {
+        position: relative;
+        isolation: isolate;
+    }
+
+    #heroCarousel .carousel-inner,
+    #heroCarousel .carousel-item {
+        position: relative;
+    }
+
+    #heroCarousel .carousel-indicators {
+        z-index: 5;
+    }
+
+    #heroCarousel .carousel-control-prev,
+    #heroCarousel .carousel-control-next {
+        z-index: 5;
+        width: 8%;
+        opacity: 0.9;
+    }
+
+    #heroCarousel .carousel-control-prev-icon,
+    #heroCarousel .carousel-control-next-icon {
+        background-size: 55%;
+    }
+
+    #heroCarousel .carousel-control-prev:hover,
+    #heroCarousel .carousel-control-next:hover {
+        opacity: 1;
+    }
+
+    #heroCarousel .carousel-indicators [data-bs-target] {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        border: none;
+        margin: 0 5px;
+        opacity: .7;
+        transition: transform .2s ease, opacity .2s ease;
+    }
+
+    #heroCarousel .carousel-indicators .active {
+        opacity: 1;
+        transform: scale(1.15);
+    }
+
+    .hero-slide {
+        overflow: hidden;
+        position: relative;
+        min-height: clamp(620px, 88vh, 860px);
+    }
+
+    .hero-overlay-pattern {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+        background-size: 18px 18px;
+        pointer-events: none;
+        opacity: 0.9;
+    }
+
+    .hero-content-wrap {
+        position: relative;
+        z-index: 1;
+        min-height: inherit;
+        padding-top: 7.5rem;
+        padding-bottom: 3rem;
+    }
+
+    .hero-subtitle {
+        max-width: 760px;
+        line-height: 1.5;
+    }
+
+    .glass-badge {
+        background: rgba(255, 255, 255, 0.20);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        white-space: normal;
+        max-width: 100%;
+    }
+
+    .hero-search-card {
+        max-width: 980px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.94) !important;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.45) !important;
+        box-shadow: var(--safar-shadow-lg) !important;
+        border-radius: var(--safar-radius-lg) !important;
+        transform: translateY(0);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .hero-search-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 28px 60px rgba(0, 0, 0, 0.18) !important;
+    }
+
+    .hero-search-card .form-control,
+    .hero-search-card .form-select {
+        border-radius: .85rem;
+        box-shadow: none !important;
+        min-height: 50px;
+    }
+
+    .hero-search-card .form-control:focus,
+    .hero-search-card .form-select:focus {
+        box-shadow: 0 0 0 0.25rem rgba(43, 103, 119, 0.15) !important;
+        border-color: rgba(43, 103, 119, 0.3) !important;
+        background: #fff !important;
+    }
+
+    .hero-search-card .form-label {
+        font-size: .78rem;
+        letter-spacing: .02em;
+    }
+
+    .hero-video-slide .hero-video-fallback {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+    }
+
+    .hero-video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .hero-video-overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background: linear-gradient(rgba(43, 103, 119, 0.55), rgba(43, 103, 119, 0.82));
+    }
+
+    .hero-video-overlay::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(circle at 50% 35%, rgba(255, 255, 255, 0.05), transparent 45%),
+            radial-gradient(circle at 50% 80%, rgba(0, 0, 0, 0.16), transparent 60%);
+        pointer-events: none;
+    }
+
+    .hero-video-slide .hero-overlay-pattern {
+        z-index: 2;
+        opacity: 0.85;
+    }
+
+    .hero-video-slide .hero-content-wrap {
+        z-index: 3;
+    }
+
+    .hero-video-slide h2,
+    .hero-video-slide .hero-subtitle {
+        text-shadow: 0 4px 18px rgba(0, 0, 0, 0.22);
+    }
+
+    .stats-card {
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        border: 1px solid rgba(0, 0, 0, 0.03);
+        background: linear-gradient(145deg, #ffffff, #f8fafc) !important;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+    }
+
+    .stats-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 22px rgba(0, 0, 0, .06);
+        border-color: rgba(43, 103, 119, 0.12);
+    }
+
+    .experience-card {
+        border-radius: var(--safar-radius-lg) !important;
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        will-change: transform;
+    }
+
+    .experience-card:hover {
+        transform: translateY(-6px);
+    }
+
+    .experience-card .card-title {
+        font-weight: 700;
+        color: #111827;
+    }
+
+    .category-card {
+        border-radius: 1rem;
+        background: linear-gradient(to bottom right, #fff, #fcfdff);
+        box-shadow: var(--safar-shadow-sm) !important;
+        border: 1px solid rgba(43, 103, 119, 0.05) !important;
+    }
+
+    .category-card:hover {
+        box-shadow: 0 16px 28px rgba(43, 103, 119, 0.12) !important;
+        border-color: rgba(43, 103, 119, 0.14) !important;
+    }
+
+    .category-card i {
+        transition: transform 0.28s ease;
+    }
+
+    .category-card:hover i {
+        transform: scale(1.12) rotate(-4deg);
+    }
+
+    .feature-section {
+        position: relative;
+    }
+
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(43, 103, 119, 0.45) #e9ecef;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #e9ecef;
+        border-radius: 999px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(43, 103, 119, 0.45);
+        border-radius: 999px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(43, 103, 119, 0.65);
+    }
+
+    .destination-card {
+        box-shadow: var(--safar-shadow-sm) !important;
+        border: 1px solid rgba(43, 103, 119, 0.05) !important;
+    }
+
+    .destination-card:hover {
+        box-shadow: 0 16px 28px rgba(0, 0, 0, 0.10) !important;
+    }
+
+    .destination-card img {
+        transition: transform 0.45s ease;
+    }
+
+    .destination-card:hover img {
+        transform: scale(1.04);
+    }
+
+    .destination-placeholder {
+        transition: filter 0.3s ease;
+    }
+
+    .destination-card:hover .destination-placeholder {
+        filter: saturate(1.06);
+    }
+
+    .featured-card {
+        box-shadow: var(--safar-shadow-sm) !important;
+        border: 1px solid rgba(43, 103, 119, 0.05) !important;
+    }
+
+    .featured-card:hover {
+        box-shadow: var(--safar-shadow-md) !important;
+    }
+
+    .featured-card .card-body {
+        gap: .2rem;
+    }
+
+    .featured-card img {
+        transition: transform .45s ease;
+    }
+
+    .featured-card:hover img {
+        transform: scale(1.03);
+    }
+
+    .how-card {
+        border: 1px solid rgba(0, 0, 0, 0.04) !important;
+        box-shadow: var(--safar-shadow-sm) !important;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .how-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 14px 26px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .testimonial-card {
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.03) !important;
+    }
+
+    .testimonial-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.24);
+        border-color: rgba(255, 255, 255, 0.18) !important;
+    }
+
+    .host-cta-new {
+        background:
+            radial-gradient(circle at 15% 20%, rgba(244, 180, 0, 0.14), transparent 45%),
+            radial-gradient(circle at 85% 80%, rgba(13, 110, 253, 0.10), transparent 45%),
+            linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.22);
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    .host-cta-new:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 26px 55px rgba(0, 0, 0, 0.28);
+        border-color: rgba(255, 255, 255, 0.14);
+    }
+
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+        outline: 2px solid rgba(43, 103, 119, 0.35);
+        outline-offset: 2px;
+    }
+
+    @media (max-width: 991.98px) {
+        #heroCarousel .carousel-control-prev,
+        #heroCarousel .carousel-control-next {
+            display: none;
+        }
+
+        #heroCarousel .carousel-indicators {
+            margin-bottom: 1rem !important;
+        }
+
+        .hero-content-wrap {
+            padding-top: 7rem;
+            padding-bottom: 2rem;
+        }
+
+        .hero-search-card {
+            max-width: 100%;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .hero-slide {
+            min-height: 92vh;
+        }
+
+        #heroCarousel h1,
+        #heroCarousel h2 {
+            font-size: 2rem !important;
+            line-height: 1.15;
+        }
+
+        #heroCarousel .lead {
+            font-size: 1rem;
+        }
+
+        .glass-badge {
+            font-size: .8rem;
+            padding-left: .85rem !important;
+            padding-right: .85rem !important;
+        }
+
+        .hero-search-card {
+            border-radius: 1rem !important;
+            padding: 1rem !important;
+        }
+
+        .hero-search-card .btn.btn-lg {
+            min-height: 52px;
+        }
+
+        .hero-search-card .form-control,
+        .hero-search-card .form-select {
+            min-height: 46px;
+        }
+
+        .hero-video {
+            object-position: center center;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .featured-card .card-body {
+            padding: 1rem !important;
+        }
+
+        .stats-card {
+            border-radius: .9rem !important;
+        }
+
+        .category-card {
+            padding: 1rem !important;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        * {
+            scroll-behavior: auto !important;
+        }
+
+        .hero-video {
+            display: none !important;
+        }
+
+        .experience-card,
+        .category-card,
+        .destination-card,
+        .featured-card,
+        .how-card,
+        .testimonial-card,
+        .host-cta-new,
+        .hero-search-card,
+        .stats-card {
+            transition: none !important;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const carouselEl = document.getElementById("heroCarousel");
+        if (!carouselEl) return;
+
+        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const videos = carouselEl.querySelectorAll(".hero-video");
+
+        function syncHeroVideos() {
+            videos.forEach(video => {
+                const item = video.closest(".carousel-item");
+                const isActive = item && item.classList.contains("active");
+
+                if (prefersReducedMotion) {
+                    try { video.pause(); } catch (e) {}
+                    return;
+                }
+
+                if (isActive) {
+                    const p = video.play();
+                    if (p && typeof p.catch === "function") {
+                        p.catch(() => {});
+                    }
+                } else {
+                    try { video.pause(); } catch (e) {}
+                }
+            });
+        }
+
+        syncHeroVideos();
+        carouselEl.addEventListener("slid.bs.carousel", syncHeroVideos);
+
+        document.addEventListener("visibilitychange", function () {
+            if (document.hidden) {
+                videos.forEach(v => { try { v.pause(); } catch (e) {} });
+            } else {
+                syncHeroVideos();
+            }
+        });
+    });
+</script>
+{% endblock %}

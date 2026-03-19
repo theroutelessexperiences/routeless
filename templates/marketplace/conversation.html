@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}Conversation - Safar{% endblock %}
+{% block content %}
+<div class="container mt-5 pt-5" style="min-height: 70vh; max-width: 800px;">
+    <div class="card shadow-sm border-0 mb-4 h-100 d-flex flex-column" style="height: 75vh;">
+        <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+            <div>
+                <a href="{% url 'listing_detail' slug=conversation.experience.slug %}" class="text-decoration-none text-dark">
+                    <h5 class="mb-0 fw-bold">{{ conversation.experience.title }}</h5>
+                </a>
+                <small class="text-muted">
+                    {% if conversation.user == request.user %}
+                        With Host: {{ conversation.host.username }}
+                    {% else %}
+                        With Traveler: {{ conversation.user.username }}
+                    {% endif %}
+                </small>
+            </div>
+            <a href="{% url 'inbox' %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                <i class="bi bi-arrow-left me-1"></i> Inbox
+            </a>
+        </div>
+        <div class="card-body overflow-auto d-flex flex-column gap-3 p-4" style="background-color: #f8f9fa;">
+            {% for msg in messages_list %}
+                {% if msg.sender == request.user %}
+                <div class="align-self-end text-end ms-5">
+                    <div class="bg-dark text-white rounded-4 rounded-end-0 py-2 px-3 d-inline-block shadow-sm text-start" style="word-break: break-word;">
+                        {{ msg.text|linebreaksbr }}
+                    </div>
+                    <div class="small text-muted mt-1" style="font-size: 0.75rem;">
+                        {{ msg.created_at|date:"g:i A" }}
+                        {% if msg.read %}<i class="bi bi-check2-all text-primary ms-1"></i>{% else %}<i class="bi bi-check2 ms-1"></i>{% endif %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="align-self-start text-start me-5">
+                    <div class="bg-white border text-dark rounded-4 rounded-start-0 py-2 px-3 d-inline-block shadow-sm" style="word-break: break-word;">
+                        {{ msg.text|linebreaksbr }}
+                    </div>
+                    <div class="small text-muted mt-1" style="font-size: 0.75rem;">
+                        {{ msg.sender.username }} &middot; {{ msg.created_at|date:"g:i A" }}
+                    </div>
+                </div>
+                {% endif %}
+            {% empty %}
+                <div class="text-center text-muted my-auto py-5">
+                    <div class="bg-white p-4 rounded-circle shadow-sm d-inline-block mb-3">
+                        <i class="bi bi-chat-dots fs-2 text-primary"></i>
+                    </div>
+                    <h6 class="fw-bold">No messages yet</h6>
+                    <p class="small">Send a message to start the conversation!</p>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="card-footer bg-white border-top p-3">
+            <form id="chat-form" class="d-flex gap-2">
+                <input type="text" id="chat-message-input" class="form-control rounded-pill bg-light border-0 px-4" placeholder="Type a message..." required autocomplete="off">
+                <button type="submit" id="chat-message-submit" class="btn btn-primary rounded-pill px-4 fw-semibold shadow-sm">
+                    <i class="bi bi-send-fill me-1"></i> Send
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const conversationId = "{{ conversation.id }}";
+        const currentUserId = "{{ request.user.id }}";
+        const chatLog = document.querySelector('.card-body');
+        const chatForm = document.querySelector('#chat-form');
+        const messageInput = document.querySelector('#chat-message-input');
+
+        function scrollToBottom() {
+            if (chatLog) {
+                chatLog.scrollTop = chatLog.scrollHeight;
+            }
+        }
+        
+        scrollToBottom();
+
+        // Check if there's the empty placeholder and remove it when a new message comes
+        function removeEmptyPlaceholder() {
+            const emptyPlaceholder = chatLog.querySelector('.text-center.text-muted.my-auto.py-5');
+            if (emptyPlaceholder) {
+                emptyPlaceholder.remove();
+            }
+        }
+
+        const wsProtocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+        const chatSocket = new WebSocket(
+            wsProtocol + '//' + window.location.host + '/ws/chat/' + conversationId + '/'
+        );
+
+        chatSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            removeEmptyPlaceholder();
+
+            const isMe = (data.sender_id.toString() === currentUserId.toString());
+            let messageHtml = '';
+
+            if (isMe) {
+                messageHtml = `
+                <div class="align-self-end text-end ms-5">
+                    <div class="bg-dark text-white rounded-4 rounded-end-0 py-2 px-3 d-inline-block shadow-sm text-start" style="word-break: break-word;">
+                        ${data.message.replace(/\\n/g, '<br>')}
+                    </div>
+                    <div class="small text-muted mt-1" style="font-size: 0.75rem;">
+                        ${data.created_at}
+                    </div>
+                </div>
+                `;
+            } else {
+                messageHtml = `
+                <div class="align-self-start text-start me-5">
+                    <div class="bg-white border text-dark rounded-4 rounded-start-0 py-2 px-3 d-inline-block shadow-sm" style="word-break: break-word;">
+                        ${data.message.replace(/\\n/g, '<br>')}
+                    </div>
+                    <div class="small text-muted mt-1" style="font-size: 0.75rem;">
+                        ${data.sender_name} &middot; ${data.created_at}
+                    </div>
+                </div>
+                `;
+            }
+            
+            chatLog.insertAdjacentHTML('beforeend', messageHtml);
+            scrollToBottom();
+        };
+
+        chatSocket.onclose = function(e) {
+            console.error('Chat socket closed unexpectedly');
+        };
+
+        chatForm.onsubmit = function(e) {
+            e.preventDefault();
+            const message = messageInput.value.trim();
+            if (message) {
+                chatSocket.send(JSON.stringify({
+                    'message': message
+                }));
+                messageInput.value = '';
+            }
+        };
+    });
+</script>
+{% endblock %}

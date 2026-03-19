@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}OTP Login - Safar{% endblock %}
+
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="card shadow-sm border-0" style="max-width: 500px; width: 100%;">
+        <div class="card-body p-5 text-center">
+            <div class="mb-4">
+                <i class="bi bi-envelope" style="font-size: 3rem; color: var(--primary-color);"></i>
+                <h2 class="fw-bold mt-2">Login with Code</h2>
+                <p class="text-muted">Enter your email and we'll send you a 6-digit access code.</p>
+            </div>
+            
+            <form method="post" action="{% url 'otp_login' %}">
+                {% csrf_token %}
+                <div class="mb-3 text-start">
+                    <label for="email" class="form-label fw-semibold">Email Address</label>
+                    <input type="email" name="email" id="email" class="form-control" required placeholder="name@example.com">
+                </div>
+                <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 mt-2">Send Access Code</button>
+            </form>
+            
+            <div class="mt-4">
+                <a href="{% url 'account_login' %}" class="text-decoration-none text-muted small"><i class="bi bi-arrow-left me-1"></i>Back to standard login</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

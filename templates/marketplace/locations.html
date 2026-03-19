@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+
+{% block title %}Destinations - Safar{% endblock %}
+
+{% block meta_description %}
+Discover popular travel destinations across the country. Find the best places for your next mountain retreat, homestay,
+or adventure.
+{% endblock %}
+
+{% block og_tags %}
+<meta property="og:site_name" content="Safar" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Top Travel Destinations - Safar" />
+<meta property="og:description"
+    content="Discover popular travel destinations across the country. Find the best places for your next mountain retreat, homestay, or adventure." />
+<meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'locations' %}" />
+{% endblock %}
+
+{% block content %}
+<style>
+    /* Scoped styles only for locations page */
+    .location-card-link {
+        display: block;
+        text-decoration: none;
+        color: inherit;
+    }
+
+    .location-image-card {
+        position: relative;
+        border-radius: var(--border-radius-card);
+        overflow: hidden;
+        box-shadow: var(--shadow-card);
+        transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+        background: #fff;
+        min-height: 330px;
+    }
+
+    .location-image-card:hover {
+        transform: translateY(-6px);
+        box-shadow: var(--shadow-hover);
+    }
+
+    .location-image-card .location-cover {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.35s ease;
+    }
+
+    .location-image-card:hover .location-cover {
+        transform: scale(1.04);
+    }
+
+    .location-image-card .location-fallback {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        background:
+            radial-gradient(circle at top right, rgba(242, 169, 0, 0.28), transparent 42%),
+            linear-gradient(135deg, var(--primary-color), #2a6496);
+        color: #fff;
+        text-align: center;
+    }
+
+    .location-image-card .location-fallback h2 {
+        margin: 0;
+        font-weight: 800;
+        letter-spacing: -0.4px;
+        text-shadow: 0 2px 12px rgba(0, 0, 0, 0.22);
+    }
+
+    .location-image-card .location-overlay {
+        position: absolute;
+        inset: 0;
+        background:
+            linear-gradient(to top,
+                rgba(15, 23, 42, 0.9) 0%,
+                rgba(15, 23, 42, 0.55) 44%,
+                rgba(15, 23, 42, 0.18) 100%);
+    }
+
+    .location-image-card .location-content {
+        position: relative;
+        z-index: 2;
+        min-height: 330px;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        padding: 1rem;
+        color: #fff;
+    }
+
+    .location-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        width: fit-content;
+        border-radius: 999px;
+        padding: 0.4rem 0.85rem;
+        background: rgba(255, 255, 255, 0.12);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 0.65rem;
+    }
+
+    .location-title {
+        font-weight: 800;
+        letter-spacing: -0.2px;
+        margin-bottom: 0.2rem;
+    }
+
+    .location-state {
+        color: rgba(255, 255, 255, 0.88);
+        font-size: 0.95rem;
+        margin-bottom: 0.85rem;
+    }
+
+    .location-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        width: fit-content;
+        border-radius: 999px;
+        padding: 0.45rem 0.9rem;
+        background: rgba(242, 169, 0, 0.95);
+        color: #1f2937;
+        border: 1px solid rgba(242, 169, 0, 0.95);
+        font-weight: 700;
+        font-size: 0.9rem;
+        transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
+        box-shadow: 0 8px 18px rgba(242, 169, 0, 0.28);
+    }
+
+    .location-image-card:hover .location-pill {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 22px rgba(242, 169, 0, 0.35);
+    }
+
+    .locations-header-card {
+        background: linear-gradient(135deg, rgba(43, 103, 119, 0.08), rgba(242, 169, 0, 0.10));
+        border: 1px solid rgba(43, 103, 119, 0.10);
+        border-radius: 1.25rem;
+    }
+
+    @media (max-width: 767.98px) {
+
+        .location-image-card,
+        .location-image-card .location-content {
+            min-height: 290px;
+        }
+    }
+</style>
+
+<div class="container" style="margin-top: 100px; min-height: 80vh;">
+    <div class="locations-header-card p-4 p-md-5 mb-5 text-center">
+        <h1 class="fw-bold section-heading mb-2">Discover Destinations</h1>
+        <p class="text-muted mb-0">Explore our handpicked locations for your next adventure.</p>
+    </div>
+
+    <div class="row g-4 mb-5">
+        {% for loc in locations %}
+        <div class="col-12 col-sm-6 col-lg-4">
+            <a href="{% url 'listing_list' %}?location={{ loc.slug }}" class="location-card-link">
+                <div class="location-image-card">
+                    {% if loc.image %}
+                    <img src="{{ loc.image.url }}" alt="{{ loc.name }}" class="location-cover" loading="lazy"
+                        width="900" height="600">
+                    {% else %}
+                    <div class="location-fallback">
+                        <h2>{{ loc.name }}</h2>
+                    </div>
+                    {% endif %}
+
+                    <div class="location-overlay"></div>
+
+                    <div class="location-content">
+                        <span class="location-badge">
+                            <i class="bi bi-geo-alt-fill"></i>
+                            Destination
+                        </span>
+
+                        <h4 class="location-title mb-1">{{ loc.name }}</h4>
+                        <p class="location-state">{{ loc.state }}</p>
+
+                        <span class="location-pill">
+                            Explore stays & experiences
+                            <i class="bi bi-arrow-right"></i>
+                        </span>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="experience-card p-4 text-center">
+                <p class="text-muted mb-0">No destinations available at the moment.</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

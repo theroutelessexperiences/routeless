@@ -1,0 +1,327 @@
+/*
+ * Safar Marketplace — Custom Styles
+ * Patch 3: Created to fix static/css/styles.css 404 errors.
+ * Custom CSS variables and utility classes for the Safar brand.
+ */
+
+/* =============================================
+   CSS Custom Properties (Design Tokens)
+   ============================================= */
+:root {
+    --primary-color: #1a3c5e;
+    --accent-color: #f2a900;
+    --secondary-color: #4a90d9;
+    --text-dark: #1e1e1e;
+    --text-muted: #6c757d;
+    --bg-light: #f8f9fa;
+    --border-radius-card: 1rem;
+    --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.08);
+    --shadow-hover: 0 8px 32px rgba(0, 0, 0, 0.15);
+    --transition-speed: 0.25s;
+}
+
+/* =============================================
+   Typography
+   ============================================= */
+body {
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+/* =============================================
+   Utility: Text Accent
+   ============================================= */
+.text-accent {
+    color: var(--accent-color) !important;
+}
+
+/* =============================================
+   Utility: Background Accent
+   ============================================= */
+.bg-accent {
+    background-color: var(--accent-color) !important;
+}
+
+/* =============================================
+   Buttons
+   ============================================= */
+.btn-accent {
+    background-color: var(--accent-color);
+    border-color: var(--accent-color);
+    color: #fff;
+    font-weight: 600;
+    transition: background-color var(--transition-speed) ease,
+        transform var(--transition-speed) ease,
+        box-shadow var(--transition-speed) ease;
+}
+
+.btn-accent:hover,
+.btn-accent:focus {
+    background-color: #d99700;
+    border-color: #d99700;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 14px rgba(242, 169, 0, 0.35);
+}
+
+/* =============================================
+   Navbar
+   ============================================= */
+.navbar-brand {
+    font-weight: 800;
+    font-size: 1.5rem;
+    letter-spacing: -0.5px;
+}
+
+.navbar {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+}
+
+.nav-link {
+    font-weight: 500;
+    transition: color var(--transition-speed) ease;
+}
+
+/* =============================================
+   Cards: Experience / Listing
+   ============================================= */
+.experience-card {
+    border: none;
+    border-radius: var(--border-radius-card);
+    box-shadow: var(--shadow-card);
+    overflow: hidden;
+    transition: transform var(--transition-speed) ease,
+        box-shadow var(--transition-speed) ease;
+}
+
+.experience-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-hover);
+}
+
+.experience-card img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+}
+
+/* =============================================
+   Booking Widget Card
+   ============================================= */
+.booking-card {
+    background: #fff;
+    border-radius: var(--border-radius-card);
+    box-shadow: var(--shadow-card);
+    padding: 2rem;
+    position: sticky;
+    top: 100px;
+}
+
+/* =============================================
+   Badges
+   ============================================= */
+.badge.bg-accent {
+    background-color: var(--accent-color) !important;
+    color: #fff;
+}
+
+/* =============================================
+   Hero / Banner Sections
+   ============================================= */
+.hero-section {
+    background: linear-gradient(135deg, var(--primary-color) 0%, #2a6496 100%);
+    color: #fff;
+    padding: 5rem 0;
+}
+
+/* =============================================
+   Section Headings
+   ============================================= */
+.section-heading {
+    color: var(--primary-color);
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+/* =============================================
+   Razorpay Payment Button Override
+   ============================================= */
+.razorpay-payment-button {
+    width: 100%;
+    padding: 12px 24px;
+    background-color: var(--accent-color);
+    color: #fff;
+    border: none;
+    border-radius: 50rem;
+    font-weight: 700;
+    font-size: 1.1rem;
+    transition: background-color var(--transition-speed) ease,
+        transform var(--transition-speed) ease,
+        box-shadow var(--transition-speed) ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.razorpay-payment-button:hover {
+    background-color: #d99700;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* =============================================
+   Forms
+   ============================================= */
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 0.2rem rgba(242, 169, 0, 0.25);
+}
+
+/* =============================================
+   Footer
+   ============================================= */
+footer {
+    background-color: var(--primary-color);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+footer a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: color var(--transition-speed) ease;
+}
+
+footer a:hover {
+    color: var(--accent-color);
+}
+
+/* =============================================
+   Utility: Responsive Helpers
+   ============================================= */
+@media (max-width: 768px) {
+    .booking-card {
+        position: static;
+        margin-top: 2rem;
+    }
+}
+
+/* =============================================
+   Hero Section (Home Page)
+   ============================================= */
+.hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 100px 0 60px;
+    background-size: cover;
+    background-position: center;
+}
+
+/* =============================================
+   Hero Text Animations
+   ============================================= */
+.slide-up {
+    animation: slideUp 0.8s ease forwards;
+    opacity: 0;
+}
+
+.delay-1 {
+    animation-delay: 0.2s;
+}
+
+.delay-2 {
+    animation-delay: 0.4s;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* =============================================
+   Feature Section
+   ============================================= */
+.feature-section {
+    background-color: var(--bg-light);
+}
+
+/* =============================================
+   Price Badge (Listing Cards)
+   ============================================= */
+.price-badge {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: var(--primary-color);
+}
+
+/* =============================================
+   Navbar — Scrolled State
+   ============================================= */
+#mainNav {
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    background-color: transparent;
+}
+
+#mainNav.scrolled {
+    background-color: var(--primary-color) !important;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Always opaque on listing/interior pages */
+.navbar-dark {
+    background-color: var(--primary-color);
+}
+
+/* =============================================
+   Custom Scrollbar (Horizontal location strip)
+   ============================================= */
+.custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-color) #f0f0f0;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+    height: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: var(--accent-color);
+    border-radius: 10px;
+}
+
+/* =============================================
+   Star Rating Widget (Leave Review page)
+   ============================================= */
+.star-rating {
+    font-size: 2rem;
+    color: #ddd;
+}
+
+.star-rating input {
+    display: none;
+}
+
+.star-rating label {
+    cursor: pointer;
+    transition: color 0.2s ease-in-out;
+    margin: 0 5px;
+}
+
+.star-rating input:checked~label,
+.star-rating input:hover~label,
+.star-rating label:hover~input~label {
+    color: var(--accent-color);
+}

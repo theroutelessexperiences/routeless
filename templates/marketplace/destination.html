@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Explore {{ location.name }} - Safar Experiences{% endblock %}
+
+{% block meta_description %}
+Discover {{ total_experiences }} unique local experiences in {{ location.name }}, {{ location.state }}. Book tours, homestays, and adventures starting from â‚¹{{ avg_price }} per person.
+{% endblock %}
+
+{% block extra_head %}
+<!-- Open Graph tags for social sharing -->
+<meta property="og:title" content="Top Experiences in {{ location.name }} | Safar">
+<meta property="og:description" content="Discover {{ total_experiences }} amazing things to do in {{ location.name }}.">
+{% if location.image %}
+<meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ location.image.url }}">
+{% endif %}
+<meta property="og:type" content="website">
+
+<!-- Structured Data (JSON-LD) for SEO -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Things to do in {{ location.name }}",
+  "description": "Discover top-rated experiences and homestays in {{ location.name }}, {{ location.state }}.",
+  "url": "{{ request.build_absolute_uri }}",
+  "offers": {
+    "@type": "AggregateOffer",
+    "lowPrice": "{{ avg_price }}",
+    "priceCurrency": "INR",
+    "offerCount": "{{ total_experiences }}"
+  }
+}
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* Destination Hero */
+    .destination-hero {
+        position: relative;
+        padding: 6rem 0 4rem;
+        background: var(--bg-color);
+        min-height: 50vh;
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+    }
+
+    .hero-bg-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 1;
+        opacity: 0.25; /* Subtle background */
+        filter: blur(2px);
+    }
+
+    .hero-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(251, 240, 233, 0.95) 0%, rgba(255, 255, 255, 0.8) 100%);
+        z-index: 2;
+    }
+
+    .destination-content {
+        position: relative;
+        z-index: 3;
+    }
+
+    .destination-title {
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        font-weight: 800;
+        color: var(--text-dark);
+        letter-spacing: -0.02em;
+        line-height: 1.1;
+        margin-bottom: 1rem;
+    }
+
+    .destination-subtitle {
+        font-size: 1.1rem;
+        color: var(--text-muted);
+        max-width: 600px;
+    }
+
+    .stats-bar {
+        background: #fff;
+        border-radius: 1rem;
+        padding: 1.5rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        display: inline-flex;
+        gap: 3rem;
+        margin-top: 2rem;
+        border: 1px solid rgba(0,0,0,0.03);
+    }
+
+    .stat-item h3 {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--primary-color);
+        margin-bottom: 0.2rem;
+    }
+    .stat-item p {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 600;
+        margin-bottom: 0;
+    }
+
+    /* Host avatars */
+    .top-host-avatar {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #fff;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        transition: transform 0.2s;
+    }
+    .top-host-avatar:hover {
+        transform: scale(1.1) translateY(-2px);
+        z-index: 10;
+        position: relative;
+    }
+    .host-stack {
+        display: flex;
+        align-items: center;
+    }
+    .host-stack img {
+        margin-left: -15px;
+    }
+    .host-stack img:first-child {
+        margin-left: 0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero Section -->
+<div class="destination-hero">
+    {% if location.image %}
+    <img src="{{ location.image.url }}" alt="{{ location.name }}" class="hero-bg-image">
+    {% endif %}
+    <div class="hero-overlay"></div>
+    
+    <div class="container destination-content">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <span class="badge bg-primary px-3 py-2 rounded-pill mb-3 fs-6">
+                    <i class="bi bi-geo-alt-fill me-1"></i>Destination Guide
+                </span>
+                <h1 class="destination-title">Explore {{ location.name }}</h1>
+                <p class="destination-subtitle">
+                    Immerse yourself in the local culture, scenic landscapes, and unforgettable adventures in {{ location.name }}, {{ location.state }}.
+                </p>
+                
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <h3>{{ total_experiences }}</h3>
+                        <p>Experiences</p>
+                    </div>
+                    <div class="stat-item">
+                        <h3>â‚¹{{ avg_price }}</h3>
+                        <p>Avg. Price</p>
+                    </div>
+                    {% if top_hosts %}
+                    <div class="stat-item pe-0">
+                        <div class="d-flex flex-column h-100 justify-content-center">
+                            <div class="host-stack mb-1">
+                                {% for host in top_hosts %}
+                                    {% if host.userprofile.profile_picture %}
+                                        <img src="{{ host.userprofile.profile_picture.url }}" class="top-host-avatar" alt="{{ host.username }}" title="{{ host.username }}">
+                                    {% else %}
+                                        <div class="top-host-avatar bg-primary text-white d-flex align-items-center justify-content-center fw-bold" title="{{ host.username }}" style="font-size: 1.2rem; margin-left: {% if not forloop.first %}-15px{% else %}0{% endif %};">
+                                            {{ host.username|make_list|first|upper }}
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <p>Top Local Hosts</p>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <div class="col-lg-5 d-none d-lg-block text-end">
+                {% if location.image %}
+                <img src="{{ location.image.url }}" alt="{{ location.name }}" class="img-fluid rounded-4 shadow-lg" style="max-height: 400px; object-fit: cover; width: 100%;">
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container my-5">
+    <div class="d-flex justify-content-between align-items-end mb-4">
+        <div>
+            <h2 class="section-heading mb-1">Top Rated in {{ location.name }}</h2>
+            <p class="text-muted mb-0">Discover highly recommended stays and tours</p>
+        </div>
+        <a href="{% url 'listing_list' %}?location={{ location.slug }}" class="btn btn-outline-primary rounded-pill px-4">
+            View All {{ total_experiences }} <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+    </div>
+
+    {% if top_experiences %}
+    <div class="row g-4 mb-5">
+        {% for listing in top_experiences %}
+        <div class="col-12 col-md-6 col-lg-4">
+            {% include "marketplace/components/listing_card.html" with listing=listing %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5 bg-light rounded-4 mb-5">
+        <i class="bi bi-emoji-frown fs-1 text-muted mb-3 d-block"></i>
+        <h5>No experiences found in {{ location.name }} yet.</h5>
+        <p class="text-muted">Be the first to host an experience here!</p>
+        <a href="{% url 'add_experience' %}" class="btn btn-primary mt-2 rounded-pill">Become a Host</a>
+    </div>
+    {% endif %}
+
+    <!-- Newsletter SEO Block -->
+    <div class="bg-primary text-white rounded-4 p-5 text-center mt-5 shadow-lg position-relative overflow-hidden">
+        <div class="position-absolute" style="top: -50px; left: -50px; width: 200px; height: 200px; border-radius: 50%; background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, transparent 100%);"></div>
+        <div class="position-absolute" style="bottom: -80px; right: -20px; width: 250px; height: 250px; border-radius: 50%; background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.15) 100%);"></div>
+        
+        <div class="position-relative z-index-1">
+            <h3 class="fw-bold mb-3">Planning a trip to {{ location.name }}?</h3>
+            <p class="opacity-75 mb-4 mx-auto" style="max-width: 500px;">
+                Get the best deals on homestays, unique tours, and exclusive access to our top rated hosts.
+            </p>
+            <a href="{% url 'listing_list' %}?location={{ location.slug }}" class="btn btn-light btn-lg rounded-pill px-5 fw-bold text-primary">
+                Browse Full Catalog
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

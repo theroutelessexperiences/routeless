@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+
+
+{% block title %}Leave a Review for {{ booking.experience.title }} - Safar{% endblock %}
+
+
+
+{% block content %}
+
+<div class="container" style="margin-top: 100px; min-height: 70vh;">
+
+    <div class="row justify-content-center">
+
+        <div class="col-md-8 col-lg-6">
+
+            <h2 class="fw-bold mb-4 text-center" style="color: var(--primary-color);">Leave a Review</h2>
+
+
+
+            {% if messages %}
+
+            {% for message in messages %}
+
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+
+                {{ message }}
+
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+
+            </div>
+
+            {% endfor %}
+
+            {% endif %}
+
+
+
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden mb-4">
+
+                <div class="bg-light p-4 border-bottom text-center">
+
+                    {% if booking.experience.main_image %}
+
+                    <img src="{{ booking.experience.main_image.url }}" alt="{{ booking.experience.title }}"
+
+                        class="img-fluid rounded border shadow-sm mb-3"
+
+                        style="max-height: 200px; object-fit: cover; width: 100%;">
+
+                    {% endif %}
+
+                    <h4 class="fw-bold mb-1">{{ booking.experience.title }}</h4>
+
+                    <p class="text-muted small mb-0"><i class="bi bi-geo-alt-fill me-1"></i>{{ booking.experience.location }}</p>
+
+                </div>
+
+
+
+                <div class="card-body p-4">
+
+                    <form method="post">
+
+                        {% csrf_token %}
+
+                        <div class="mb-4 text-center">
+
+                            <label class="form-label fw-bold d-block">Rate your experience</label>
+
+                            <div class="star-rating d-inline-block" dir="rtl">
+
+                                <input type="radio" id="star5" name="rating" value="5" required />
+
+                                <label for="star5" title="5 stars"><i class="bi bi-star-fill"></i></label>
+
+                                <input type="radio" id="star4" name="rating" value="4" />
+
+                                <label for="star4" title="4 stars"><i class="bi bi-star-fill"></i></label>
+
+                                <input type="radio" id="star3" name="rating" value="3" />
+
+                                <label for="star3" title="3 stars"><i class="bi bi-star-fill"></i></label>
+
+                                <input type="radio" id="star2" name="rating" value="2" />
+
+                                <label for="star2" title="2 stars"><i class="bi bi-star-fill"></i></label>
+
+                                <input type="radio" id="star1" name="rating" value="1" />
+
+                                <label for="star1" title="1 star"><i class="bi bi-star-fill"></i></label>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="mb-4">
+
+                            <label for="comment" class="form-label fw-bold">Share your thoughts</label>
+
+                            <textarea class="form-control bg-light border-0 shadow-none" id="comment" name="comment"
+
+                                rows="4" placeholder="What did you like the most? Any tips for future travelers?"
+
+                                required></textarea>
+
+                        </div>
+
+
+
+                        <button type="submit" class="btn btn-primary w-100 rounded-pill py-3 fw-bold shadow-sm">Submit
+
+                            Review</button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="text-center">
+
+                <a href="{% url 'my_bookings' %}" class="btn btn-link text-decoration-none text-muted">Cancel and return
+
+                    to My Bookings</a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

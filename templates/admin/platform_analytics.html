@@ -1,0 +1,341 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Platform Analytics - Safar{% endblock %}
+
+{% block extra_head %}
+<!-- Chart.js for visualizations -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .analytics-hero {
+        background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(43, 103, 119, 0.95));
+        border-radius: 1.5rem;
+        padding: 3rem 2rem;
+        color: white;
+        margin-bottom: -4rem;
+        position: relative;
+        z-index: 1;
+        box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
+    }
+
+    .analytics-card {
+        background: #fff;
+        border-radius: 1rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+        padding: 1.5rem;
+        height: 100%;
+        position: relative;
+        z-index: 2;
+        border: 1px solid rgba(0,0,0,0.02);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .analytics-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.08);
+    }
+
+    .stat-title {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-value {
+        font-size: 2.25rem;
+        font-weight: 900;
+        color: var(--text-dark);
+        line-height: 1;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-money {
+        color: var(--primary-color);
+    }
+
+    .panel-card {
+        background: #fff;
+        border-radius: 1rem;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.04);
+        border: 1px solid rgba(0,0,0,0.02);
+        overflow: hidden;
+    }
+    
+    .panel-card-header {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid rgba(0,0,0,0.04);
+        background: #fff;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 100px; min-height: 80vh;">
+    
+    <!-- Hero / Title -->
+    <div class="analytics-hero">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <span class="badge bg-white text-dark px-3 py-2 rounded-pill mb-3 fw-bold">
+                    <i class="bi bi-shield-lock-fill me-1 text-primary"></i>Superuser Admin
+                </span>
+                <h1 class="fw-bold mb-2">Platform Revenue Analytics</h1>
+                <p class="mb-0 text-white-50">High-level financial overview and 15% marketplace commission metrics.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Stats -->
+    <div class="row g-4 mt-1 mb-5">
+        <div class="col-12 col-md-4">
+            <div class="analytics-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-title">Platform Revenue</div>
+                        <div class="stat-value stat-money">â‚¹{{ total_revenue|floatformat:2 }}</div>
+                        <p class="small text-muted mb-0">Total 15% commissions earned</p>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle text-primary">
+                        <i class="bi bi-bank fs-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="analytics-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-title">Total Bookings</div>
+                        <div class="stat-value">{{ total_bookings }}</div>
+                        <p class="small text-muted mb-0">All-time bookings processed</p>
+                    </div>
+                    <div class="bg-success bg-opacity-10 p-3 rounded-circle text-success">
+                        <i class="bi bi-calendar-check fs-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="analytics-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-title">Registered Users</div>
+                        <div class="stat-value">{{ total_users }}</div>
+                        <p class="small text-muted mb-0">Total hosts and travelers</p>
+                    </div>
+                    <div class="bg-info bg-opacity-10 p-3 rounded-circle text-info">
+                        <i class="bi bi-people fs-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="analytics-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-title">Daily Active Users</div>
+                        <div class="stat-value">{{ dau|default:"0" }}</div>
+                        <p class="small text-muted mb-0">Unique visitors today</p>
+                    </div>
+                    <div class="bg-warning bg-opacity-10 p-3 rounded-circle text-warning">
+                        <i class="bi bi-lightning-charge fs-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="analytics-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-title">Conversion Rate</div>
+                        <div class="stat-value">{{ conversion_rate|default:"0" }}%</div>
+                        <p class="small text-muted mb-0">Bookings / Visitors (30d)</p>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 p-3 rounded-circle text-primary">
+                        <i class="bi bi-funnel fs-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <div class="analytics-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="stat-title">Booking Growth</div>
+                        <div class="stat-value {% if booking_growth > 0 %}text-success{% elif booking_growth < 0 %}text-danger{% endif %}">
+                            {% if booking_growth > 0 %}+{% endif %}{{ booking_growth|default:"0" }}%
+                        </div>
+                        <p class="small text-muted mb-0">vs previous 30 days</p>
+                    </div>
+                    <div class="bg-success bg-opacity-10 p-3 rounded-circle text-success">
+                        <i class="bi bi-graph-up-arrow fs-3"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart Row -->
+    <div class="row g-4 mb-5">
+        <div class="col-12">
+            <div class="panel-card mt-3">
+                <div class="panel-card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0 fw-bold">
+                        <i class="bi bi-graph-up-arrow me-2 text-primary"></i>Trailing 6-Month Revenue Trend (Platform 15% Fee)
+                    </h5>
+                </div>
+                <div class="p-4" style="height: 400px; position: relative;">
+                    <canvas id="revenueChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Chart Injection -->
+{{ chart_json|json_script:"chartData" }}
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const rawData = document.getElementById('chartData').textContent;
+        const data = JSON.parse(rawData);
+
+        const ctx = document.getElementById('revenueChart').getContext('2d');
+        
+        // Gradient for revenue fill
+        let revGradient = ctx.createLinearGradient(0, 0, 0, 400);
+        revGradient.addColorStop(0, 'rgba(43, 103, 119, 0.4)');
+        revGradient.addColorStop(1, 'rgba(43, 103, 119, 0.0)');
+        
+        // Gradient for bookings fill
+        let bookGradient = ctx.createLinearGradient(0, 0, 0, 400);
+        bookGradient.addColorStop(0, 'rgba(242, 169, 0, 0.4)');
+        bookGradient.addColorStop(1, 'rgba(242, 169, 0, 0.0)');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: data.labels,
+                datasets: [
+                    {
+                        label: 'Platform Commission (₹)',
+                        data: data.revenue,
+                        borderColor: '#2b6777',
+                        backgroundColor: revGradient,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: '#2b6777',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        fill: true,
+                        tension: 0.4,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Total Bookings',
+                        data: data.bookings,
+                        borderColor: '#f2a900',
+                        backgroundColor: bookGradient,
+                        borderWidth: 3,
+                        pointBackgroundColor: '#ffffff',
+                        pointBorderColor: '#f2a900',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        fill: true,
+                        tension: 0.4,
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: { family: "'Inter', sans-serif", weight: 'bold' },
+                            usePointStyle: true,
+                            padding: 20
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                        titleFont: { size: 14, family: "'Inter', sans-serif" },
+                        bodyFont: { size: 14, family: "'Inter', sans-serif", weight: 'bold' },
+                        padding: 12,
+                        cornerRadius: 8,
+                        displayColors: true,
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                if (context.datasetIndex === 0) {
+                                    label += '₹' + context.parsed.y.toLocaleString();
+                                } else {
+                                    label += context.parsed.y.toLocaleString();
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false,
+                            drawBorder: false
+                        },
+                        ticks: {
+                            font: { family: "'Inter', sans-serif" }
+                        }
+                    },
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(0,0,0,0.04)',
+                            drawBorder: false
+                        },
+                        ticks: {
+                            font: { family: "'Inter', sans-serif" },
+                            callback: function(value) {
+                                return '₹' + value.toLocaleString();
+                            }
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        beginAtZero: true,
+                        grid: {
+                            drawOnChartArea: false, // only want the grid lines for one axis to show up
+                        },
+                        ticks: {
+                            font: { family: "'Inter', sans-serif" }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

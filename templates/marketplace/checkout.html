@@ -1,0 +1,422 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Checkout - Safar{% endblock %}
+
+{% block meta_description %}
+Complete your booking payment securely on Safar.
+{% endblock %}
+
+{% block content %}
+<div class="container" style="margin-top: 100px; min-height: 80vh;">
+    <div class="row g-4">
+        <!-- Left: Booking Summary -->
+        <div class="col-12 col-lg-7">
+            <div class="checkout-card p-4 p-md-4">
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+                    <div>
+                        <div class="small text-muted fw-semibold mb-1">Booking Checkout</div>
+                        <h1 class="h3 fw-bold section-heading mb-0">Review & Pay</h1>
+                    </div>
+                    <span class="status-pill
+                        {% if payment.payment_status == 'success' %}status-paid
+                        {% elif payment.payment_status == 'failed' %}status-failed
+                        {% else %}status-created{% endif %}">
+                        {{ payment.payment_status|default:"Pending"|title }}
+                    </span>
+                </div>
+
+                <div class="experience-summary d-flex gap-3 align-items-start mb-4">
+                    <div class="experience-thumb-wrap">
+                        {% if booking.experience.main_image %}
+                        <img src="{{ booking.experience.main_image.url }}" alt="{{ booking.experience.title }}"
+                            class="experience-thumb" loading="lazy">
+                        {% else %}
+                        <div
+                            class="experience-thumb placeholder-thumb d-flex align-items-center justify-content-center">
+                            <i class="bi bi-image text-muted"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="flex-grow-1">
+                        <h5 class="fw-bold mb-1">{{ booking.experience.title }}</h5>
+                        <div class="small text-muted mb-2">
+                            <i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ booking.experience.location }}
+                        </div>
+                        <span class="badge rounded-pill bg-light text-dark border">
+                            {{ booking.experience.category }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="summary-grid">
+                    <div class="summary-row">
+                        <span class="summary-label">Traveler</span>
+                        <span class="summary-value">{{ booking.traveler_name }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Email</span>
+                        <span class="summary-value text-break">{{ booking.traveler_email }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Phone</span>
+                        <span class="summary-value">{{ booking.traveler_phone }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Check-in</span>
+                        <span class="summary-value">{{ booking.check_in_date|date:"d M Y" }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Check-out</span>
+                        <span class="summary-value">{{ booking.check_out_date|date:"d M Y" }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Guests</span>
+                        <span class="summary-value">{{ booking.guests_count }}</span>
+                    </div>
+                    <div class="summary-row">
+                        <span class="summary-label">Booking status</span>
+                        <span class="summary-value">{{ booking.status }}</span>
+                    </div>
+                </div>
+
+                {% if booking.message %}
+                <div class="note-box mt-4">
+                    <div class="small fw-semibold mb-1" style="color: var(--primary-color);">
+                        <i class="bi bi-chat-left-text me-1"></i>Traveler Note
+                    </div>
+                    <p class="mb-0 small text-muted">{{ booking.message }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Right: Payment Panel -->
+        <div class="col-12 col-lg-5">
+            <div class="checkout-card payment-panel p-4">
+                <div class="d-flex align-items-center justify-content-between mb-3">
+                    <h2 class="h5 fw-bold mb-0">Payment Summary</h2>
+                    <span class="secure-chip">
+                        <i class="bi bi-shield-lock me-1"></i>Secure
+                    </span>
+                </div>
+
+                <div class="price-panel mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="text-muted">Total Amount</span>
+                        <span class="amount-lg">â‚¹{{ booking.total_price|floatformat:2 }}</span>
+                    </div>
+                    <div class="small text-muted">
+                        Payment for booking #{{ booking.id }}
+                    </div>
+                </div>
+
+                {% if payment.payment_status == "success" %}
+                <div class="alert alert-success rounded-4 border-0">
+                    <div class="d-flex">
+                        <i class="bi bi-check-circle-fill me-2 mt-1"></i>
+                        <div>
+                            <div class="fw-semibold">Payment already completed</div>
+                            <div class="small">This booking has already been paid successfully.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <a href="{% url 'booking_success' %}?booking_id={{ booking.id }}"
+                        class="btn btn-primary rounded-pill">
+                        View Booking Success
+                    </a>
+                    <a href="{% url 'my_bookings' %}" class="btn btn-outline-secondary rounded-pill">
+                        Go to My Bookings
+                    </a>
+                </div>
+
+                {% else %}
+                {% if payment.razorpay_order_id %}
+                <div class="real-mode-box mb-4">
+                    <div class="fw-semibold mb-1" style="color: var(--primary-color);">
+                        <i class="bi bi-credit-card-2-front me-1"></i>Razorpay Checkout
+                    </div>
+                    <p class="small text-muted mb-0">
+                        Click below to proceed with secure payment via Razorpay.
+                    </p>
+                </div>
+
+                <button id="rzp-pay-btn" type="button" class="btn btn-accent rounded-pill fw-bold py-2 w-100 mb-2">
+                    <i class="bi bi-lock-fill me-1"></i>Pay Now
+                </button>
+
+                <a href="{% url 'my_bookings' %}" class="btn btn-outline-secondary rounded-pill w-100">
+                    Pay Later
+                </a>
+
+                <!-- Hidden form for payment verification -->
+                <form id="payment-verify-form" method="post" action="{% url 'payments:checkout_verify' %}" class="d-none">
+                    {% csrf_token %}
+                    <input type="hidden" name="booking_id" value="{{ booking.id }}">
+                    <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id">
+                    <input type="hidden" name="razorpay_order_id" id="razorpay_order_id"
+                        value="{{ payment.razorpay_order_id }}">
+                    <input type="hidden" name="razorpay_signature" id="razorpay_signature">
+                </form>
+                {% else %}
+                <div class="alert alert-warning rounded-4 border-0 mb-4">
+                    <div class="d-flex">
+                        <i class="bi bi-exclamation-triangle-fill me-2 mt-1"></i>
+                        <div>
+                            <div class="fw-semibold">Payment order not ready</div>
+                            <div class="small">
+                                Payment gateway order could not be created yet. You can try again shortly.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <a href="" class="btn btn-primary rounded-pill">
+                        Retry Checkout
+                    </a>
+                    <a href="{% url 'my_bookings' %}" class="btn btn-outline-secondary rounded-pill">
+                        Go to My Bookings
+                    </a>
+                </div>
+                {% endif %}
+                {% endif %}
+
+                <hr class="my-4">
+
+                <div class="small text-muted">
+                    <div class="mb-1"><i class="bi bi-shield-check me-1"></i>Your payment details are processed
+                        securely.</div>
+                    <div><i class="bi bi-receipt me-1"></i>Booking confirmation will appear after successful payment
+                        verification.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if payment.razorpay_order_id and payment.payment_status != "success" %}
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    (function () {
+        const payBtn = document.getElementById("rzp-pay-btn");
+        if (!payBtn) return;
+
+        payBtn.addEventListener("click", function () {
+            const isDemoMode = "{{ is_demo_mode|yesno:'true,false' }}" === "true";
+            if (isDemoMode) {
+                document.getElementById("razorpay_payment_id").value = "demo_payment_" + Math.random().toString(36).substring(7);
+                document.getElementById("razorpay_order_id").value = "{{ payment.razorpay_order_id|default:''|escapejs }}";
+                document.getElementById("razorpay_signature").value = "demo_signature";
+                document.getElementById("payment-verify-form").submit();
+                return;
+            }
+
+            const options = {
+                key: "{{ razorpay_key_id|escapejs }}",
+                amount: "{{ amount }}",
+                currency: "INR",
+                name: "Safar",
+                description: "Booking Payment #{{ booking.id }}",
+                order_id: "{{ payment.razorpay_order_id|default:''|escapejs }}",
+                handler: function (response) {
+                    document.getElementById("razorpay_payment_id").value = response.razorpay_payment_id || "";
+                    document.getElementById("razorpay_order_id").value = response.razorpay_order_id || "";
+                    document.getElementById("razorpay_signature").value = response.razorpay_signature || "";
+                    document.getElementById("payment-verify-form").submit();
+                },
+                prefill: {
+                    name: "{{ booking.traveler_name|default:''|escapejs }}",
+                    email: "{{ booking.traveler_email|default:''|escapejs }}",
+                    contact: "{{ booking.traveler_phone|default:''|escapejs }}"
+                },
+                theme: {
+                    color: "#2b6777"
+                },
+                modal: {
+                    ondismiss: function () {
+                        // Optional: user closed modal
+                    }
+                }
+            };
+
+            const rzp = new Razorpay(options);
+            rzp.open();
+        });
+    })();
+</script>
+{% endif %}
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .checkout-card {
+        background: #fff;
+        border: 1px solid rgba(15, 23, 42, 0.06);
+        border-radius: 1rem;
+        box-shadow: 0 10px 28px rgba(43, 103, 119, 0.07);
+    }
+
+    .payment-panel {
+        position: sticky;
+        top: 100px;
+    }
+
+    .status-pill {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        padding: 0.4rem 0.75rem;
+        font-size: 0.82rem;
+        font-weight: 700;
+        border: 1px solid transparent;
+    }
+
+    .status-created {
+        background: rgba(59, 130, 246, 0.1);
+        color: #1d4ed8;
+        border-color: rgba(59, 130, 246, 0.15);
+    }
+
+    .status-paid {
+        background: rgba(16, 185, 129, 0.12);
+        color: #047857;
+        border-color: rgba(16, 185, 129, 0.18);
+    }
+
+    .status-failed {
+        background: rgba(239, 68, 68, 0.1);
+        color: #b91c1c;
+        border-color: rgba(239, 68, 68, 0.15);
+    }
+
+    .experience-summary {
+        background: #fbfdff;
+        border: 1px solid rgba(43, 103, 119, 0.07);
+        border-radius: 0.95rem;
+        padding: 0.85rem;
+    }
+
+    .experience-thumb-wrap {
+        flex: 0 0 110px;
+    }
+
+    .experience-thumb {
+        width: 110px;
+        height: 82px;
+        object-fit: cover;
+        border-radius: 0.75rem;
+        display: block;
+        border: 1px solid rgba(15, 23, 42, 0.06);
+    }
+
+    .placeholder-thumb {
+        background: #f8fafc;
+        font-size: 1.5rem;
+    }
+
+    .summary-grid {
+        display: grid;
+        gap: 0.65rem;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 0.55rem 0.25rem;
+        border-bottom: 1px dashed rgba(15, 23, 42, 0.08);
+    }
+
+    .summary-row:last-child {
+        border-bottom: none;
+    }
+
+    .summary-label {
+        color: var(--text-muted);
+        font-size: 0.92rem;
+    }
+
+    .summary-value {
+        font-weight: 600;
+        color: var(--text-dark);
+        text-align: right;
+    }
+
+    .note-box {
+        background: rgba(43, 103, 119, 0.04);
+        border: 1px solid rgba(43, 103, 119, 0.08);
+        border-radius: 0.85rem;
+        padding: 0.85rem;
+    }
+
+    .secure-chip {
+        display: inline-flex;
+        align-items: center;
+        background: rgba(16, 185, 129, 0.08);
+        color: #047857;
+        border: 1px solid rgba(16, 185, 129, 0.15);
+        border-radius: 999px;
+        padding: 0.35rem 0.65rem;
+        font-size: 0.78rem;
+        font-weight: 700;
+    }
+
+    .price-panel {
+        background: #fbfdff;
+        border: 1px solid rgba(43, 103, 119, 0.07);
+        border-radius: 0.95rem;
+        padding: 1rem;
+    }
+
+    .amount-lg {
+        font-size: 1.35rem;
+        font-weight: 800;
+        color: var(--primary-color);
+    }
+
+    .demo-mode-box,
+    .real-mode-box {
+        border-radius: 0.95rem;
+        padding: 0.9rem;
+        border: 1px solid rgba(15, 23, 42, 0.06);
+        background: #fff;
+    }
+
+    .demo-mode-box {
+        background: rgba(242, 169, 0, 0.08);
+        border-color: rgba(242, 169, 0, 0.18);
+    }
+
+    @media (max-width: 991.98px) {
+        .payment-panel {
+            position: static;
+            top: auto;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .experience-thumb-wrap {
+            flex-basis: 92px;
+        }
+
+        .experience-thumb {
+            width: 92px;
+            height: 72px;
+        }
+
+        .summary-row {
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .summary-value {
+            text-align: left;
+        }
+    }
+</style>
+{% endblock %}

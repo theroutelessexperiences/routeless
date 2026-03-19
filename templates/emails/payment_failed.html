@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #333; line-height: 1.6; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 8px; }
+        .error-header { background: #e74c3c; color: white; padding: 20px; text-align: center; border-radius: 8px 8px 0 0; margin-top: -20px; margin-left: -20px; margin-right: -20px; }
+        h1 { margin: 0; }
+        .info-block { background: #f9f9f9; border-left: 4px solid #e74c3c; padding: 15px; margin: 20px 0; }
+        .footer { margin-top: 30px; font-size: 0.9em; color: #7f8c8d; text-align: center; }
+        .btn { display: inline-block; padding: 10px 20px; background-color: #e74c3c; color: white; text-decoration: none; border-radius: 5px; margin-top: 15px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="error-header">
+            <h1>Payment Action Required</h1>
+        </div>
+        
+        <p>Hi {{ traveler_name }},</p>
+        <p>There was an issue processing your payment for <strong>{{ experience.title }}</strong>.</p>
+        
+        <div class="info-block">
+            <p><strong>Booking ID:</strong> #{{ booking.id }}</p>
+            <p><strong>Total Due:</strong> â‚¹{{ booking.total_price }}</p>
+            <p>Your booking is currently saved as <strong>Pending</strong>.</p>
+        </div>
+
+        <p>Please log in to your Safar account and try your payment again to secure your spot.</p>
+        
+        <a href="{{ site_url }}/my-bookings/" class="btn">Retry Payment</a>
+        
+        <div class="footer">
+            &copy; {% now "Y" %} Safar Travels. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>

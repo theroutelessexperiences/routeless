@@ -1,0 +1,764 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Experiences - Safar{% endblock %}
+
+{% block meta_description %}
+Explore our handpicked selection of top-rated local travel experiences, treks, and homestays.
+Filter by location, category, and price to find your perfect trip.
+{% endblock %}
+
+{% block og_tags %}
+<meta property="og:site_name" content="Safar" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Explore Experiences - Safar" />
+<meta property="og:description"
+    content="Explore our handpicked selection of top-rated local travel experiences, treks, and homestays. Filter by location, category, and price to find your perfect trip." />
+<meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'listing_list' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="container experiences-page" style="margin-top: 100px; min-height: 80vh;">
+
+    <!-- Page Header -->
+    <div class="page-hero-lite mb-4">
+        <div
+            class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center gap-3">
+            <div>
+                <div class="hero-kicker">
+                    <i class="bi bi-compass-fill me-2"></i>Explore Safar
+                </div>
+                <h1 class="fw-bold section-heading mb-2">Curated Experiences</h1>
+                <p class="text-muted mb-0">
+                    Find the perfect adventure, stay, or local experience for your next trip.
+                </p>
+            </div>
+
+            {% if page_obj %}
+            <div class="results-stat-card">
+                <div class="small text-muted mb-1">Available results</div>
+                <div class="fw-bold fs-5" style="color: var(--primary-color);">
+                    {{ page_obj.paginator.count }}
+                </div>
+                <div class="small text-muted">
+                    Showing {{ page_obj.start_index }}â€“{{ page_obj.end_index }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Filter Panel -->
+    <div class="filter-panel-modern mb-4" id="filters">
+        <form id="experienceFilterForm" method="get" class="row g-3 align-items-end">
+
+            <!-- Location -->
+            <div class="col-12 col-md-6 col-xl-3">
+                <label for="location" class="form-label filter-label">Location</label>
+                <div class="filter-input-wrap">
+                    <i class="bi bi-geo-alt filter-icon"></i>
+                    <select class="form-select filter-control filter-control-with-icon" id="location" name="location"
+                        onchange="autoSubmitFilters()">
+                        <option value="">All Locations</option>
+                        {% for opt in location_options %}
+                        <option value="{{ opt.value }}" {% if opt.selected %}selected{% endif %}>
+                            {{ opt.label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Category -->
+            <div class="col-12 col-md-6 col-xl-3">
+                <label for="category" class="form-label filter-label">Category</label>
+                <div class="filter-input-wrap">
+                    <i class="bi bi-grid-3x3-gap filter-icon"></i>
+                    <select class="form-select filter-control filter-control-with-icon" id="category" name="category"
+                        onchange="autoSubmitFilters()">
+                        <option value="">All Categories</option>
+                        {% for opt in category_options %}
+                        <option value="{{ opt.value }}" {% if opt.selected %}selected{% endif %}>
+                            {{ opt.label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Min Price -->
+            <div class="col-6 col-md-4 col-xl-2">
+                <label for="min_price" class="form-label filter-label">Min Price</label>
+                <div class="filter-input-wrap">
+                    <i class="bi bi-currency-rupee filter-icon"></i>
+                    <input type="number" class="form-control filter-control filter-control-with-icon" id="min_price"
+                        name="min_price" placeholder="Min" min="0" value="{{ request.GET.min_price|default:'' }}">
+                </div>
+            </div>
+
+            <!-- Max Price -->
+            <div class="col-6 col-md-4 col-xl-2">
+                <label for="max_price" class="form-label filter-label">Max Price</label>
+                <div class="filter-input-wrap">
+                    <i class="bi bi-currency-rupee filter-icon"></i>
+                    <input type="number" class="form-control filter-control filter-control-with-icon" id="max_price"
+                        name="max_price" placeholder="Max" min="0" value="{{ request.GET.max_price|default:'' }}">
+                </div>
+            </div>
+
+            <!-- Start Date -->
+            <div class="col-6 col-md-4 col-xl-2">
+                <label for="start_date" class="form-label filter-label">Check-in</label>
+                <div class="filter-input-wrap">
+                    <i class="bi bi-calendar-event filter-icon"></i>
+                    <input type="text" class="form-control filter-control filter-control-with-icon" id="start_date"
+                        name="start_date" placeholder="Any dates" value="{{ request.GET.start_date|default:'' }}">
+                </div>
+            </div>
+
+            <!-- End Date (Hidden but maintained for parity with detail page logic if needed, or purely cosmetic here) -->
+            <input type="hidden" id="end_date" name="end_date" value="{{ request.GET.end_date|default:'' }}">
+
+            <!-- Guests -->
+            <div class="col-6 col-md-4 col-xl-2">
+                <label for="guests" class="form-label filter-label">Guests</label>
+                <div class="filter-input-wrap">
+                    <i class="bi bi-people filter-icon"></i>
+                    <input type="number" class="form-control filter-control filter-control-with-icon" id="guests"
+                        name="guests" placeholder="1 guest" min="1" value="{{ request.GET.guests|default:'' }}">
+                </div>
+            </div>
+
+            <!-- Sort -->
+            <div class="col-12 col-md-4 col-xl-2">
+                <label for="sort" class="form-label filter-label">Sort By</label>
+                <div class="filter-input-wrap">
+                    <i class="bi bi-funnel filter-icon"></i>
+                    <select class="form-select filter-control filter-control-with-icon" id="sort" name="sort"
+                        onchange="autoSubmitFilters()">
+                        {% for opt in sort_options %}
+                        <option value="{{ opt.value }}" {% if opt.selected %}selected{% endif %}>
+                            {{ opt.label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            <!-- Footer row inside panel -->
+            <div
+                class="col-12 d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2 pt-1">
+                <div class="small text-muted">
+                    Filters apply automatically
+                    <span class="mx-1">â€¢</span>
+                    No search button needed
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                    {% if request.GET %}
+                    <a href="{% url 'listing_list' %}" class="btn btn-sm btn-outline-secondary rounded-pill px-3">
+                        <i class="bi bi-x-circle me-1"></i>Clear Filters
+                    </a>
+                    {% endif %}
+
+                    <noscript>
+                        <button type="submit" class="btn btn-sm btn-primary rounded-pill px-3">
+                            Apply Filters
+                        </button>
+                    </noscript>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Active Filters -->
+    {% if active_filters %}
+    <div class="active-filters-row d-flex flex-wrap align-items-center gap-2 mb-4">
+        <span class="small text-muted me-1">Active filters:</span>
+        {% for filter in active_filters %}
+        <span class="filter-chip">
+            {{ filter.label }}
+            <a href="{{ filter.remove_url }}" class="filter-chip-close" aria-label="Remove filter">
+                <i class="bi bi-x"></i>
+            </a>
+        </span>
+        {% endfor %}
+        <a href="{% url 'listing_list' %}" class="small text-danger text-decoration-none fw-semibold ms-1">
+            Clear all
+        </a>
+    </div>
+    {% endif %}
+
+    <!-- Grid -->
+    <div class="row g-4 mb-5">
+        {% for listing in page_obj %}
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="card experience-card experience-card-modern h-100 position-relative">
+
+                <!-- Category badge -->
+                <span class="badge category-badge">
+                    {{ listing.category }}
+                </span>
+
+                <!-- Featured badge -->
+                {% if listing.is_featured %}
+                <span class="badge featured-badge">
+                    <i class="bi bi-star-fill me-1"></i>Featured
+                </span>
+                {% endif %}
+
+                <!-- Image -->
+                <a href="{% url 'listing_detail' listing.slug %}" class="image-link">
+                    {% if listing.main_image %}
+                    <img src="{{ listing.main_image.url }}" alt="{{ listing.title }}" loading="lazy" width="800"
+                        height="440"
+                        onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=800&q=80';">
+                    {% else %}
+                    <img src="https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=800&q=80"
+                        alt="No image for {{ listing.title }}" loading="lazy" width="800" height="440">
+                    {% endif %}
+                </a>
+
+                <div class="card-body p-4 d-flex flex-column">
+
+                    <!-- Top meta -->
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-2 small text-muted">
+                        <span class="d-inline-flex align-items-center meta-location text-truncate">
+                            <i class="bi bi-geo-alt-fill me-1 text-danger"></i>{{ listing.location }}
+                        </span>
+
+                        {% if listing.review_count and listing.review_count > 0 %}
+                        <span class="ms-auto d-inline-flex align-items-center rating-pill">
+                            <i class="bi bi-star-fill me-1"></i>
+                            {{ listing.avg_rating|floatformat:1 }}
+                            <span class="text-muted ms-1">({{ listing.review_count }})</span>
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Title -->
+                    <h5 class="fw-bold mb-1 listing-title">
+                        <a href="{% url 'listing_detail' listing.slug %}"
+                            class="text-decoration-none listing-title-link">
+                            {{ listing.title }}
+                        </a>
+                    </h5>
+
+                    <p class="text-muted small mb-3 d-flex align-items-center">
+                        <i class="bi bi-person-circle me-1"></i>Hosted by {{ listing.host.username }}
+                    </p>
+
+                    <!-- Description -->
+                    <p class="text-muted small flex-grow-1 mb-3 listing-desc">
+                        {% if listing.short_description %}
+                        {{ listing.short_description|truncatechars:110 }}
+                        {% else %}
+                        {{ listing.description|truncatechars:110 }}
+                        {% endif %}
+                    </p>
+
+                    <!-- Footer -->
+                    <div class="d-flex justify-content-between align-items-center pt-3 mt-auto border-top">
+                        <div>
+                            <div class="price-badge mb-0">
+                               &#8377;{{ listing.price_per_person|floatformat:2 }}
+                                <span class="fs-6 fw-normal text-muted">/person</span>
+                            </div>
+                            <div class="small text-muted">per day</div>
+                        </div>
+
+                        <a href="{% url 'listing_detail' listing.slug %}"
+                            class="btn btn-outline-primary rounded-pill px-4 btn-sm fw-semibold">
+                            View
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="empty-state text-center py-5 px-4">
+                <div class="mb-3">
+                    <i class="bi bi-search" style="font-size: 2.25rem; color: var(--primary-color); opacity: 0.8;"></i>
+                </div>
+                <h4 class="fw-bold mb-2" style="color: var(--primary-color);">No experiences found</h4>
+                <p class="text-muted mb-3">Try changing your filters or explore all available experiences.</p>
+                <a href="{% url 'listing_list' %}" class="btn btn-primary rounded-pill px-4">
+                    View All Experiences
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if page_obj.has_other_pages %}
+    <nav aria-label="Experiences pagination" class="mb-5">
+        <ul class="pagination justify-content-center flex-wrap gap-1">
+
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link page-pill" href="{{ pagination_base_url }}{{ page_obj.previous_page_number }}">
+                    &laquo; Prev
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active">
+                <span class="page-link page-circle-active">{{ num }}</span>
+            </li>
+            {% else %}
+            <li class="page-item">
+                <a class="page-link page-circle" href="{{ pagination_base_url }}{{ num }}">{{ num }}</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link page-pill" href="{{ pagination_base_url }}{{ page_obj.next_page_number }}">
+                    Next &raquo;
+                </a>
+            </li>
+            {% endif %}
+
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+
+<!-- Auto-submit filter JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    (function () {
+        const form = document.getElementById("experienceFilterForm");
+        if (!form) return;
+
+        let debounceTimer = null;
+
+        function submitForm() {
+            const pageField = form.querySelector('[name="page"]');
+            if (pageField) pageField.remove();
+            
+            // Clean empty fields to keep URL uncluttered
+            const inputs = form.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                if (!input.value) {
+                    input.disabled = true; // disable right before submit so it's excluded from URL
+                }
+            });
+            form.submit();
+        }
+
+        window.autoSubmitFilters = function () {
+            submitForm();
+        };
+
+        const minPrice = document.getElementById("min_price");
+        const maxPrice = document.getElementById("max_price");
+        const guests = document.getElementById("guests");
+
+        [minPrice, maxPrice, guests].forEach(function (el) {
+            if (!el) return;
+
+            el.addEventListener("input", function () {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(submitForm, 650);
+            });
+
+            el.addEventListener("change", function () {
+                clearTimeout(debounceTimer);
+                submitForm();
+            });
+
+            el.addEventListener("keydown", function (e) {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    clearTimeout(debounceTimer);
+                    submitForm();
+                }
+            });
+        });
+        
+        // Datepicker setup
+        const startDateInput = document.getElementById("start_date");
+        const endDateInput = document.getElementById("end_date"); // Hidden field to pass along end range if needed
+
+        if (startDateInput && typeof flatpickr !== "undefined") {
+            flatpickr(startDateInput, {
+                mode: "range",
+                dateFormat: "Y-m-d",
+                minDate: "today",
+                altInput: true,
+                altFormat: "M j", 
+                onChange: function(selectedDates, dateStr, instance) {
+                    if (selectedDates.length == 2) {
+                        // Extract dates from range string
+                        const dates = dateStr.split(" to ");
+                        if (dates.length == 2) {
+                            startDateInput.value = dates[0];
+                            if(endDateInput) endDateInput.value = dates[1];
+                            submitForm();
+                        }
+                    } else if (selectedDates.length == 1) {
+                        // Single date selection
+                        startDateInput.value = dateStr;
+                        if(endDateInput) endDateInput.value = "";
+                        submitForm();
+                    }
+                }
+            });
+        }
+    })();
+</script>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<style>
+    /* Page header */
+    .page-hero-lite {
+        background: #fff;
+        border: 1px solid rgba(15, 23, 42, 0.06);
+        border-radius: 1rem;
+        box-shadow: 0 10px 28px rgba(43, 103, 119, 0.06);
+        padding: 1rem 1.1rem;
+    }
+
+    .hero-kicker {
+        display: inline-flex;
+        align-items: center;
+        background: rgba(43, 103, 119, 0.08);
+        color: var(--primary-color);
+        border: 1px solid rgba(43, 103, 119, 0.12);
+        border-radius: 999px;
+        padding: 0.35rem 0.7rem;
+        font-size: 0.82rem;
+        font-weight: 700;
+        margin-bottom: 0.55rem;
+    }
+
+    .results-stat-card {
+        background: #fbfdff;
+        border: 1px solid rgba(43, 103, 119, 0.08);
+        border-radius: 0.95rem;
+        padding: 0.8rem 0.95rem;
+        min-width: 180px;
+        box-shadow: 0 6px 16px rgba(43, 103, 119, 0.04);
+    }
+
+    /* Filter panel */
+    .filter-panel-modern {
+        background: #fff;
+        border: 1px solid rgba(15, 23, 42, 0.06);
+        border-radius: 1rem;
+        box-shadow: 0 10px 28px rgba(43, 103, 119, 0.07);
+        padding: 1rem;
+    }
+
+    .filter-label {
+        font-size: 0.84rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 0.38rem;
+    }
+
+    .filter-input-wrap {
+        position: relative;
+    }
+
+    .filter-icon {
+        position: absolute;
+        left: 0.85rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        z-index: 3;
+        pointer-events: none;
+    }
+
+    .filter-control {
+        min-height: 46px;
+        border-radius: 0.85rem;
+        border: 1px solid rgba(43, 103, 119, 0.12);
+        background: #fff;
+        box-shadow: none;
+        transition: all 0.2s ease;
+    }
+
+    .filter-control-with-icon {
+        padding-left: 2.2rem;
+    }
+
+    .filter-control::placeholder {
+        color: #9aa3af;
+    }
+
+    .filter-control:focus {
+        border-color: rgba(43, 103, 119, 0.35);
+        box-shadow: 0 0 0 0.2rem rgba(43, 103, 119, 0.12);
+    }
+
+    /* Active filter chips */
+    .active-filters-row {
+        background: transparent;
+    }
+
+    .filter-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        background: #fff;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 999px;
+        padding: 0.45rem 0.7rem;
+        font-size: 0.86rem;
+        color: var(--text-dark);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .filter-chip-close {
+        width: 22px;
+        height: 22px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        text-decoration: none;
+        color: var(--text-muted);
+        transition: 0.2s ease;
+    }
+
+    .filter-chip-close:hover {
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc3545;
+    }
+
+    /* Cards */
+    .experience-card-modern {
+        border-radius: 1rem;
+        overflow: hidden;
+        border: none;
+        background: #fff;
+        box-shadow: 0 8px 22px rgba(43, 103, 119, 0.06);
+        transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+
+    .experience-card-modern:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 16px 30px rgba(43, 103, 119, 0.12);
+    }
+
+    .experience-card-modern img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.35s ease;
+    }
+
+    .experience-card-modern:hover img {
+        transform: scale(1.03);
+    }
+
+    .image-link {
+        display: block;
+        overflow: hidden;
+    }
+
+    .category-badge {
+        position: absolute;
+        top: 0.85rem;
+        right: 0.85rem;
+        z-index: 3;
+        background: rgba(255, 255, 255, 0.94);
+        color: var(--text-dark);
+        border-radius: 999px;
+        padding: 0.42rem 0.72rem;
+        font-weight: 600;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(15, 23, 42, 0.06);
+    }
+
+    .featured-badge {
+        position: absolute;
+        top: 0.85rem;
+        left: 0.85rem;
+        z-index: 3;
+        background: rgba(242, 169, 0, 0.95);
+        color: #212529;
+        border-radius: 999px;
+        padding: 0.42rem 0.72rem;
+        font-weight: 700;
+        box-shadow: 0 6px 16px rgba(242, 169, 0, 0.28);
+    }
+
+    .meta-location {
+        max-width: 65%;
+    }
+
+    .listing-title {
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 2.6em;
+        color: var(--text-dark);
+    }
+
+    .listing-title-link {
+        color: inherit;
+        transition: color 0.2s ease;
+    }
+
+    .listing-title-link:hover {
+        color: var(--primary-color);
+    }
+
+    .listing-desc {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 3.8em;
+    }
+
+    .rating-pill {
+        color: #d89b00;
+        font-weight: 700;
+        background: rgba(242, 169, 0, 0.12);
+        border-radius: 999px;
+        padding: 0.2rem 0.55rem;
+        white-space: nowrap;
+    }
+
+    /* Empty state */
+    .empty-state {
+        background: #fff;
+        border: 1px dashed rgba(43, 103, 119, 0.22);
+        border-radius: 1rem;
+        box-shadow: 0 8px 24px rgba(43, 103, 119, 0.05);
+    }
+
+    /* Pagination */
+    .pagination .page-item {
+        margin: 0 2px;
+    }
+
+    .pagination .page-link {
+        border: none;
+        color: var(--text-dark);
+        background: #fff;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s ease;
+    }
+
+    .pagination .page-link:hover {
+        color: var(--primary-color);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(43, 103, 119, 0.12);
+    }
+
+    .page-circle,
+    .page-circle-active {
+        width: 42px;
+        height: 42px;
+        border-radius: 50% !important;
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+    }
+
+    .page-circle-active {
+        background: var(--primary-color) !important;
+        color: #fff !important;
+        box-shadow: 0 8px 18px rgba(43, 103, 119, 0.22) !important;
+    }
+
+    .page-pill {
+        border-radius: 999px !important;
+        padding: 0.6rem 1rem !important;
+        font-weight: 600;
+    }
+
+    /* Responsive */
+    @media (max-width: 1199.98px) {
+        .results-stat-card {
+            min-width: 160px;
+        }
+    }
+
+    @media (max-width: 991.98px) {
+
+        .page-hero-lite,
+        .filter-panel-modern {
+            padding: 0.95rem;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .hero-kicker {
+            font-size: 0.78rem;
+        }
+
+        .results-stat-card {
+            width: 100%;
+            min-width: 0;
+        }
+
+        .filter-panel-modern {
+            padding: 0.9rem;
+        }
+
+        .filter-control {
+            min-height: 44px;
+            border-radius: 0.75rem;
+        }
+
+        .category-badge,
+        .featured-badge {
+            top: 0.65rem;
+            padding: 0.34rem 0.55rem;
+            font-size: 0.75rem;
+        }
+
+        .category-badge {
+            right: 0.65rem;
+        }
+
+        .featured-badge {
+            left: 0.65rem;
+        }
+
+        .experience-card-modern img {
+            height: 210px;
+        }
+
+        .meta-location {
+            max-width: 100%;
+        }
+
+        .pagination .page-link.page-pill {
+            padding: 0.55rem 0.8rem !important;
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .page-hero-lite h1 {
+            font-size: 1.55rem;
+        }
+
+        .experience-card-modern .card-body {
+            padding: 1rem !important;
+        }
+    }
+</style>
+{% endblock %}

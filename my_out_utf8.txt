@@ -1,0 +1,77 @@
+venv_desktop\Scripts\python : 
+C:\Users\Lab 2\OneDrive - iitr.ac.in\pro
+ject_01\web_v1\venv_desktop\Lib\site-pac
+kages\django\db\models\base.py:388: 
+RuntimeWarning: Model 
+'marketplace.reviewreport' was already 
+registered. Reloading models is not 
+advised as it can lead to 
+inconsistencies, most notably with 
+related models.
+At line:1 char:1
++ venv_desktop\Scripts\python manage.py 
+test --failfast > my_out.txt 2> ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecif 
+   ied: (C:\Users\Lab 2\...related mod  
+  els.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCom 
+   mandError
+ 
+  new_class._meta.apps.register_model(ne
+w_class._meta.app_label, new_class)
+C:\Users\Lab 2\OneDrive - iitr.ac.in\pro
+ject_01\web_v1\venv_desktop\Lib\site-pac
+kages\django\db\models\base.py:388: 
+RuntimeWarning: Model 
+'marketplace.conversation' was already 
+registered. Reloading models is not 
+advised as it can lead to 
+inconsistencies, most notably with 
+related models.
+  new_class._meta.apps.register_model(ne
+w_class._meta.app_label, new_class)
+C:\Users\Lab 2\OneDrive - iitr.ac.in\pro
+ject_01\web_v1\venv_desktop\Lib\site-pac
+kages\django\db\models\base.py:388: 
+RuntimeWarning: Model 
+'marketplace.message' was already 
+registered. Reloading models is not 
+advised as it can lead to 
+inconsistencies, most notably with 
+related models.
+  new_class._meta.apps.register_model(ne
+w_class._meta.app_label, new_class)
+Creating test database for alias 
+'default'...
+
+System check identified some issues:
+
+WARNINGS:
+?: 
+settings.ACCOUNT_AUTHENTICATION_METHOD 
+is deprecated, use: 
+settings.ACCOUNT_LOGIN_METHODS = 
+{'email'}
+?: settings.ACCOUNT_EMAIL_REQUIRED is 
+deprecated, use: 
+settings.ACCOUNT_SIGNUP_FIELDS = 
+['email*', 'password1*', 'password2*']
+?: settings.ACCOUNT_USERNAME_REQUIRED 
+is deprecated, use: 
+settings.ACCOUNT_SIGNUP_FIELDS = 
+['email*', 'password1*', 'password2*']
+
+System check identified 3 issues (0 
+silenced).
+.......
+----------------------------------------
+------------------------------
+Ran 7 tests in 14.470s
+
+OK
+Destroying test database for alias 
+'default'...
+
+Found 7 test(s).

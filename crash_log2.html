@@ -1,0 +1,3852 @@
+--- URL: / ---
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Safar - Discover Curated Travel Experiences</title>
+
+    <!-- SEO Essentials -->
+    <meta name="description"
+        content="Find the best homestays, thrilling adventures, and curated local travel experiences. Book
+securely with verified hosts on Safar." />
+    
+
+    <!-- Open Graph Default Tags -->
+    
+<meta property="og:site_name" content="Safar" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Safar - Discover Curated Travel Experiences" />
+<meta property="og:description"
+    content="Find the best homestays, thrilling adventures, and curated local travel experiences. Book securely with verified hosts on Safar." />
+<meta property="og:url" content="http://localhost/" />
+<meta property="og:image"
+    content="http://localhost/static/img/safar-og-default.jpg" />
+
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Optional Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #2b6777;
+            --accent-color: #f2a900;
+            --dark-color: #1f2937;
+            --muted-color: #6b7280;
+            --light-bg: #f8fafc;
+            --card-radius: 1rem;
+            --navbar-height: 78px;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            color: var(--dark-color);
+            background: #ffffff;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .text-accent {
+            color: var(--accent-color) !important;
+        }
+
+        .bg-accent {
+            background-color: var(--accent-color) !important;
+        }
+
+        .btn-accent {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: #212529;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .btn-accent:hover,
+        .btn-accent:focus {
+            background-color: #de9b00;
+            border-color: #de9b00;
+            color: #212529;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(242, 169, 0, 0.3);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background-color: #245866;
+            border-color: #245866;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(43, 103, 119, 0.3);
+        }
+
+        /* ---------- Navbar ---------- */
+        #mainNavbar {
+            min-height: var(--navbar-height);
+            transition: all 0.25s ease;
+            z-index: 2000 !important;
+        }
+
+        /* Home page initial state (transparent) */
+        body.is-home #mainNavbar.navbar-home-top {
+            background: transparent;
+            box-shadow: none;
+        }
+
+        body.is-home #mainNavbar.navbar-home-top .navbar-brand,
+        body.is-home #mainNavbar.navbar-home-top .nav-link {
+            color: #fff !important;
+        }
+
+        body.is-home #mainNavbar.navbar-home-top .nav-link {
+            opacity: 0.92;
+        }
+
+        body.is-home #mainNavbar.navbar-home-top .nav-link:hover {
+            opacity: 1;
+        }
+
+        /* Fix active link on transparent navbar */
+        body.is-home #mainNavbar.navbar-home-top .nav-link.active {
+            color: #fff !important;
+            opacity: 1;
+            text-shadow: 0 1px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Better visibility for home top navbar buttons */
+        body.is-home #mainNavbar.navbar-home-top .btn-outline-secondary,
+        body.is-home #mainNavbar.navbar-home-top .btn-outline-light {
+            color: #fff !important;
+            border-color: rgba(255, 255, 255, 0.55) !important;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+        }
+
+        body.is-home #mainNavbar.navbar-home-top .btn-outline-secondary:hover,
+        body.is-home #mainNavbar.navbar-home-top .btn-outline-light:hover {
+            background: rgba(255, 255, 255, 0.16);
+            border-color: rgba(255, 255, 255, 0.8) !important;
+            color: #fff !important;
+        }
+
+        body.is-home #mainNavbar.navbar-home-top .navbar-toggler {
+            color: #fff;
+        }
+
+        body.is-home #mainNavbar.navbar-home-top .dropdown-toggle {
+            color: #fff !important;
+            border-color: rgba(255, 255, 255, 0.55) !important;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+        }
+
+        body.is-home #mainNavbar.navbar-home-top .dropdown-toggle:hover {
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        /* Scrolled or non-home solid state */
+        #mainNavbar.navbar-solid {
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        }
+
+        #mainNavbar.navbar-solid .navbar-brand,
+        #mainNavbar.navbar-solid .nav-link {
+            color: var(--dark-color) !important;
+        }
+
+        #mainNavbar .navbar-brand {
+            font-weight: 800;
+            letter-spacing: 0.2px;
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        #mainNavbar .brand-mark {
+            width: 34px;
+            height: 34px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: #fff;
+            font-weight: 800;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+            flex-shrink: 0;
+        }
+
+        #mainNavbar .nav-link {
+            font-weight: 600;
+            margin: 0 .1rem;
+            transition: color .2s ease, opacity .2s ease;
+        }
+
+        #mainNavbar .nav-link.active {
+            color: var(--primary-color) !important;
+        }
+
+        #mainNavbar .navbar-toggler {
+            border: none;
+            box-shadow: none !important;
+            color: var(--dark-color);
+        }
+
+        /* Custom toggler icon for visibility */
+        .navbar-toggler-custom {
+            width: 1.4rem;
+            height: 1.4rem;
+            display: inline-block;
+            position: relative;
+            color: currentColor;
+        }
+
+        .navbar-toggler-custom::before,
+        .navbar-toggler-custom::after,
+        .navbar-toggler-custom span {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 2px;
+            border-radius: 2px;
+            background: currentColor;
+        }
+
+        .navbar-toggler-custom::before {
+            top: 2px;
+        }
+
+        .navbar-toggler-custom span {
+            top: 9px;
+        }
+
+        .navbar-toggler-custom::after {
+            top: 16px;
+        }
+
+        .navbar-cta {
+            border-radius: 999px;
+            padding: .55rem 1rem;
+            font-weight: 700;
+        }
+
+        /* Page offset for non-home pages */
+        body:not(.is-home) main.site-main {
+            padding-top: calc(var(--navbar-height) + 20px);
+        }
+
+        /* ---------- Layering / z-index fixes for hero carousel ---------- */
+        #heroCarousel,
+        #heroCarousel .carousel-inner,
+        #heroCarousel .carousel-item,
+        #heroCarousel .hero-slide {
+            position: relative;
+            z-index: 1;
+        }
+
+        #heroCarousel .carousel-indicators,
+        #heroCarousel .carousel-control-prev,
+        #heroCarousel .carousel-control-next {
+            z-index: 2;
+        }
+
+        /* ---------- Home hero spacing + vertical centering fix ---------- */
+        body.is-home .hero-slide {
+            min-height: 86vh;
+            padding-top: calc(var(--navbar-height) + 24px);
+        }
+
+        body.is-home .hero-slide>.container {
+            min-height: calc(86vh - (var(--navbar-height) + 24px));
+            display: flex;
+            align-items: center;
+        }
+
+        /* ---------- Cards ---------- */
+        .experience-card {
+            border-radius: var(--card-radius);
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            background: #fff;
+        }
+
+        .experience-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+            border-color: rgba(0, 0, 0, 0.08);
+        }
+
+        .experience-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .experience-card:hover img {
+            transform: scale(1.04);
+        }
+
+        .price-badge {
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        /* ---------- Hero helper ---------- */
+        .hero {
+            min-height: 75vh;
+            display: flex;
+            align-items: center;
+        }
+
+        /* ---------- Subtle animations ---------- */
+        .slide-up {
+            animation: slideUp .65s ease both;
+        }
+
+        .slide-up.delay-1 {
+            animation-delay: .12s;
+        }
+
+        .slide-up.delay-2 {
+            animation-delay: .22s;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ---------- Footer ---------- */
+        footer.site-footer {
+            background: #0f172a;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        footer.site-footer a {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        footer.site-footer a:hover {
+            color: #fff;
+        }
+
+        /* ---------- Messages ---------- */
+        .message-stack {
+            z-index: 1020;
+        }
+
+        /* ---------- Offcanvas ---------- */
+        .offcanvas .nav-link {
+            font-weight: 600;
+            color: var(--dark-color);
+            padding: .75rem 0;
+        }
+
+        /* ---------- Utilities ---------- */
+        .rounded-4 {
+            border-radius: 1rem !important;
+        }
+
+        @media (max-width: 991.98px) {
+            body:not(.is-home) main.site-main {
+                padding-top: calc(var(--navbar-height) + 12px);
+            }
+
+            body.is-home .hero-slide {
+                min-height: 92vh;
+                padding-top: calc(var(--navbar-height) + 16px);
+            }
+
+            body.is-home .hero-slide>.container {
+                min-height: calc(92vh - (var(--navbar-height) + 16px));
+            }
+        }
+    </style>
+    
+    
+<style>
+    /* =========================
+       Home Page Design Tokens
+       ========================= */
+    :root {
+        --safar-radius-lg: 1.25rem;
+        --safar-radius-md: 1rem;
+        --safar-shadow-sm: 0 8px 20px rgba(15, 23, 42, 0.06);
+        --safar-shadow-md: 0 14px 30px rgba(15, 23, 42, 0.10);
+        --safar-shadow-lg: 0 24px 50px rgba(15, 23, 42, 0.16);
+    }
+
+    /* Utility */
+    .line-clamp-1 {
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        line-clamp: 1;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .line-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .section-kicker {
+        color: var(--accent-color);
+        font-weight: 700;
+        font-size: 0.82rem;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        margin-bottom: .35rem;
+    }
+
+    /* ---------- Hero / carousel ---------- */
+    #heroCarousel {
+        position: relative;
+        isolation: isolate;
+    }
+
+    #heroCarousel .carousel-inner,
+    #heroCarousel .carousel-item {
+        position: relative;
+    }
+
+    #heroCarousel .carousel-indicators {
+        z-index: 5;
+    }
+
+    #heroCarousel .carousel-control-prev,
+    #heroCarousel .carousel-control-next {
+        z-index: 5;
+        width: 8%;
+        opacity: 0.9;
+    }
+
+    #heroCarousel .carousel-control-prev-icon,
+    #heroCarousel .carousel-control-next-icon {
+        background-size: 55%;
+    }
+
+    #heroCarousel .carousel-control-prev:hover,
+    #heroCarousel .carousel-control-next:hover {
+        opacity: 1;
+    }
+
+    /* Scope carousel dots to this hero only */
+    #heroCarousel .carousel-indicators [data-bs-target] {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        border: none;
+        margin: 0 5px;
+        opacity: .7;
+        transition: transform .2s ease, opacity .2s ease;
+    }
+
+    #heroCarousel .carousel-indicators .active {
+        opacity: 1;
+        transform: scale(1.15);
+    }
+
+    .hero-slide {
+        overflow: hidden;
+        position: relative;
+        min-height: clamp(620px, 88vh, 860px);
+    }
+
+    .hero-overlay-pattern {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+        background-image: radial-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+        background-size: 18px 18px;
+        pointer-events: none;
+        opacity: 0.9;
+    }
+
+    .hero-content-wrap {
+        position: relative;
+        z-index: 1;
+        min-height: inherit;
+        padding-top: 7.5rem;
+        padding-bottom: 3rem;
+    }
+
+    .hero-subtitle {
+        max-width: 760px;
+        line-height: 1.5;
+    }
+
+    .glass-badge {
+        background: rgba(255, 255, 255, 0.20);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.28);
+        box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
+        font-weight: 600;
+        letter-spacing: 0.3px;
+        white-space: normal;
+        max-width: 100%;
+    }
+
+    .hero-search-card {
+        max-width: 980px;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.94) !important;
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.45) !important;
+        box-shadow: var(--safar-shadow-lg) !important;
+        border-radius: var(--safar-radius-lg) !important;
+        transform: translateY(0);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .hero-search-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 28px 60px rgba(0, 0, 0, 0.18) !important;
+    }
+
+    .hero-search-card .form-control,
+    .hero-search-card .form-select {
+        border-radius: .85rem;
+        box-shadow: none !important;
+        min-height: 50px;
+    }
+
+    .hero-search-card .form-control:focus,
+    .hero-search-card .form-select:focus {
+        box-shadow: 0 0 0 0.25rem rgba(43, 103, 119, 0.15) !important;
+        border-color: rgba(43, 103, 119, 0.3) !important;
+        background: #fff !important;
+    }
+
+    .hero-search-card .form-label {
+        font-size: .78rem;
+        letter-spacing: .02em;
+    }
+
+    /* ---------- Hero Video Slide ---------- */
+    .hero-video-slide .hero-video-fallback {
+        position: absolute;
+        inset: 0;
+        z-index: 0;
+    }
+
+    .hero-video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+        pointer-events: none;
+    }
+
+    .hero-video-overlay {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        background: linear-gradient(rgba(43, 103, 119, 0.55), rgba(43, 103, 119, 0.82));
+    }
+
+    .hero-video-overlay::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(circle at 50% 35%, rgba(255, 255, 255, 0.05), transparent 45%),
+            radial-gradient(circle at 50% 80%, rgba(0, 0, 0, 0.16), transparent 60%);
+        pointer-events: none;
+    }
+
+    .hero-video-slide .hero-overlay-pattern {
+        z-index: 2;
+        opacity: 0.85;
+    }
+
+    .hero-video-slide .hero-content-wrap {
+        z-index: 3;
+    }
+
+    .hero-video-slide h2,
+    .hero-video-slide .hero-subtitle {
+        text-shadow: 0 4px 18px rgba(0, 0, 0, 0.22);
+    }
+
+    /* ---------- Stats strip ---------- */
+    .stats-card {
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        border: 1px solid rgba(0, 0, 0, 0.03);
+        background: linear-gradient(145deg, #ffffff, #f8fafc) !important;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+    }
+
+    .stats-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 12px 22px rgba(0, 0, 0, .06);
+        border-color: rgba(43, 103, 119, 0.12);
+    }
+
+    /* ---------- Cards common ---------- */
+    .experience-card {
+        border-radius: var(--safar-radius-lg) !important;
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        will-change: transform;
+    }
+
+    .experience-card:hover {
+        transform: translateY(-6px);
+    }
+
+    .experience-card .card-title {
+        font-weight: 700;
+        color: #111827;
+    }
+
+    /* ---------- Category cards ---------- */
+    .category-card {
+        border-radius: 1rem;
+        background: linear-gradient(to bottom right, #fff, #fcfdff);
+        box-shadow: var(--safar-shadow-sm) !important;
+        border: 1px solid rgba(43, 103, 119, 0.05) !important;
+    }
+
+    .category-card:hover {
+        box-shadow: 0 16px 28px rgba(43, 103, 119, 0.12) !important;
+        border-color: rgba(43, 103, 119, 0.14) !important;
+    }
+
+    .category-card i {
+        transition: transform 0.28s ease;
+    }
+
+    .category-card:hover i {
+        transform: scale(1.12) rotate(-4deg);
+    }
+
+    /* ---------- Horizontal destination scroller ---------- */
+    .feature-section {
+        position: relative;
+    }
+
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(43, 103, 119, 0.45) #e9ecef;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar {
+        height: 8px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: #e9ecef;
+        border-radius: 999px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: rgba(43, 103, 119, 0.45);
+        border-radius: 999px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: rgba(43, 103, 119, 0.65);
+    }
+
+    .destination-card {
+        box-shadow: var(--safar-shadow-sm) !important;
+        border: 1px solid rgba(43, 103, 119, 0.05) !important;
+    }
+
+    .destination-card:hover {
+        box-shadow: 0 16px 28px rgba(0, 0, 0, 0.10) !important;
+    }
+
+    .destination-card img {
+        transition: transform 0.45s ease;
+    }
+
+    .destination-card:hover img {
+        transform: scale(1.04);
+    }
+
+    .destination-placeholder {
+        transition: filter 0.3s ease;
+    }
+
+    .destination-card:hover .destination-placeholder {
+        filter: saturate(1.06);
+    }
+
+    /* ---------- Featured cards ---------- */
+    .featured-card {
+        box-shadow: var(--safar-shadow-sm) !important;
+        border: 1px solid rgba(43, 103, 119, 0.05) !important;
+    }
+
+    .featured-card:hover {
+        box-shadow: var(--safar-shadow-md) !important;
+    }
+
+    .featured-card .card-body {
+        gap: .2rem;
+    }
+
+    .featured-card img {
+        transition: transform .45s ease;
+    }
+
+    .featured-card:hover img {
+        transform: scale(1.03);
+    }
+
+    /* ---------- How it works ---------- */
+    .how-card {
+        border: 1px solid rgba(0, 0, 0, 0.04) !important;
+        box-shadow: var(--safar-shadow-sm) !important;
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .how-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 14px 26px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    /* ---------- Testimonials ---------- */
+    .testimonial-card {
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.03) !important;
+    }
+
+    .testimonial-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 28px rgba(0, 0, 0, 0.24);
+        border-color: rgba(255, 255, 255, 0.18) !important;
+    }
+
+    /* ---------- Host CTA (matches HTML class host-cta-new) ---------- */
+    .host-cta-new {
+        background:
+            radial-gradient(circle at 15% 20%, rgba(244, 180, 0, 0.14), transparent 45%),
+            radial-gradient(circle at 85% 80%, rgba(13, 110, 253, 0.10), transparent 45%),
+            linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01));
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.22);
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+    }
+
+    .host-cta-new:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 26px 55px rgba(0, 0, 0, 0.28);
+        border-color: rgba(255, 255, 255, 0.14);
+    }
+
+    /* ---------- Accessibility / focus polish ---------- */
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+        outline: 2px solid rgba(43, 103, 119, 0.35);
+        outline-offset: 2px;
+    }
+
+    /* ---------- Responsive ---------- */
+    @media (max-width: 991.98px) {
+
+        #heroCarousel .carousel-control-prev,
+        #heroCarousel .carousel-control-next {
+            display: none;
+        }
+
+        #heroCarousel .carousel-indicators {
+            margin-bottom: 1rem !important;
+        }
+
+        .hero-content-wrap {
+            padding-top: 7rem;
+            padding-bottom: 2rem;
+        }
+
+        .hero-search-card {
+            max-width: 100%;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .hero-slide {
+            min-height: 92vh;
+        }
+
+        #heroCarousel h1,
+        #heroCarousel h2 {
+            font-size: 2rem !important;
+            line-height: 1.15;
+        }
+
+        #heroCarousel .lead {
+            font-size: 1rem;
+        }
+
+        .glass-badge {
+            font-size: .8rem;
+            padding-left: .85rem !important;
+            padding-right: .85rem !important;
+        }
+
+        .hero-search-card {
+            border-radius: 1rem !important;
+            padding: 1rem !important;
+        }
+
+        .hero-search-card .btn.btn-lg {
+            min-height: 52px;
+        }
+
+        .hero-search-card .form-control,
+        .hero-search-card .form-select {
+            min-height: 46px;
+        }
+
+        .hero-video {
+            object-position: center center;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .featured-card .card-body {
+            padding: 1rem !important;
+        }
+
+        .stats-card {
+            border-radius: .9rem !important;
+        }
+
+        .category-card {
+            padding: 1rem !important;
+        }
+    }
+
+    /* Respect reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+        * {
+            scroll-behavior: auto !important;
+        }
+
+        .hero-video {
+            display: none !important;
+        }
+
+        .experience-card,
+        .category-card,
+        .destination-card,
+        .featured-card,
+        .how-card,
+        .testimonial-card,
+        .host-cta-new,
+        .hero-search-card,
+        .stats-card {
+            transition: none !important;
+        }
+    }
+</style>
+
+</head>
+
+
+
+<body class="is-home d-flex flex-column">
+
+    <!-- NAVBAR -->
+    <nav id="mainNavbar"
+        class="navbar navbar-expand-lg fixed-top navbar-home-top">
+        <div class="container">
+
+            <!-- Brand -->
+            <a class="navbar-brand" href="/">
+                <span class="brand-mark">S</span>
+                <span>Safar</span>
+            </a>
+
+            <!-- Right-side quick actions on mobile -->
+            <div class="d-flex align-items-center gap-2 ms-auto d-lg-none">
+                
+                <a href="/accounts/login/"
+                    class="btn btn-sm btn-outline-light rounded-pill px-3 ">
+                    Login
+                </a>
+                
+
+                <button class="navbar-toggler p-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav"
+                    aria-controls="mobileNav" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-custom"><span></span></span>
+                </button>
+            </div>
+
+            <!-- Desktop nav -->
+            <div class="collapse navbar-collapse d-none d-lg-flex" id="navbarSupportedContent">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0 align-items-lg-center">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">
+                            Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link "
+                            href="/experiences/">
+                            Experiences
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link "
+                            href="/locations/">
+                            Destinations
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link "
+                            href="/categories/">
+                            Categories
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="d-flex align-items-center gap-2">
+                    
+                    <a href="/accounts/login/" class="btn btn-outline-secondary rounded-pill px-4">
+                        Login
+                    </a>
+                    <a href="/accounts/signup/" class="btn btn-accent navbar-cta">
+                        Sign Up
+                    </a>
+                    
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Offcanvas -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="mobileNav" aria-labelledby="mobileNavLabel">
+        <div class="offcanvas-header border-bottom">
+            <h5 class="offcanvas-title fw-bold" id="mobileNavLabel">
+                <span class="brand-mark me-2">S</span> Safar
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+
+        <div class="offcanvas-body d-flex flex-column">
+            <nav class="mb-4">
+                <a class="nav-link text-primary" href="/">
+                    <i class="bi bi-house-door me-2"></i>Home
+                </a>
+                <a class="nav-link "
+                    href="/experiences/">
+                    <i class="bi bi-compass me-2"></i>Experiences
+                </a>
+                <a class="nav-link "
+                    href="/locations/">
+                    <i class="bi bi-geo-alt me-2"></i>Destinations
+                </a>
+                <a class="nav-link "
+                    href="/categories/">
+                    <i class="bi bi-grid me-2"></i>Categories
+                </a>
+            </nav>
+
+            <div class="mt-auto border-top pt-3">
+                
+                <div class="d-grid gap-2">
+                    <a href="/accounts/login/" class="btn btn-outline-primary rounded-pill">Login</a>
+                    <a href="/accounts/signup/" class="btn btn-accent rounded-pill">Create Account</a>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <main class="site-main flex-grow-1">
+        
+
+        
+
+<!-- Hero Carousel -->
+
+<div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000"
+    data-bs-touch="true" aria-label="Safar hero carousel">
+
+    <!-- Indicators -->
+    <div class="carousel-indicators mb-4">
+        
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0"
+            class="active" aria-current="true" 
+            aria-label="Slide 1">
+        </button>
+        
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"
+            class="" 
+            aria-label="Slide 2">
+        </button>
+        
+        <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"
+            class="" 
+            aria-label="Slide 3">
+        </button>
+        
+    </div>
+
+    <div class="carousel-inner">
+        
+        <div class="carousel-item active" data-bs-interval="5000">
+
+            
+            <!-- IMAGE SLIDE -->
+            <div class="hero position-relative hero-slide" style="background:
+                linear-gradient(
+                    rgba(43, 103, 119, 0.55),
+                    rgba(43, 103, 119, 0.82)
+                ),
+                url('/media/hero_slides/images/B%E1%BA%A3n_%C4%91%E1%BB%93_th%E1%BA%BF_gi%E1%BB%9Bi_3d_trang_tr%C3%AD_v%C4%83n_ph%C3%B2ng_b%E1%BA%A3n_%C4%91%E1%BB%93_th%E1%BA%BF_gi%E1%BB%9Bi_l%E1%BA%AFp_led_1.jpg') center/cover;">
+
+                <div class="hero-overlay-pattern"></div>
+
+                <div class="container d-flex align-items-center position-relative hero-content-wrap">
+                    <div class="row w-100 justify-content-center">
+                        <div class="col-lg-10 text-center text-white">
+
+                            
+                            <span class="badge rounded-pill px-3 py-2 mb-3 glass-badge">
+                                <i class="bi bi bi-stars me-1"></i>
+                                Curated Mountain Experiences
+                            </span>
+                            
+
+                            
+                            <h1 class="display-3 fw-bold mb-3 slide-up">Discover Curated Travel Experiences</h1>
+                            
+
+                            
+                            <p
+                                class="lead mb-4 slide-up delay-1 text-white-50 mx-auto hero-subtitle">
+                                Homestays, adventures, and local journeys with trusted hosts.
+                            </p>
+                            
+
+                            
+                            <div
+                                class="d-flex justify-content-center gap-3 flex-wrap mb-4 slide-up delay-2">
+                                
+                                <a href="/listings/"
+                                    class="btn btn-accent rounded-pill px-5 py-3 fs-5 fw-bold shadow">
+                                    Explore Experiences
+                                </a>
+                                
+
+                                
+                                <a href="/locations/"
+                                    class="btn btn-outline-light rounded-pill px-4 py-3 fw-bold">
+                                    View Destinations
+                                </a>
+                                
+                            </div>
+                            
+
+                            
+                            <!-- Quick Search Card -->
+                            <div
+                                class="bg-white rounded-4 shadow-lg p-3 p-md-4 text-start mx-auto slide-up delay-2 hero-search-card">
+                                <form method="get" action="/experiences/">
+                                    <div class="row g-2 align-items-end">
+                                        <div class="col-md-4">
+                                            <label class="form-label small fw-bold text-muted mb-1">Location</label>
+                                            <input type="text" name="location"
+                                                class="form-control form-control-lg border-0 bg-light"
+                                                placeholder="e.g., Manali / Rishikesh">
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <label class="form-label small fw-bold text-muted mb-1">Category</label>
+                                            <select name="category"
+                                                class="form-select form-select-lg border-0 bg-light">
+                                                <option value="">All categories</option>
+                                                
+                                                <option value="adventure">Adventure</option>
+                                                
+                                                <option value="spiritual">Spiritual</option>
+                                                
+                                                <option value="homestay">Homestay</option>
+                                                
+                                                <option value="trek">Trek</option>
+                                                
+                                                <option value="wildlife">Wildlife</option>
+                                                
+                                                <option value="cultural">Cultural</option>
+                                                
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            <label class="form-label small fw-bold text-muted mb-1">Min Price</label>
+                                            <input type="number" name="min_price" min="0" step="1"
+                                                class="form-control form-control-lg border-0 bg-light" placeholder="0">
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            <label class="form-label small fw-bold text-muted mb-1">Max Price</label>
+                                            <input type="number" name="max_price" min="0" step="1"
+                                                class="form-control form-control-lg border-0 bg-light"
+                                                placeholder="5000">
+                                        </div>
+
+                                        <div class="col-12 col-md-1 d-grid">
+                                            <button type="submit" class="btn btn-accent btn-lg rounded-3"
+                                                aria-label="Search experiences">
+                                                <i class="bi bi-search"></i>
+                                                <span class="d-md-none ms-1">Search</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            
+
+                            
+                            <div class="d-flex flex-wrap justify-content-center gap-2 mt-4"
+                                style="padding-bottom: 20px;">
+                                <span class="badge rounded-pill px-3 py-2 bg-light text-dark shadow-sm">
+                                    <i class="bi bi-shield-check me-1"></i> Verified Hosts
+                                </span>
+                                <span class="badge rounded-pill px-3 py-2 bg-light text-dark shadow-sm">
+                                    <i class="bi bi-credit-card me-1"></i> Secure Payments
+                                </span>
+                                <span class="badge rounded-pill px-3 py-2 bg-light text-dark shadow-sm">
+                                    <i class="bi bi-arrow-repeat me-1"></i> Easy Cancellation
+                                </span>
+                            </div>
+                            
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+        </div>
+        
+        <div class="carousel-item " data-bs-interval="5000">
+
+            
+            <!-- IMAGE SLIDE -->
+            <div class="hero position-relative hero-slide" style="background:
+                linear-gradient(
+                    rgba(43, 103, 119, 0.55),
+                    rgba(43, 103, 119, 0.82)
+                ),
+                url('/media/hero_slides/images/pexels-sanmane-1365425.jpg') center/cover;">
+
+                <div class="hero-overlay-pattern"></div>
+
+                <div class="container d-flex align-items-center position-relative hero-content-wrap">
+                    <div class="row w-100 justify-content-center">
+                        <div class="col-lg-10 text-center text-white">
+
+                            
+                            <span class="badge rounded-pill px-3 py-2 mb-3 glass-badge">
+                                <i class="bi bi bi-compass-fill me-1"></i>
+                                Adventure Experiences
+                            </span>
+                            
+
+                            
+                            <h2 class="display-4 fw-bold mb-3">Chase Adventure, Not Just Destinations</h2>
+                            
+
+                            
+                            <p
+                                class="lead mb-4  text-white-50 mx-auto hero-subtitle">
+                                Book thrilling treks, rafting trips, camping escapes, and guided outdoor experiences with trusted local hosts.
+                            </p>
+                            
+
+                            
+                            <div
+                                class="d-flex justify-content-center gap-3 flex-wrap mb-4 ">
+                                
+                                <a href="/listings/?category=adventure"
+                                    class="btn btn-accent rounded-pill px-5 py-3 fs-5 fw-bold shadow">
+                                    Explore Adventure
+                                </a>
+                                
+
+                                
+                                <a href="/listings/?category=trek"
+                                    class="btn btn-outline-light rounded-pill px-4 py-3 fw-bold">
+                                    Browse Treks
+                                </a>
+                                
+                            </div>
+                            
+
+                            
+
+                            
+                            <div class="d-flex flex-wrap justify-content-center gap-2 mt-4"
+                                style="padding-bottom: 20px;">
+                                <span class="badge rounded-pill px-3 py-2 bg-light text-dark shadow-sm">
+                                    <i class="bi bi-shield-check me-1"></i> Verified Hosts
+                                </span>
+                                <span class="badge rounded-pill px-3 py-2 bg-light text-dark shadow-sm">
+                                    <i class="bi bi-credit-card me-1"></i> Secure Payments
+                                </span>
+                                <span class="badge rounded-pill px-3 py-2 bg-light text-dark shadow-sm">
+                                    <i class="bi bi-arrow-repeat me-1"></i> Easy Cancellation
+                                </span>
+                            </div>
+                            
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+
+        </div>
+        
+        <div class="carousel-item " data-bs-interval="5000">
+
+            
+            <!-- VIDEO SLIDE -->
+            <div class="hero position-relative hero-slide hero-video-slide overflow-hidden">
+
+                <!-- Poster fallback background -->
+                <div class="hero-video-fallback" style="background:
+                    linear-gradient(rgba(43, 103, 119, 0.55),rgba(43, 103, 119, 0.82);">
+                </div>
+
+                <video class="hero-video" muted loop playsinline preload="metadata" aria-hidden="true">
+                    <source src="/media/hero_slides/videos/4236790-hd_1920_1080_25fps.mp4" type="video/mp4">
+                </video>
+
+                <div class="hero-video-overlay" style="background: linear-gradient(rgba(43, 103, 119, 0.55),rgba(43, 103, 119, 0.82));">
+                </div>
+
+                <div class="hero-overlay-pattern"></div>
+
+                <div
+                    class="container d-flex align-items-center justify-content-center text-center text-white position-relative hero-content-wrap">
+                    <div class="col-lg-9">
+                        
+                        <span class="badge rounded-pill px-3 py-2 mb-3 glass-badge">
+                            <i class="bi bi bi-palette-fill me-1"></i>
+                            Cultural Experiences
+                        </span>
+                        
+
+                        <h2 class="display-4 fw-bold mb-3">Experience Culture Through Local Stories</h2>
+
+                        
+                        <p class="lead mb-4 text-white-50 hero-subtitle mx-auto">
+                            Join heritage walks, folk performances, village workshops, and authentic cultural activities hosted by local communities.
+                        </p>
+                        
+
+                        
+                        <div class="d-flex justify-content-center gap-3 flex-wrap">
+                            
+                            <a href="/listings/?category=cultural"
+                                class="btn btn-accent rounded-pill px-5 py-3 fs-5 fw-bold shadow">
+                                Explore Culture
+                            </a>
+                            
+
+                            
+                            <a href="/listings/?category=adventure"
+                                class="btn btn-outline-light rounded-pill px-4 py-3 fw-bold">
+                                Local Workshops
+                            </a>
+                            
+                        </div>
+                        
+                    </div>
+                </div>
+            </div>
+
+            
+
+        </div>
+        
+    </div>
+
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev"
+        aria-label="Previous slide">
+        <span class="carousel-control-prev-icon bg-dark rounded-circle p-3 shadow" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next"
+        aria-label="Next slide">
+        <span class="carousel-control-next-icon bg-dark rounded-circle p-3 shadow" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button>
+</div>
+
+
+<!-- Stats / Trust Strip -->
+<section class="py-4 border-bottom bg-white">
+    <div class="container">
+        <div class="row text-center g-3">
+            <div class="col-6 col-md-3">
+                <div class="p-3 rounded-4 bg-light h-100 stats-card">
+                    <div class="fw-bold fs-4" style="color: var(--primary-color);">2+</div>
+                    <div class="small text-muted">Featured Experiences</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-3 rounded-4 bg-light h-100 stats-card">
+                    <div class="fw-bold fs-4" style="color: var(--primary-color);">6+</div>
+                    <div class="small text-muted">Categories</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-3 rounded-4 bg-light h-100 stats-card">
+                    <div class="fw-bold fs-4" style="color: var(--primary-color);">6+</div>
+                    <div class="small text-muted">Destinations</div>
+                </div>
+            </div>
+            <div class="col-6 col-md-3">
+                <div class="p-3 rounded-4 bg-light h-100 stats-card">
+                    <div class="fw-bold fs-4 text-success"><i class="bi bi-shield-check"></i></div>
+                    <div class="small text-muted">Secure Booking Flow</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Explore by Category -->
+
+<section id="explore-categories" class="py-5 mt-2">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <div class="section-kicker">Discover</div>
+                <h2 class="fw-bold mb-1" style="color: var(--primary-color);">Explore by Category</h2>
+                <p class="text-muted mb-0">Pick how you want to travel today.</p>
+            </div>
+            <a href="/categories/" class="text-accent fw-bold text-decoration-none d-none d-md-block">
+                View All Categories <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="row row-cols-2 row-cols-md-4 g-4">
+            
+            <div class="col">
+                <a href="/experiences/?category=adventure" class="text-decoration-none">
+                    <div class="card experience-card h-100 border-0 text-center p-4 category-card shadow-sm">
+                        <div class="mb-3">
+                            
+                            
+                            <i class="bi bi-compass-fill" style="font-size: 2.5rem; color: var(--accent-color);"></i>
+                            
+                            
+                        </div>
+                        <h5 class="fw-bold text-dark mb-1">Adventure</h5>
+                        <p class="small text-muted mb-0">Discover options</p>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="col">
+                <a href="/experiences/?category=spiritual" class="text-decoration-none">
+                    <div class="card experience-card h-100 border-0 text-center p-4 category-card shadow-sm">
+                        <div class="mb-3">
+                            
+                            
+                            <i class="bi bi-brightness-high-fill"
+                                style="font-size: 2.5rem; color: var(--accent-color);"></i>
+                            
+                            
+                        </div>
+                        <h5 class="fw-bold text-dark mb-1">Spiritual</h5>
+                        <p class="small text-muted mb-0">Discover options</p>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="col">
+                <a href="/experiences/?category=homestay" class="text-decoration-none">
+                    <div class="card experience-card h-100 border-0 text-center p-4 category-card shadow-sm">
+                        <div class="mb-3">
+                            
+                            
+                            <i class="bi bi-house-heart-fill"
+                                style="font-size: 2.5rem; color: var(--accent-color);"></i>
+                            
+                            
+                        </div>
+                        <h5 class="fw-bold text-dark mb-1">Homestay</h5>
+                        <p class="small text-muted mb-0">Discover options</p>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="col">
+                <a href="/experiences/?category=trek" class="text-decoration-none">
+                    <div class="card experience-card h-100 border-0 text-center p-4 category-card shadow-sm">
+                        <div class="mb-3">
+                            
+                            
+                            <i class="bi bi-signpost-split-fill"
+                                style="font-size: 2.5rem; color: var(--accent-color);"></i>
+                            
+                            
+                        </div>
+                        <h5 class="fw-bold text-dark mb-1">Trek</h5>
+                        <p class="small text-muted mb-0">Discover options</p>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="col">
+                <a href="/experiences/?category=wildlife" class="text-decoration-none">
+                    <div class="card experience-card h-100 border-0 text-center p-4 category-card shadow-sm">
+                        <div class="mb-3">
+                            
+                            
+                            <i class="bi bi-binoculars-fill" style="font-size: 2.5rem; color: var(--accent-color);"></i>
+                            
+                            
+                        </div>
+                        <h5 class="fw-bold text-dark mb-1">Wildlife</h5>
+                        <p class="small text-muted mb-0">Discover options</p>
+                    </div>
+                </a>
+            </div>
+            
+            <div class="col">
+                <a href="/experiences/?category=cultural" class="text-decoration-none">
+                    <div class="card experience-card h-100 border-0 text-center p-4 category-card shadow-sm">
+                        <div class="mb-3">
+                            
+                            
+                            <i class="bi bi-palette-fill" style="font-size: 2.5rem; color: var(--accent-color);"></i>
+                            
+                            
+                        </div>
+                        <h5 class="fw-bold text-dark mb-1">Cultural</h5>
+                        <p class="small text-muted mb-0">Discover options</p>
+                    </div>
+                </a>
+            </div>
+            
+        </div>
+
+        <div class="text-center mt-4 d-md-none">
+            <a href="/categories/" class="btn btn-outline-primary rounded-pill px-4">View All Categories</a>
+        </div>
+    </div>
+</section>
+
+
+<!-- Top Destinations -->
+
+<section id="top-destinations" class="py-5 bg-light feature-section">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <div class="section-kicker">Places</div>
+                <h2 class="fw-bold mb-1" style="color: var(--primary-color);">Top Destinations</h2>
+                <p class="text-muted mb-0">Popular places travelers are exploring right now.</p>
+            </div>
+            <a href="/locations/" class="text-accent fw-bold text-decoration-none d-none d-md-block">
+                View All Locations <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="d-flex overflow-auto pb-3 custom-scrollbar" style="gap: 20px; scroll-snap-type: x mandatory;">
+            
+            <div class="card experience-card border-0 shadow-sm flex-shrink-0 rounded-4 overflow-hidden destination-card"
+                style="width: 290px; scroll-snap-align: start;">
+
+                
+                <img src="/media/locations/shubhamtharani28-india-6136837_1920.jpg" alt="Kasol" loading="lazy" width="290" height="190"
+                    style="height: 190px; width: 100%; object-fit: cover;">
+                
+
+                <div class="card-body p-3">
+                    <h5 class="fw-bold mb-1 text-dark">
+                        Kasol
+                    </h5>
+                    <p class="small text-muted mb-2">
+                        Himachal Pradesh
+                    </p>
+
+                    
+                    <a href="/experiences/?location=kasol"
+                        class="stretched-link text-decoration-none text-accent small fw-bold">
+                        Explore Listings <i class="bi bi-chevron-right"></i>
+                    </a>
+                    
+                </div>
+            </div>
+            
+            <div class="card experience-card border-0 shadow-sm flex-shrink-0 rounded-4 overflow-hidden destination-card"
+                style="width: 290px; scroll-snap-align: start;">
+
+                
+                <img src="/media/locations/travelhaven-mountains-8908538_1920.jpg" alt="Manali" loading="lazy" width="290" height="190"
+                    style="height: 190px; width: 100%; object-fit: cover;">
+                
+
+                <div class="card-body p-3">
+                    <h5 class="fw-bold mb-1 text-dark">
+                        Manali
+                    </h5>
+                    <p class="small text-muted mb-2">
+                        Himachal Pradesh
+                    </p>
+
+                    
+                    <a href="/experiences/?location=manali"
+                        class="stretched-link text-decoration-none text-accent small fw-bold">
+                        Explore Listings <i class="bi bi-chevron-right"></i>
+                    </a>
+                    
+                </div>
+            </div>
+            
+            <div class="card experience-card border-0 shadow-sm flex-shrink-0 rounded-4 overflow-hidden destination-card"
+                style="width: 290px; scroll-snap-align: start;">
+
+                
+                <img src="/media/locations/aymyogaschool-rishikesh-4785189_1920.jpg" alt="Rishikesh" loading="lazy" width="290" height="190"
+                    style="height: 190px; width: 100%; object-fit: cover;">
+                
+
+                <div class="card-body p-3">
+                    <h5 class="fw-bold mb-1 text-dark">
+                        Rishikesh
+                    </h5>
+                    <p class="small text-muted mb-2">
+                        Uttarakhand
+                    </p>
+
+                    
+                    <a href="/experiences/?location=rishikesh"
+                        class="stretched-link text-decoration-none text-accent small fw-bold">
+                        Explore Listings <i class="bi bi-chevron-right"></i>
+                    </a>
+                    
+                </div>
+            </div>
+            
+            <div class="card experience-card border-0 shadow-sm flex-shrink-0 rounded-4 overflow-hidden destination-card"
+                style="width: 290px; scroll-snap-align: start;">
+
+                
+                <img src="/media/locations/richardmc-christ-2337375_1920.jpg" alt="Shimla" loading="lazy" width="290" height="190"
+                    style="height: 190px; width: 100%; object-fit: cover;">
+                
+
+                <div class="card-body p-3">
+                    <h5 class="fw-bold mb-1 text-dark">
+                        Shimla
+                    </h5>
+                    <p class="small text-muted mb-2">
+                        Himachal Pradesh
+                    </p>
+
+                    
+                    <a href="/experiences/?location=shimla"
+                        class="stretched-link text-decoration-none text-accent small fw-bold">
+                        Explore Listings <i class="bi bi-chevron-right"></i>
+                    </a>
+                    
+                </div>
+            </div>
+            
+            <div class="card experience-card border-0 shadow-sm flex-shrink-0 rounded-4 overflow-hidden destination-card"
+                style="width: 290px; scroll-snap-align: start;">
+
+                
+                <div class="d-flex align-items-center justify-content-center text-white destination-placeholder"
+                    style="height: 190px; background: linear-gradient(45deg, var(--primary-color), var(--accent-color));">
+                    <div class="text-center px-3">
+                        <i class="bi bi-geo-alt-fill fs-2 d-block mb-1"></i>
+                        <h4 class="fw-bold m-0">
+                            fdsf
+                        </h4>
+                    </div>
+                </div>
+                
+
+                <div class="card-body p-3">
+                    <h5 class="fw-bold mb-1 text-dark">
+                        fdsf
+                    </h5>
+                    <p class="small text-muted mb-2">
+                        Unknown
+                    </p>
+
+                    
+                    <a href="/experiences/?location=fdsf"
+                        class="stretched-link text-decoration-none text-accent small fw-bold">
+                        Explore Listings <i class="bi bi-chevron-right"></i>
+                    </a>
+                    
+                </div>
+            </div>
+            
+            <div class="card experience-card border-0 shadow-sm flex-shrink-0 rounded-4 overflow-hidden destination-card"
+                style="width: 290px; scroll-snap-align: start;">
+
+                
+                <div class="d-flex align-items-center justify-content-center text-white destination-placeholder"
+                    style="height: 190px; background: linear-gradient(45deg, var(--primary-color), var(--accent-color));">
+                    <div class="text-center px-3">
+                        <i class="bi bi-geo-alt-fill fs-2 d-block mb-1"></i>
+                        <h4 class="fw-bold m-0">
+                            sadd
+                        </h4>
+                    </div>
+                </div>
+                
+
+                <div class="card-body p-3">
+                    <h5 class="fw-bold mb-1 text-dark">
+                        sadd
+                    </h5>
+                    <p class="small text-muted mb-2">
+                        Unknown
+                    </p>
+
+                    
+                    <a href="/experiences/?location=sadd"
+                        class="stretched-link text-decoration-none text-accent small fw-bold">
+                        Explore Listings <i class="bi bi-chevron-right"></i>
+                    </a>
+                    
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</section>
+
+
+<!-- Personalized Recommendations -->
+
+<section id="recommended-experiences" class="py-5 bg-white border-top">
+    <div class="container my-3">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <div class="section-kicker text-success"><i class="bi bi-stars"></i> Just For You</div>
+                <h2 class="fw-bold mb-1" style="color: var(--primary-color);">Recommended for You</h2>
+                <p class="text-muted mb-0">Based on your recent activity and preferences.</p>
+            </div>
+        </div>
+
+        <div class="row g-4 flex-nowrap overflow-auto custom-scrollbar pb-3" style="scroll-snap-type: x mandatory;">
+            
+            <div class="col-10 col-md-5 col-lg-4" style="scroll-snap-align: start;">
+                <div class="card experience-card h-100 border-0 shadow-sm rounded-4 overflow-hidden featured-card">
+                    <div class="position-relative">
+                        <span class="position-absolute top-0 end-0 m-3 badge bg-success text-white rounded-pill px-3 py-2 z-1 shadow-sm">
+                            Match
+                        </span>
+
+                        
+                        <img src="https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+                            alt="No image available for test title" loading="lazy" width="400" height="240"
+                            style="height: 240px; width: 100%; object-fit: cover;">
+                        
+                    </div>
+
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                            <div class="text-muted small line-clamp-1">
+                                <i class="bi bi-geo-alt me-1"></i>
+                                Rishikesh
+                            </div>
+                            
+                        </div>
+
+                        <h5 class="card-title mb-2 line-clamp-2">test title</h5>
+                        <p class="text-muted small mb-3 line-clamp-1">
+                            Hosted by harshit
+                        </p>
+
+                        <div class="mt-auto d-flex justify-content-between align-items-center pt-3 border-top">
+                            <div>
+                                <span class="fw-bold fs-5" style="color: var(--accent-color);">
+                                    ₹1000.00</span>
+                                <span class="fs-6 fw-normal text-muted">/ person</span>
+                            </div>
+                            <a href="/experiences/t_t_t/"
+                                class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-medium">
+                                View
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-10 col-md-5 col-lg-4" style="scroll-snap-align: start;">
+                <div class="card experience-card h-100 border-0 shadow-sm rounded-4 overflow-hidden featured-card">
+                    <div class="position-relative">
+                        <span class="position-absolute top-0 end-0 m-3 badge bg-success text-white rounded-pill px-3 py-2 z-1 shadow-sm">
+                            Match
+                        </span>
+
+                        
+                        <img src="/media/experiences/placeholder1.jpg" alt="Jakhoo Hike" loading="lazy" width="400"
+                            height="240" style="height: 240px; width: 100%; object-fit: cover;">
+                        
+                    </div>
+
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                            <div class="text-muted small line-clamp-1">
+                                <i class="bi bi-geo-alt me-1"></i>
+                                Shimla
+                            </div>
+                            
+                            <div class="small fw-bold text-warning text-nowrap">
+                                <i class="bi bi-star-fill"></i> 5.0
+                                <span class="text-muted fw-normal">(1)</span>
+                            </div>
+                            
+                        </div>
+
+                        <h5 class="card-title mb-2 line-clamp-2">Jakhoo Hike</h5>
+                        <p class="text-muted small mb-3 line-clamp-1">
+                            Hosted by rahul_host
+                        </p>
+
+                        <div class="mt-auto d-flex justify-content-between align-items-center pt-3 border-top">
+                            <div>
+                                <span class="fw-bold fs-5" style="color: var(--accent-color);">
+                                    ₹800.00</span>
+                                <span class="fs-6 fw-normal text-muted">/ person</span>
+                            </div>
+                            <a href="/experiences/jakhoo-hike/"
+                                class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-medium">
+                                View
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</section>
+
+
+<!-- Featured Experiences -->
+<section id="featured-experiences" class="py-5 bg-light border-top">
+    <div class="container my-3">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <div class="section-kicker">Handpicked</div>
+                <h2 class="fw-bold mb-1" style="color: var(--primary-color);">Featured Experiences</h2>
+                <p class="text-muted mb-0">Handpicked stays and activities for your next trip.</p>
+            </div>
+            <a href="/experiences/" class="text-accent fw-bold text-decoration-none d-none d-md-block">
+                View All <i class="bi bi-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="row g-4">
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="card experience-card h-100 border-0 shadow-sm rounded-4 overflow-hidden featured-card">
+                    <div class="position-relative">
+                        <span
+                            class="position-absolute top-0 end-0 m-3 badge bg-white text-dark rounded-pill px-3 py-2 z-1 shadow-sm">
+                            Homestay
+                        </span>
+
+                        
+                        <img src="https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+                            alt="No image available for test title" loading="lazy" width="400" height="240"
+                            style="height: 240px; width: 100%; object-fit: cover;">
+                        
+                    </div>
+
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                            <div class="text-muted small line-clamp-1">
+                                <i class="bi bi-geo-alt me-1"></i>
+                                Rishikesh
+                            </div>
+                            
+                        </div>
+
+                        <h5 class="card-title mb-2 line-clamp-2">test title</h5>
+                        <p class="text-muted small mb-3 line-clamp-1">
+                            Hosted by harshit
+                        </p>
+
+                        <div class="mt-auto d-flex justify-content-between align-items-center pt-3 border-top">
+                            <div>
+                                <span class="fw-bold fs-5" style="color: var(--accent-color);">
+                                    â‚¹1000.00</span>
+                                <span class="fs-6 fw-normal text-muted">/ person</span>
+                            </div>
+                            <a href="/experiences/t_t_t/"
+                                class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-medium">
+                                View
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6 col-lg-4">
+                <div class="card experience-card h-100 border-0 shadow-sm rounded-4 overflow-hidden featured-card">
+                    <div class="position-relative">
+                        <span
+                            class="position-absolute top-0 end-0 m-3 badge bg-white text-dark rounded-pill px-3 py-2 z-1 shadow-sm">
+                            Trek
+                        </span>
+
+                        
+                        <img src="/media/experiences/placeholder1.jpg" alt="Jakhoo Hike" loading="lazy" width="400"
+                            height="240" style="height: 240px; width: 100%; object-fit: cover;">
+                        
+                    </div>
+
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                            <div class="text-muted small line-clamp-1">
+                                <i class="bi bi-geo-alt me-1"></i>
+                                Shimla
+                            </div>
+                            
+                            <div class="small fw-bold text-warning text-nowrap">
+                                <i class="bi bi-star-fill"></i> 5.0
+                                <span class="text-muted fw-normal">(1)</span>
+                            </div>
+                            
+                        </div>
+
+                        <h5 class="card-title mb-2 line-clamp-2">Jakhoo Hike</h5>
+                        <p class="text-muted small mb-3 line-clamp-1">
+                            Hosted by rahul_host
+                        </p>
+
+                        <div class="mt-auto d-flex justify-content-between align-items-center pt-3 border-top">
+                            <div>
+                                <span class="fw-bold fs-5" style="color: var(--accent-color);">
+                                    â‚¹800.00</span>
+                                <span class="fs-6 fw-normal text-muted">/ person</span>
+                            </div>
+                            <a href="/experiences/jakhoo-hike/"
+                                class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-medium">
+                                View
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+
+        
+        <div class="text-center mt-5">
+            <a href="/experiences/" class="btn btn-primary rounded-pill px-5 py-3 fs-5 fw-bold shadow-sm">
+                View All Experiences
+            </a>
+        </div>
+        
+    </div>
+</section>
+
+<!-- Trending Experiences (Dynamic Intelligence) -->
+
+<section id="trending-experiences" class="py-5 bg-light border-top">
+    <div class="container my-3">
+        <div class="d-flex justify-content-between align-items-end mb-4">
+            <div>
+                <div class="section-kicker text-danger"><i class="bi bi-fire"></i> Hot Right Now</div>
+                <h2 class="fw-bold mb-1" style="color: var(--primary-color);">Trending This Week</h2>
+                <p class="text-muted mb-0">Experiences getting the most love from our community.</p>
+            </div>
+        </div>
+
+        <div class="row g-4 flex-nowrap overflow-auto custom-scrollbar pb-3" style="scroll-snap-type: x mandatory;">
+            
+            <div class="col-10 col-md-5 col-lg-4" style="scroll-snap-align: start;">
+                <div class="card experience-card h-100 border-0 shadow-sm rounded-4 overflow-hidden featured-card">
+                    <div class="position-relative">
+                        <span class="position-absolute top-0 end-0 m-3 badge bg-danger text-white rounded-pill px-3 py-2 z-1 shadow-sm">
+                            Trending #1
+                        </span>
+
+                        
+                        <img src="/media/experiences/placeholder1.jpg" alt="Jakhoo Hike" loading="lazy" width="400"
+                            height="240" style="height: 240px; width: 100%; object-fit: cover;">
+                        
+                    </div>
+
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                            <div class="text-muted small line-clamp-1">
+                                <i class="bi bi-geo-alt me-1"></i>
+                                Shimla
+                            </div>
+                            
+                            <div class="small fw-bold text-warning text-nowrap">
+                                <i class="bi bi-star-fill"></i> 5.0
+                                <span class="text-muted fw-normal">(1)</span>
+                            </div>
+                            
+                        </div>
+
+                        <h5 class="card-title mb-2 line-clamp-2">Jakhoo Hike</h5>
+                        <p class="text-muted small mb-3 line-clamp-1">
+                            Hosted by rahul_host
+                        </p>
+
+                        <div class="mt-auto d-flex justify-content-between align-items-center pt-3 border-top">
+                            <div>
+                                <span class="fw-bold fs-5" style="color: var(--accent-color);">
+                                    ₹800.00</span>
+                                <span class="fs-6 fw-normal text-muted">/ person</span>
+                            </div>
+                            <a href="/experiences/jakhoo-hike/"
+                                class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-medium">
+                                View
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-10 col-md-5 col-lg-4" style="scroll-snap-align: start;">
+                <div class="card experience-card h-100 border-0 shadow-sm rounded-4 overflow-hidden featured-card">
+                    <div class="position-relative">
+                        <span class="position-absolute top-0 end-0 m-3 badge bg-danger text-white rounded-pill px-3 py-2 z-1 shadow-sm">
+                            Trending #2
+                        </span>
+
+                        
+                        <img src="https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80"
+                            alt="No image available for test title" loading="lazy" width="400" height="240"
+                            style="height: 240px; width: 100%; object-fit: cover;">
+                        
+                    </div>
+
+                    <div class="card-body p-4 d-flex flex-column">
+                        <div class="d-flex justify-content-between align-items-start gap-2 mb-2">
+                            <div class="text-muted small line-clamp-1">
+                                <i class="bi bi-geo-alt me-1"></i>
+                                Rishikesh
+                            </div>
+                            
+                        </div>
+
+                        <h5 class="card-title mb-2 line-clamp-2">test title</h5>
+                        <p class="text-muted small mb-3 line-clamp-1">
+                            Hosted by harshit
+                        </p>
+
+                        <div class="mt-auto d-flex justify-content-between align-items-center pt-3 border-top">
+                            <div>
+                                <span class="fw-bold fs-5" style="color: var(--accent-color);">
+                                    ₹1000.00</span>
+                                <span class="fs-6 fw-normal text-muted">/ person</span>
+                            </div>
+                            <a href="/experiences/t_t_t/"
+                                class="btn btn-outline-primary btn-sm rounded-pill px-3 fw-medium">
+                                View
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</section>
+
+
+<!-- How It Works -->
+<section id="how-it-works" class="py-5 bg-white border-top">
+    <div class="container">
+        <div class="text-center mb-5">
+            <div class="section-kicker">Simple Process</div>
+            <h2 class="fw-bold" style="color: var(--primary-color);">How Safar Works</h2>
+            <p class="text-muted mb-0">A simple, trusted way to discover and book local experiences.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center how-card">
+                    <div class="mb-3">
+                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle"
+                            style="width: 64px; height: 64px; background: rgba(242, 169, 0, 0.12); color: var(--accent-color);">
+                            <i class="bi bi-search fs-3"></i>
+                        </span>
+                    </div>
+                    <h5 class="fw-bold">1. Discover</h5>
+                    <p class="text-muted mb-0">Browse stays and activities by destination, category, and budget.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center how-card">
+                    <div class="mb-3">
+                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle"
+                            style="width: 64px; height: 64px; background: rgba(43, 103, 119, 0.12); color: var(--primary-color);">
+                            <i class="bi bi-calendar-check fs-3"></i>
+                        </span>
+                    </div>
+                    <h5 class="fw-bold">2. Book</h5>
+                    <p class="text-muted mb-0">Choose dates, guests, and send a booking request in a few clicks.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4 p-4 text-center how-card">
+                    <div class="mb-3">
+                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle"
+                            style="width: 64px; height: 64px; background: rgba(25, 135, 84, 0.12); color: #198754;">
+                            <i class="bi bi-geo-alt fs-3"></i>
+                        </span>
+                    </div>
+                    <h5 class="fw-bold">3. Experience</h5>
+                    <p class="text-muted mb-0">Travel confidently with verified hosts and curated local experiences.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Recent Activity Feed -->
+
+
+<!-- Why Choose Safar & Testimonials -->
+<section class="bg-dark text-white" style="padding-top: 6rem; padding-bottom: 6rem;">
+    <div class="container">
+        <div class="row g-5 align-items-start">
+
+            <!-- Why Choose Safar -->
+            <div class="col-lg-5">
+
+                <div class="section-kicker text-warning">Why Safar</div>
+                <h2 class="fw-bold mb-4 text-warning">Why Choose Safar?</h2>
+
+                <p class="lead mb-5" style="color: rgba(255,255,255,0.75);">
+                    Weâ€™re building a trusted travel marketplace for meaningful, local-first journeys.
+                </p>
+
+                <ul class="list-unstyled">
+
+                    <li class="mb-4 d-flex">
+                        <i class="bi bi-patch-check-fill fs-3 text-warning me-3"></i>
+                        <div>
+                            <h5 class="fw-semibold mb-1">Verified Hosts</h5>
+                            <p class="mb-0" style="color: rgba(255,255,255,0.65);">
+                                Hosts are screened for safety, reliability, and experience quality.
+                            </p>
+                        </div>
+                    </li>
+
+                    <li class="mb-4 d-flex">
+                        <i class="bi bi-shield-check fs-3 text-warning me-3"></i>
+                        <div>
+                            <h5 class="fw-semibold mb-1">Secure Booking Flow</h5>
+                            <p class="mb-0" style="color: rgba(255,255,255,0.65);">
+                                Clear pricing, secure checkout, and booking tracking in one place.
+                            </p>
+                        </div>
+                    </li>
+
+                    <li class="mb-5 d-flex">
+                        <i class="bi bi-globe-central-south-asia fs-3 text-warning me-3"></i>
+                        <div>
+                            <h5 class="fw-semibold mb-1">Local Impact</h5>
+                            <p class="mb-0" style="color: rgba(255,255,255,0.65);">
+                                Your bookings support local communities and small businesses directly.
+                            </p>
+                        </div>
+                    </li>
+
+                </ul>
+
+                <a href="/experiences/" class="btn rounded-pill px-4 py-2 fw-bold"
+                    style="background: #f4b400; color: #000;">
+                    Start Exploring
+                </a>
+
+            </div>
+
+            <!-- Testimonials -->
+            <div class="col-lg-6 offset-lg-1">
+
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3 class="fw-bold mb-0">What Our Travelers Say</h3>
+
+                    <span class="badge rounded-pill px-3 py-2" style="
+                            background: rgba(255,255,255,0.08);
+                            border: 1px solid rgba(255,255,255,0.15);
+                            color: #fff;">
+                        Trusted by early users
+                    </span>
+                </div>
+
+                <!-- Testimonial Card 1 -->
+                <div class="card p-4 mb-4 rounded-4 position-relative testimonial-card" style="
+                        background: linear-gradient(145deg, #141414, #1a1a1a);
+                        border: 1px solid rgba(255,255,255,0.08);
+                        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+                        overflow: hidden;">
+
+                    <i class="bi bi-quote" style="
+                            position: absolute;
+                            top: 20px;
+                            left: 25px;
+                            font-size: 3.5rem;
+                            color: rgba(255,255,255,0.06);">
+                    </i>
+
+                    <div style="position: relative; z-index: 2; padding-top: 10px;">
+                        <p class="fs-5 fst-italic mb-4 text-white" style="line-height: 1.6;">
+                            â€œSafar made finding a homestay in Kasol incredibly easy.
+                            The host was warm, the place was beautiful,
+                            and the whole experience felt authentic.â€
+                        </p>
+
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold"
+                                style="width: 44px; height: 44px; background: #f4b400; color: #000;">
+                                P
+                            </div>
+
+                            <div class="ms-3">
+                                <h6 class="fw-semibold mb-0 text-white">Priya K.</h6>
+                                <small style="color: rgba(255,255,255,0.6);">
+                                    Traveled to Kasol
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial Card 2 -->
+                <div class="card p-4 rounded-4 position-relative testimonial-card" style="
+                        background: linear-gradient(145deg, #141414, #1a1a1a);
+                        border: 1px solid rgba(255,255,255,0.08);
+                        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+                        overflow: hidden;">
+
+                    <i class="bi bi-quote" style="
+                            position: absolute;
+                            top: 20px;
+                            left: 25px;
+                            font-size: 3.5rem;
+                            color: rgba(255,255,255,0.06);">
+                    </i>
+
+                    <div style="position: relative; z-index: 2; padding-top: 10px;">
+                        <p class="fs-5 fst-italic mb-4 text-white" style="line-height: 1.6;">
+                            â€œI usually struggle to find good trekking guides,
+                            but Safar helped me book a perfect guided experience.
+                            Smooth process and great communication.â€
+                        </p>
+
+                        <div class="d-flex align-items-center">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center fw-bold"
+                                style="width: 44px; height: 44px; background: #0d6efd; color: #fff;">
+                                R
+                            </div>
+
+                            <div class="ms-3">
+                                <h6 class="fw-semibold mb-0 text-white">Rahul S.</h6>
+                                <small style="color: rgba(255,255,255,0.6);">
+                                    Traveled to Rishikesh
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Host CTA Section -->
+<section class="py-5" style="background-color: #0f172a;">
+    <div class="container">
+
+        <div class="host-cta-new rounded-4 p-4 p-md-5">
+
+            <div class="row align-items-center">
+
+                <!-- Left Content -->
+                <div class="col-lg-7 mb-4 mb-lg-0">
+                    <div class="section-kicker text-warning">For Creators & Hosts</div>
+                    <h2 class="fw-bold mb-3 text-white">
+                        Become a Host on <span class="text-warning">Safar</span>
+                    </h2>
+
+                    <p class="text-light opacity-75 fs-5 mb-0">
+                        Share your homestay, trek, workshop, or unique local experience.
+                        Earn income, grow your community, and showcase authentic stories.
+                    </p>
+                </div>
+
+                <!-- Right Buttons -->
+                <div class="col-lg-5 text-lg-end">
+
+                    
+                    <a href="/accounts/signup/"
+                        class="btn btn-warning rounded-pill px-4 py-3 fw-semibold me-2 mb-2 mb-lg-0 shadow-sm">
+                        <i class="bi bi-person-plus me-1"></i> Create Account
+                    </a>
+
+                    <a href="/become-host/" class="btn btn-outline-light rounded-pill px-4 py-3 fw-semibold">
+                        Become a Host
+                    </a>
+                    
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</section>
+
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer mt-auto py-5">
+        <div class="container">
+            <div class="row g-4 align-items-start">
+                <div class="col-lg-4">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span class="brand-mark">S</span>
+                        <h5 class="mb-0 fw-bold text-white">Safar</h5>
+                    </div>
+                    <p class="mb-0 small text-white-50">
+                        Curated local travel experiences â€” homestays, adventures, and meaningful journeys.
+                    </p>
+                </div>
+
+                <div class="col-6 col-lg-2">
+                    <h6 class="fw-bold mb-3">Explore</h6>
+                    <ul class="list-unstyled small mb-0">
+                        <li class="mb-2"><a href="/experiences/">Experiences</a></li>
+                        <li class="mb-2"><a href="/locations/">Destinations</a></li>
+                        <li class="mb-2"><a href="/categories/">Categories</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-6 col-lg-2">
+                    <h6 class="fw-bold mb-3">Account</h6>
+                    <ul class="list-unstyled small mb-0">
+                        
+                        <li class="mb-2"><a href="/accounts/login/">Login</a></li>
+                        <li class="mb-2"><a href="/accounts/signup/">Sign Up</a></li>
+                        
+                    </ul>
+                </div>
+
+                <div class="col-lg-4">
+                    <h6 class="fw-bold mb-3">Quick Note</h6>
+                    <p class="small text-white-50 mb-0">
+                        Safar is evolving â€” more destinations, categories, and host tools coming soon.
+                    </p>
+                </div>
+            </div>
+
+            <hr class="border-secondary my-4">
+
+            <div
+                class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 small text-white-50">
+                <div>Â© 2026 Safar. All rights reserved.</div>
+                <div class="d-flex gap-3">
+                    <span><i class="bi bi-shield-check me-1"></i>Secure Booking Flow</span>
+                    <span><i class="bi bi-geo-alt me-1"></i>Local-first Travel</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Navbar transparency/scroll behavior -->
+    <script>
+        (function () {
+            const navbar = document.getElementById('mainNavbar');
+            if (!navbar) return;
+
+            const isHome = document.body.classList.contains('is-home');
+
+            function setNavbarState() {
+                if (!isHome) {
+                    navbar.classList.remove('navbar-home-top');
+                    navbar.classList.add('navbar-solid');
+                    return;
+                }
+
+                if (window.scrollY > 30) {
+                    navbar.classList.remove('navbar-home-top');
+                    navbar.classList.add('navbar-solid');
+                } else {
+                    navbar.classList.add('navbar-home-top');
+                    navbar.classList.remove('navbar-solid');
+                }
+            }
+
+            setNavbarState();
+            window.addEventListener('scroll', setNavbarState, { passive: true });
+
+            // Close offcanvas after clicking a link (mobile)
+            const offcanvasEl = document.getElementById('mobileNav');
+            if (offcanvasEl && window.bootstrap) {
+                const links = offcanvasEl.querySelectorAll('a[href]');
+                links.forEach(link => {
+                    link.addEventListener('click', () => {
+                        const offcanvas = bootstrap.Offcanvas.getInstance(offcanvasEl);
+                        if (offcanvas) offcanvas.hide();
+                    });
+                });
+            }
+        })();
+    </script>
+
+    
+
+    
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const carouselEl = document.getElementById("heroCarousel");
+        if (!carouselEl) return;
+
+        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const videos = carouselEl.querySelectorAll(".hero-video");
+
+        function syncHeroVideos() {
+            videos.forEach(video => {
+                const item = video.closest(".carousel-item");
+                const isActive = item && item.classList.contains("active");
+
+                if (prefersReducedMotion) {
+                    try { video.pause(); } catch (e) { }
+                    return;
+                }
+
+                if (isActive) {
+                    const p = video.play();
+                    if (p && typeof p.catch === "function") {
+                        p.catch(() => { });
+                    }
+                } else {
+                    try { video.pause(); } catch (e) { }
+                }
+            });
+        }
+
+        syncHeroVideos();
+        carouselEl.addEventListener("slid.bs.carousel", syncHeroVideos);
+
+        document.addEventListener("visibilitychange", function () {
+            if (document.hidden) {
+                videos.forEach(v => { try { v.pause(); } catch (e) { } });
+            } else {
+                syncHeroVideos();
+            }
+        });
+    });
+</script>
+
+</body>
+
+</html>
+--- URL: /experiences/ ---
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Experiences - Safar</title>
+
+    <!-- SEO Essentials -->
+    <meta name="description"
+        content="
+Explore our handpicked selection of top-rated local travel experiences, treks, and homestays.
+Filter by location, category, and price to find your perfect trip.
+" />
+    
+
+    <!-- Open Graph Default Tags -->
+    
+<meta property="og:site_name" content="Safar" />
+<meta property="og:type" content="website" />
+<meta property="og:title" content="Explore Experiences - Safar" />
+<meta property="og:description"
+    content="Explore our handpicked selection of top-rated local travel experiences, treks, and homestays. Filter by location, category, and price to find your perfect trip." />
+<meta property="og:url" content="http://localhost/experiences/" />
+
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <!-- Optional Google Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #2b6777;
+            --accent-color: #f2a900;
+            --dark-color: #1f2937;
+            --muted-color: #6b7280;
+            --light-bg: #f8fafc;
+            --card-radius: 1rem;
+            --navbar-height: 78px;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            color: var(--dark-color);
+            background: #ffffff;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .text-accent {
+            color: var(--accent-color) !important;
+        }
+
+        .bg-accent {
+            background-color: var(--accent-color) !important;
+        }
+
+        .btn-accent {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+            color: #212529;
+            font-weight: 700;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .btn-accent:hover,
+        .btn-accent:focus {
+            background-color: #de9b00;
+            border-color: #de9b00;
+            color: #212529;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(242, 169, 0, 0.3);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .btn-primary:hover,
+        .btn-primary:focus {
+            background-color: #245866;
+            border-color: #245866;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(43, 103, 119, 0.3);
+        }
+
+        /* ---------- Navbar ---------- */
+        #mainNavbar {
+            min-height: var(--navbar-height);
+            transition: all 0.25s ease;
+            z-index: 2000 !important;
+        }
+
+        /* Home page initial state (transparent) */
+        body.is-home #mainNavbar.navbar-home-top {
+            background: transparent;
+            box-shadow: none;
+        }
+
+        body.is-home #mainNavbar.navbar-home-top .navbar-brand,
+        body.is-home #mainNavbar.navbar-home-top .nav-link {
+            color: #fff !important;
+        }
+
+        body.is-home #mainNavbar.navbar-home-top .nav-link {
+            opacity: 0.92;
+        }
+
+        body.is-home #mainNavbar.navbar-home-top .nav-link:hover {
+            opacity: 1;
+        }
+
+        /* Fix active link on transparent navbar */
+        body.is-home #mainNavbar.navbar-home-top .nav-link.active {
+            color: #fff !important;
+            opacity: 1;
+            text-shadow: 0 1px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Better visibility for home top navbar buttons */
+        body.is-home #mainNavbar.navbar-home-top .btn-outline-secondary,
+        body.is-home #mainNavbar.navbar-home-top .btn-outline-light {
+            color: #fff !important;
+            border-color: rgba(255, 255, 255, 0.55) !important;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+        }
+
+        body.is-home #mainNavbar.navbar-home-top .btn-outline-secondary:hover,
+        body.is-home #mainNavbar.navbar-home-top .btn-outline-light:hover {
+            background: rgba(255, 255, 255, 0.16);
+            border-color: rgba(255, 255, 255, 0.8) !important;
+            color: #fff !important;
+        }
+
+        body.is-home #mainNavbar.navbar-home-top .navbar-toggler {
+            color: #fff;
+        }
+
+        body.is-home #mainNavbar.navbar-home-top .dropdown-toggle {
+            color: #fff !important;
+            border-color: rgba(255, 255, 255, 0.55) !important;
+            background: rgba(255, 255, 255, 0.06);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+        }
+
+        body.is-home #mainNavbar.navbar-home-top .dropdown-toggle:hover {
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        /* Scrolled or non-home solid state */
+        #mainNavbar.navbar-solid {
+            background: rgba(255, 255, 255, 0.94);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+        }
+
+        #mainNavbar.navbar-solid .navbar-brand,
+        #mainNavbar.navbar-solid .nav-link {
+            color: var(--dark-color) !important;
+        }
+
+        #mainNavbar .navbar-brand {
+            font-weight: 800;
+            letter-spacing: 0.2px;
+            display: inline-flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        #mainNavbar .brand-mark {
+            width: 34px;
+            height: 34px;
+            border-radius: 999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: #fff;
+            font-weight: 800;
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
+            flex-shrink: 0;
+        }
+
+        #mainNavbar .nav-link {
+            font-weight: 600;
+            margin: 0 .1rem;
+            transition: color .2s ease, opacity .2s ease;
+        }
+
+        #mainNavbar .nav-link.active {
+            color: var(--primary-color) !important;
+        }
+
+        #mainNavbar .navbar-toggler {
+            border: none;
+            box-shadow: none !important;
+            color: var(--dark-color);
+        }
+
+        /* Custom toggler icon for visibility */
+        .navbar-toggler-custom {
+            width: 1.4rem;
+            height: 1.4rem;
+            display: inline-block;
+            position: relative;
+            color: currentColor;
+        }
+
+        .navbar-toggler-custom::before,
+        .navbar-toggler-custom::after,
+        .navbar-toggler-custom span {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 2px;
+            border-radius: 2px;
+            background: currentColor;
+        }
+
+        .navbar-toggler-custom::before {
+            top: 2px;
+        }
+
+        .navbar-toggler-custom span {
+            top: 9px;
+        }
+
+        .navbar-toggler-custom::after {
+            top: 16px;
+        }
+
+        .navbar-cta {
+            border-radius: 999px;
+            padding: .55rem 1rem;
+            font-weight: 700;
+        }
+
+        /* Page offset for non-home pages */
+        body:not(.is-home) main.site-main {
+            padding-top: calc(var(--navbar-height) + 20px);
+        }
+
+        /* ---------- Layering / z-index fixes for hero carousel ---------- */
+        #heroCarousel,
+        #heroCarousel .carousel-inner,
+        #heroCarousel .carousel-item,
+        #heroCarousel .hero-slide {
+            position: relative;
+            z-index: 1;
+        }
+
+        #heroCarousel .carousel-indicators,
+        #heroCarousel .carousel-control-prev,
+        #heroCarousel .carousel-control-next {
+            z-index: 2;
+        }
+
+        /* ---------- Home hero spacing + vertical centering fix ---------- */
+        body.is-home .hero-slide {
+            min-height: 86vh;
+            padding-top: calc(var(--navbar-height) + 24px);
+        }
+
+        body.is-home .hero-slide>.container {
+            min-height: calc(86vh - (var(--navbar-height) + 24px));
+            display: flex;
+            align-items: center;
+        }
+
+        /* ---------- Cards ---------- */
+        .experience-card {
+            border-radius: var(--card-radius);
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            background: #fff;
+        }
+
+        .experience-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+            border-color: rgba(0, 0, 0, 0.08);
+        }
+
+        .experience-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        .experience-card:hover img {
+            transform: scale(1.04);
+        }
+
+        .price-badge {
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+
+        /* ---------- Hero helper ---------- */
+        .hero {
+            min-height: 75vh;
+            display: flex;
+            align-items: center;
+        }
+
+        /* ---------- Subtle animations ---------- */
+        .slide-up {
+            animation: slideUp .65s ease both;
+        }
+
+        .slide-up.delay-1 {
+            animation-delay: .12s;
+        }
+
+        .slide-up.delay-2 {
+            animation-delay: .22s;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(18px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ---------- Footer ---------- */
+        footer.site-footer {
+            background: #0f172a;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        footer.site-footer a {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        footer.site-footer a:hover {
+            color: #fff;
+        }
+
+        /* ---------- Messages ---------- */
+        .message-stack {
+            z-index: 1020;
+        }
+
+        /* ---------- Offcanvas ---------- */
+        .offcanvas .nav-link {
+            font-weight: 600;
+            color: var(--dark-color);
+            padding: .75rem 0;
+        }
+
+        /* ---------- Utilities ---------- */
+        .rounded-4 {
+            border-radius: 1rem !important;
+        }
+
+        @media (max-width: 991.98px) {
+            body:not(.is-home) main.site-main {
+                padding-top: calc(var(--navbar-height) + 12px);
+            }
+
+            body.is-home .hero-slide {
+                min-height: 92vh;
+                padding-top: calc(var(--navbar-height) + 16px);
+            }
+
+            body.is-home .hero-slide>.container {
+                min-height: calc(92vh - (var(--navbar-height) + 16px));
+            }
+        }
+    </style>
+    
+    
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<style>
+    /* Page header */
+    .page-hero-lite {
+        background: #fff;
+        border: 1px solid rgba(15, 23, 42, 0.06);
+        border-radius: 1rem;
+        box-shadow: 0 10px 28px rgba(43, 103, 119, 0.06);
+        padding: 1rem 1.1rem;
+    }
+
+    .hero-kicker {
+        display: inline-flex;
+        align-items: center;
+        background: rgba(43, 103, 119, 0.08);
+        color: var(--primary-color);
+        border: 1px solid rgba(43, 103, 119, 0.12);
+        border-radius: 999px;
+        padding: 0.35rem 0.7rem;
+        font-size: 0.82rem;
+        font-weight: 700;
+        margin-bottom: 0.55rem;
+    }
+
+    .results-stat-card {
+        background: #fbfdff;
+        border: 1px solid rgba(43, 103, 119, 0.08);
+        border-radius: 0.95rem;
+        padding: 0.8rem 0.95rem;
+        min-width: 180px;
+        box-shadow: 0 6px 16px rgba(43, 103, 119, 0.04);
+    }
+
+    /* Filter panel */
+    .filter-panel-modern {
+        background: #fff;
+        border: 1px solid rgba(15, 23, 42, 0.06);
+        border-radius: 1rem;
+        box-shadow: 0 10px 28px rgba(43, 103, 119, 0.07);
+        padding: 1rem;
+    }
+
+    .filter-label {
+        font-size: 0.84rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 0.38rem;
+    }
+
+    .filter-input-wrap {
+        position: relative;
+    }
+
+    .filter-icon {
+        position: absolute;
+        left: 0.85rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--text-muted);
+        font-size: 0.95rem;
+        z-index: 3;
+        pointer-events: none;
+    }
+
+    .filter-control {
+        min-height: 46px;
+        border-radius: 0.85rem;
+        border: 1px solid rgba(43, 103, 119, 0.12);
+        background: #fff;
+        box-shadow: none;
+        transition: all 0.2s ease;
+    }
+
+    .filter-control-with-icon {
+        padding-left: 2.2rem;
+    }
+
+    .filter-control::placeholder {
+        color: #9aa3af;
+    }
+
+    .filter-control:focus {
+        border-color: rgba(43, 103, 119, 0.35);
+        box-shadow: 0 0 0 0.2rem rgba(43, 103, 119, 0.12);
+    }
+
+    /* Active filter chips */
+    .active-filters-row {
+        background: transparent;
+    }
+
+    .filter-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        background: #fff;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 999px;
+        padding: 0.45rem 0.7rem;
+        font-size: 0.86rem;
+        color: var(--text-dark);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    .filter-chip-close {
+        width: 22px;
+        height: 22px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        text-decoration: none;
+        color: var(--text-muted);
+        transition: 0.2s ease;
+    }
+
+    .filter-chip-close:hover {
+        background: rgba(239, 68, 68, 0.1);
+        color: #dc3545;
+    }
+
+    /* Cards */
+    .experience-card-modern {
+        border-radius: 1rem;
+        overflow: hidden;
+        border: none;
+        background: #fff;
+        box-shadow: 0 8px 22px rgba(43, 103, 119, 0.06);
+        transition: transform 0.22s ease, box-shadow 0.22s ease;
+    }
+
+    .experience-card-modern:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 16px 30px rgba(43, 103, 119, 0.12);
+    }
+
+    .experience-card-modern img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.35s ease;
+    }
+
+    .experience-card-modern:hover img {
+        transform: scale(1.03);
+    }
+
+    .image-link {
+        display: block;
+        overflow: hidden;
+    }
+
+    .category-badge {
+        position: absolute;
+        top: 0.85rem;
+        right: 0.85rem;
+        z-index: 3;
+        background: rgba(255, 255, 255, 0.94);
+        color: var(--text-dark);
+        border-radius: 999px;
+        padding: 0.42rem 0.72rem;
+        font-weight: 600;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(15, 23, 42, 0.06);
+    }
+
+    .featured-badge {
+        position: absolute;
+        top: 0.85rem;
+        left: 0.85rem;
+        z-index: 3;
+        background: rgba(242, 169, 0, 0.95);
+        color: #212529;
+        border-radius: 999px;
+        padding: 0.42rem 0.72rem;
+        font-weight: 700;
+        box-shadow: 0 6px 16px rgba(242, 169, 0, 0.28);
+    }
+
+    .meta-location {
+        max-width: 65%;
+    }
+
+    .listing-title {
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 2.6em;
+        color: var(--text-dark);
+    }
+
+    .listing-title-link {
+        color: inherit;
+        transition: color 0.2s ease;
+    }
+
+    .listing-title-link:hover {
+        color: var(--primary-color);
+    }
+
+    .listing-desc {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        min-height: 3.8em;
+    }
+
+    .rating-pill {
+        color: #d89b00;
+        font-weight: 700;
+        background: rgba(242, 169, 0, 0.12);
+        border-radius: 999px;
+        padding: 0.2rem 0.55rem;
+        white-space: nowrap;
+    }
+
+    /* Empty state */
+    .empty-state {
+        background: #fff;
+        border: 1px dashed rgba(43, 103, 119, 0.22);
+        border-radius: 1rem;
+        box-shadow: 0 8px 24px rgba(43, 103, 119, 0.05);
+    }
+
+    /* Pagination */
+    .pagination .page-item {
+        margin: 0 2px;
+    }
+
+    .pagination .page-link {
+        border: none;
+        color: var(--text-dark);
+        background: #fff;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+        transition: all 0.2s ease;
+    }
+
+    .pagination .page-link:hover {
+        color: var(--primary-color);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 18px rgba(43, 103, 119, 0.12);
+    }
+
+    .page-circle,
+    .page-circle-active {
+        width: 42px;
+        height: 42px;
+        border-radius: 50% !important;
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        font-weight: 600;
+    }
+
+    .page-circle-active {
+        background: var(--primary-color) !important;
+        color: #fff !important;
+        box-shadow: 0 8px 18px rgba(43, 103, 119, 0.22) !important;
+    }
+
+    .page-pill {
+        border-radius: 999px !important;
+        padding: 0.6rem 1rem !important;
+        font-weight: 600;
+    }
+
+    /* Responsive */
+    @media (max-width: 1199.98px) {
+        .results-stat-card {
+            min-width: 160px;
+        }
+    }
+
+    @media (max-width: 991.98px) {
+
+        .page-hero-lite,
+        .filter-panel-modern {
+            padding: 0.95rem;
+        }
+    }
+
+    @media (max-width: 767.98px) {
+        .hero-kicker {
+            font-size: 0.78rem;
+        }
+
+        .results-stat-card {
+            width: 100%;
+            min-width: 0;
+        }
+
+        .filter-panel-modern {
+            padding: 0.9rem;
+        }
+
+        .filter-control {
+            min-height: 44px;
+            border-radius: 0.75rem;
+        }
+
+        .category-badge,
+        .featured-badge {
+            top: 0.65rem;
+            padding: 0.34rem 0.55rem;
+            font-size: 0.75rem;
+        }
+
+        .category-badge {
+            right: 0.65rem;
+        }
+
+        .featured-badge {
+            left: 0.65rem;
+        }
+
+        .experience-card-modern img {
+            height: 210px;
+        }
+
+        .meta-location {
+            max-width: 100%;
+        }
+
+        .pagination .page-link.page-pill {
+            padding: 0.55rem 0.8rem !important;
+            font-size: 0.9rem;
+        }
+    }
+
+    @media (max-width: 575.98px) {
+        .page-hero-lite h1 {
+            font-size: 1.55rem;
+        }
+
+        .experience-card-modern .card-body {
+            padding: 1rem !important;
+        }
+    }
+</style>
+
+</head>
+
+
+
+<body class=" d-flex flex-column">
+
+    <!-- NAVBAR -->
+    <nav id="mainNavbar"
+        class="navbar navbar-expand-lg fixed-top navbar-solid">
+        <div class="container">
+
+            <!-- Brand -->
+            <a class="navbar-brand" href="/">
+                <span class="brand-mark">S</span>
+                <span>Safar</span>
+            </a>
+
+            <!-- Right-side quick actions on mobile -->
+            <div class="d-flex align-items-center gap-2 ms-auto d-lg-none">
+                
+                <a href="/accounts/login/"
+                    class="btn btn-sm btn-outline-light rounded-pill px-3 text-dark border-secondary-subtle">
+                    Login
+                </a>
+                
+
+                <button class="navbar-toggler p-1" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileNav"
+                    aria-controls="mobileNav" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-custom"><span></span></span>
+                </button>
+            </div>
+
+            <!-- Desktop nav -->
+            <div class="collapse navbar-collapse d-none d-lg-flex" id="navbarSupportedContent">
+                <ul class="navbar-nav mx-auto mb-2 mb-lg-0 align-items-lg-center">
+                    <li class="nav-item">
+                        <a class="nav-link " href="/">
+                            Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active"
+                            href="/experiences/">
+                            Experiences
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link "
+                            href="/locations/">
+                            Destinations
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link "
+                            href="/categories/">
+                            Categories
+                        </a>
+                    </li>
+                </ul>
+
+                <div class="d-flex align-items-center gap-2">
+                    
+                    <a href="/accounts/login/" class="btn btn-outline-secondary rounded-pill px-4">
+                        Login
+                    </a>
+                    <a href="/accounts/signup/" class="btn btn-accent navbar-cta">
+                        Sign Up
+                    </a>
+                    
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Offcanvas -->
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="mobileNav" aria-labelledby="mobileNavLabel">
+        <div class="offcanvas-header border-bottom">
+            <h5 class="offcanvas-title fw-bold" id="mobileNavLabel">
+                <span class="brand-mark me-2">S</span> Safar
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+
+        <div class="offcanvas-body d-flex flex-column">
+            <nav class="mb-4">
+                <a class="nav-link " href="/">
+                    <i class="bi bi-house-door me-2"></i>Home
+                </a>
+                <a class="nav-link text-primary"
+                    href="/experiences/">
+                    <i class="bi bi-compass me-2"></i>Experiences
+                </a>
+                <a class="nav-link "
+                    href="/locations/">
+                    <i class="bi bi-geo-alt me-2"></i>Destinations
+                </a>
+                <a class="nav-link "
+                    href="/categories/">
+                    <i class="bi bi-grid me-2"></i>Categories
+                </a>
+            </nav>
+
+            <div class="mt-auto border-top pt-3">
+                
+                <div class="d-grid gap-2">
+                    <a href="/accounts/login/" class="btn btn-outline-primary rounded-pill">Login</a>
+                    <a href="/accounts/signup/" class="btn btn-accent rounded-pill">Create Account</a>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <main class="site-main flex-grow-1">
+        
+
+        
+<div class="container experiences-page" style="margin-top: 100px; min-height: 80vh;">
+
+    <!-- Page Header -->
+    <div class="page-hero-lite mb-4">
+        <div
+            class="d-flex flex-column flex-lg-row justify-content-between align-items-start align-items-lg-center gap-3">
+            <div>
+                <div class="hero-kicker">
+                    <i class="bi bi-compass-fill me-2"></i>Explore Safar
+                </div>
+                <h1 class="fw-bold section-heading mb-2">Curated Experiences</h1>
+                <p class="text-muted mb-0">
+                    Find the perfect adventure, stay, or local experience for your next trip.
+                </p>
+            </div>
+
+            
+            <div class="results-stat-card">
+                <div class="small text-muted mb-1">Available results</div>
+                <div class="fw-bold fs-5" style="color: var(--primary-color);">
+                    2
+                </div>
+                <div class="small text-muted">
+                    Showing 1â€“2
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+    <!-- Filter Panel -->
+    <div class="filter-panel-modern mb-4" id="filters">
+        <form id="experienceFilterForm" method="get" class="row g-3 align-items-end">
+
+            <!-- Location -->
+            <div class="col-12 col-md-6 col-xl-3">
+                <label for="location" class="form-label filter-label">Location</label>
+                <div class="filter-input-wrap">
+                    <i class="bi bi-geo-alt filter-icon"></i>
+                    <select class="form-select filter-control filter-control-with-icon" id="location" name="location"
+                        onchange="autoSubmitFilters()">
+                        <option value="">All Locations</option>
+                        
+                        <option value="kasol" >
+                            Kasol, Himachal Pradesh
+                        </option>
+                        
+                        <option value="manali" >
+                            Manali, Himachal Pradesh
+                        </option>
+                        
+                        <option value="rishikesh" >
+                            Rishikesh, Uttarakhand
+                        </option>
+                        
+                        <option value="shimla" >
+                            Shimla, Himachal Pradesh
+                        </option>
+                        
+                        <option value="fdsf" >
+                            fdsf, Unknown
+                        </option>
+                        
+                        <option value="sadd" >
+                            sadd, Unknown
+                        </option>
+                        
+                    </select>
+                </div>
+            </div>
+
+            <!-- Category -->
+            <div class="col-12 col-md-6 col-xl-3">
+                <label for="category" class="form-label filter-label">Category</label>
+                <div class="filter-input-wrap">
+                    <i class="bi bi-grid-3x3-gap filter-icon"></i>
+                    <select class="form-select filter-control filter-control-with-icon" id="category" name="category"
+                        onchange="autoSubmitFilters()">
+                        <option value="">All Categories</option>
+                        
+                        <option value="adventure" >
+                            Adventure
+                        </option>
+                        
+                        <option value="spiritual" >
+                            Spiritual
+                        </option>
+                        
+                        <option value="homestay" >
+                            Homestay
+                        </option>
+                        
+                        <option value="trek" >
+                            Trek
+                        </option>
+                        
+                        <option value="wildlife" >
+                            Wildlife
+                        </option>
+                        
+                        <option value="cultural" >
+                            Cultural
+                        </option>
+                        
+                    </select>
+                </div>
+            </div>
+
+            <!-- Min Price -->
+            <div class="col-6 col-md-4 col-xl-2">
+                <label for="min_price" class="form-label filter-label">Min Price</label>
+                <div class="filter-input-wrap">
+                    <i class="bi bi-currency-rupee filter-icon"></i>
+                    <input type="number" class="form-control filter-control filter-control-with-icon" id="min_price"
+                        name="min_price" placeholder="Min" min="0" value="">
+                </div>
+            </div>
+
+            <!-- Max Price -->
+            <div class="col-6 col-md-4 col-xl-2">
+                <label for="max_price" class="form-label filter-label">Max Price</label>
+                <div class="filter-input-wrap">
+                    <i class="bi bi-currency-rupee filter-icon"></i>
+                    <input type="number" class="form-control filter-control filter-control-with-icon" id="max_price"
+                        name="max_price" placeholder="Max" min="0" value="">
+                </div>
+            </div>
+
+            <!-- Start Date -->
+            <div class="col-6 col-md-4 col-xl-2">
+                <label for="start_date" class="form-label filter-label">Check-in</label>
+                <div class="filter-input-wrap">
+                    <i class="bi bi-calendar-event filter-icon"></i>
+                    <input type="text" class="form-control filter-control filter-control-with-icon" id="start_date"
+                        name="start_date" placeholder="Any dates" value="">
+                </div>
+            </div>
+
+            <!-- End Date (Hidden but maintained for parity with detail page logic if needed, or purely cosmetic here) -->
+            <input type="hidden" id="end_date" name="end_date" value="">
+
+            <!-- Guests -->
+            <div class="col-6 col-md-4 col-xl-2">
+                <label for="guests" class="form-label filter-label">Guests</label>
+                <div class="filter-input-wrap">
+                    <i class="bi bi-people filter-icon"></i>
+                    <input type="number" class="form-control filter-control filter-control-with-icon" id="guests"
+                        name="guests" placeholder="1 guest" min="1" value="">
+                </div>
+            </div>
+
+            <!-- Sort -->
+            <div class="col-12 col-md-4 col-xl-2">
+                <label for="sort" class="form-label filter-label">Sort By</label>
+                <div class="filter-input-wrap">
+                    <i class="bi bi-funnel filter-icon"></i>
+                    <select class="form-select filter-control filter-control-with-icon" id="sort" name="sort"
+                        onchange="autoSubmitFilters()">
+                        
+                        <option value="recommended" >
+                            Recommended
+                        </option>
+                        
+                        <option value="newest" selected>
+                            Newest
+                        </option>
+                        
+                        <option value="price_asc" >
+                            Price: Low to High
+                        </option>
+                        
+                        <option value="price_desc" >
+                            Price: High to Low
+                        </option>
+                        
+                        <option value="rating_desc" >
+                            Rating: High to Low
+                        </option>
+                        
+                        <option value="reviews_desc" >
+                            Most Reviewed
+                        </option>
+                        
+                    </select>
+                </div>
+            </div>
+
+            <!-- Footer row inside panel -->
+            <div
+                class="col-12 d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2 pt-1">
+                <div class="small text-muted">
+                    Filters apply automatically
+                    <span class="mx-1">â€¢</span>
+                    No search button needed
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                    
+
+                    <noscript>
+                        <button type="submit" class="btn btn-sm btn-primary rounded-pill px-3">
+                            Apply Filters
+                        </button>
+                    </noscript>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Active Filters -->
+    
+
+    <!-- Grid -->
+    <div class="row g-4 mb-5">
+        
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="card experience-card experience-card-modern h-100 position-relative">
+
+                <!-- Category badge -->
+                <span class="badge category-badge">
+                    Homestay
+                </span>
+
+                <!-- Featured badge -->
+                
+
+                <!-- Image -->
+                <a href="/experiences/t_t_t/" class="image-link">
+                    
+                    <img src="https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=800&q=80"
+                        alt="No image for test title" loading="lazy" width="800" height="440">
+                    
+                </a>
+
+                <div class="card-body p-4 d-flex flex-column">
+
+                    <!-- Top meta -->
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-2 small text-muted">
+                        <span class="d-inline-flex align-items-center meta-location text-truncate">
+                            <i class="bi bi-geo-alt-fill me-1 text-danger"></i>Rishikesh
+                        </span>
+
+                        
+                    </div>
+
+                    <!-- Title -->
+                    <h5 class="fw-bold mb-1 listing-title">
+                        <a href="/experiences/t_t_t/"
+                            class="text-decoration-none listing-title-link">
+                            test title
+                        </a>
+                    </h5>
+
+                    <p class="text-muted small mb-3 d-flex align-items-center">
+                        <i class="bi bi-person-circle me-1"></i>Hosted by harshit
+                    </p>
+
+                    <!-- Description -->
+                    <p class="text-muted small flex-grow-1 mb-3 listing-desc">
+                        
+                        test desc
+                        
+                    </p>
+
+                    <!-- Footer -->
+                    <div class="d-flex justify-content-between align-items-center pt-3 mt-auto border-top">
+                        <div>
+                            <div class="price-badge mb-0">
+                                â‚¹1000.00
+                                <span class="fs-6 fw-normal text-muted">/person</span>
+                            </div>
+                            <div class="small text-muted">per day</div>
+                        </div>
+
+                        <a href="/experiences/t_t_t/"
+                            class="btn btn-outline-primary rounded-pill px-4 btn-sm fw-semibold">
+                            View
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-12 col-md-6 col-xl-4">
+            <div class="card experience-card experience-card-modern h-100 position-relative">
+
+                <!-- Category badge -->
+                <span class="badge category-badge">
+                    Trek
+                </span>
+
+                <!-- Featured badge -->
+                
+
+                <!-- Image -->
+                <a href="/experiences/jakhoo-hike/" class="image-link">
+                    
+                    <img src="/media/experiences/placeholder1.jpg" alt="Jakhoo Hike" loading="lazy" width="800"
+                        height="440"
+                        onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=800&q=80';">
+                    
+                </a>
+
+                <div class="card-body p-4 d-flex flex-column">
+
+                    <!-- Top meta -->
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-2 small text-muted">
+                        <span class="d-inline-flex align-items-center meta-location text-truncate">
+                            <i class="bi bi-geo-alt-fill me-1 text-danger"></i>Shimla, Himachal Pradesh
+                        </span>
+
+                        
+                        <span class="ms-auto d-inline-flex align-items-center rating-pill">
+                            <i class="bi bi-star-fill me-1"></i>
+                            5.0
+                            <span class="text-muted ms-1">(1)</span>
+                        </span>
+                        
+                    </div>
+
+                    <!-- Title -->
+                    <h5 class="fw-bold mb-1 listing-title">
+                        <a href="/experiences/jakhoo-hike/"
+                            class="text-decoration-none listing-title-link">
+                            Jakhoo Hike
+                        </a>
+                    </h5>
+
+                    <p class="text-muted small mb-3 d-flex align-items-center">
+                        <i class="bi bi-person-circle me-1"></i>Hosted by rahul_host
+                    </p>
+
+                    <!-- Description -->
+                    <p class="text-muted small flex-grow-1 mb-3 listing-desc">
+                        
+                        A beautiful Trek experience in Shimla.
+                        
+                    </p>
+
+                    <!-- Footer -->
+                    <div class="d-flex justify-content-between align-items-center pt-3 mt-auto border-top">
+                        <div>
+                            <div class="price-badge mb-0">
+                                â‚¹800.00
+                                <span class="fs-6 fw-normal text-muted">/person</span>
+                            </div>
+                            <div class="small text-muted">per day</div>
+                        </div>
+
+                        <a href="/experiences/jakhoo-hike/"
+                            class="btn btn-outline-primary rounded-pill px-4 btn-sm fw-semibold">
+                            View
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- Pagination -->
+    
+</div>
+
+<!-- Auto-submit filter JS -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+    (function () {
+        const form = document.getElementById("experienceFilterForm");
+        if (!form) return;
+
+        let debounceTimer = null;
+
+        function submitForm() {
+            const pageField = form.querySelector('[name="page"]');
+            if (pageField) pageField.remove();
+            
+            // Clean empty fields to keep URL uncluttered
+            const inputs = form.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                if (!input.value) {
+                    input.disabled = true; // disable right before submit so it's excluded from URL
+                }
+            });
+            form.submit();
+        }
+
+        window.autoSubmitFilters = function () {
+            submitForm();
+        };
+
+        const minPrice = document.getElementById("min_price");
+        const maxPrice = document.getElementById("max_price");
+        const guests = document.getElementById("guests");
+
+        [minPrice, maxPrice, guests].forEach(function (el) {
+            if (!el) return;
+
+            el.addEventListener("input", function () {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(submitForm, 650);
+            });
+
+            el.addEventListener("change", function () {
+                clearTimeout(debounceTimer);
+                submitForm();
+            });
+
+            el.addEventListener("keydown", function (e) {
+                if (e.key === "Enter") {
+                    e.preventDefault();
+                    clearTimeout(debounceTimer);
+                    submitForm();
+                }
+            });
+        });
+        
+        // Datepicker setup
+        const startDateInput = document.getElementById("start_date");
+        const endDateInput = document.getElementById("end_date"); // Hidden field to pass along end range if needed
+
+        if (startDateInput && typeof flatpickr !== "undefined") {
+            flatpickr(startDateInput, {
+                mode: "range",
+                dateFormat: "Y-m-d",
+                minDate: "today",
+                altInput: true,
+                altFormat: "M j", 
+                onChange: function(selectedDates, dateStr, instance) {
+                    if (selectedDates.length == 2) {
+                        // Extract dates from range string
+                        const dates = dateStr.split(" to ");
+                        if (dates.length == 2) {
+                            startDateInput.value = dates[0];
+                            if(endDateInput) endDateInput.value = dates[1];
+                            submitForm();
+                        }
+                    } else if (selectedDates.length == 1) {
+                        // Single date selection
+                        startDateInput.value = dateStr;
+                        if(endDateInput) endDateInput.value = "";
+                        submitForm();
+                    }
+                }
+            });
+        }
+    })();
+</script>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer mt-auto py-5">
+        <div class="container">
+            <div class="row g-4 align-items-start">
+                <div class="col-lg-4">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <span class="brand-mark">S</span>
+                        <h5 class="mb-0 fw-bold text-white">Safar</h5>
+                    </div>
+                    <p class="mb-0 small text-white-50">
+                        Curated local travel experiences â€” homestays, adventures, and meaningful journeys.
+                    </p>
+                </div>
+
+                <div class="col-6 col-lg-2">
+                    <h6 class="fw-bold mb-3">Explore</h6>
+                    <ul class="list-unstyled small mb-0">
+                        <li class="mb-2"><a href="/experiences/">Experiences</a></li>
+                        <li class="mb-2"><a href="/locations/">Destinations</a></li>
+                        <li class="mb-2"><a href="/categories/">Categories</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-6 col-lg-2">
+                    <h6 class="fw-bold mb-3">Account</h6>
+                    <ul class="list-unstyled small mb-0">
+                        
+                        <li class="mb-2"><a href="/accounts/login/">Login</a></li>
+                        <li class="mb-2"><a href="/accounts/signup/">Sign Up</a></li>
+                        
+                    </ul>
+                </div>
+
+                <div class="col-lg-4">
+                    <h6 class="fw-bold mb-3">Quick Note</h6>
+                    <p class="small text-white-50 mb-0">
+                        Safar is evolving â€” more destinations, categories, and host tools coming soon.
+                    </p>
+                </div>
+            </div>
+
+            <hr class="border-secondary my-4">
+
+            <div
+                class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 small text-white-50">
+                <div>Â© 2026 Safar. All rights reserved.</div>
+                <div class="d-flex gap-3">
+                    <span><i class="bi bi-shield-check me-1"></i>Secure Booking Flow</span>
+                    <span><i class="bi bi-geo-alt me-1"></i>Local-first Travel</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Navbar transparency/scroll behavior -->
+    <script>
+        (function () {
+            const navbar = document.getElementById('mainNavbar');
+            if (!navbar) return;
+
+            const isHome = document.body.classList.contains('is-home');
+
+            function setNavbarState() {
+                if (!isHome) {
+                    navbar.classList.remove('navbar-home-top');
+                    navbar.classList.add('navbar-solid');
+                    return;
+                }
+
+                if (window.scrollY > 30) {
+                    navbar.classList.remove('navbar-home-top');
+                    navbar.classList.add('navbar-solid');
+                } else {
+                    navbar.classList.add('navbar-home-top');
+                    navbar.classList.remove('navbar-solid');
+                }
+            }
+
+            setNavbarState();
+            window.addEventListener('scroll', setNavbarState, { passive: true });
+
+            // Close offcanvas after clicking a link (mobile)
+            const offcanvasEl = document.getElementById('mobileNav');
+            if (offcanvasEl && window.bootstrap) {
+                const links = offcanvasEl.querySelectorAll('a[href]');
+                links.forEach(link => {
+                    link.addEventListener('click', () => {
+                        const offcanvas = bootstrap.Offcanvas.getInstance(offcanvasEl);
+                        if (offcanvas) offcanvas.hide();
+                    });
+                });
+            }
+        })();
+    </script>
+
+    
+
+    
+</body>
+
+</html>
+--- URL: /dashboard/host/ ---
+--- URL: /experiences/riverside-camping/ ---
+
+<!doctype html>
+<html lang="en">
+<head>
+  <title>Not Found</title>
+</head>
+<body>
+  <h1>Not Found</h1><p>The requested resource was not found on this server.</p>
+</body>
+</html>

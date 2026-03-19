@@ -1,0 +1,188 @@
+Traceback (most recent call last):
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\test_templates.py", line 15, in <module>
+    for m in missing: print(m)
+                      ~~~~~^^^
+  File "C:\Users\User\AppData\Local\Programs\Python\Python314\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 32-33: character maps to <undefined>
+Traceback (most recent call last):
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\test_templates.py", line 15, in <module>
+    for m in missing: print(m)
+                      ~~~~~^^^
+  File "C:\Users\User\AppData\Local\Programs\Python\Python314\Lib\encodings\cp1252.py", line 19, in encode
+    return codecs.charmap_encode(input,self.errors,encoding_table)[0]
+           ~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+UnicodeEncodeError: 'charmap' codec can't encode characters in position 15-16: character maps to <undefined>
+Internal Server Error: /experiences/riverside-camping/
+Traceback (most recent call last):
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\base.py", line 577, in parse
+    compile_func = self.tags[command]
+                   ~~~~~~~~~^^^^^^^^^
+KeyError: 'endblock'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\marketplace\views.py", line 173, in listing_detail
+    return render(request, 'marketplace/experience_detail_v3.html', {'listing': listing, 'page_obj': page_obj})
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\backends\django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\engine.py", line 186, in get_template
+    template, origin = self.find_template(template_name)
+                       ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\loaders\cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\loaders\base.py", line 28, in get_template
+    return Template(
+        contents,
+    ...<2 lines>...
+        self.engine,
+    )
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\base.py", line 157, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\base.py", line 199, in compile_nodelist
+    nodelist = parser.parse()
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\base.py", line 585, in parse
+    raise self.error(token, e)
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\base.py", line 583, in parse
+    compiled_result = compile_func(self, token)
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\loader_tags.py", line 307, in do_extends
+    nodelist = parser.parse()
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\base.py", line 585, in parse
+    raise self.error(token, e)
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\base.py", line 583, in parse
+    compiled_result = compile_func(self, token)
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\loader_tags.py", line 235, in do_block
+    nodelist = parser.parse(("endblock",))
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\base.py", line 585, in parse
+    raise self.error(token, e)
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\base.py", line 583, in parse
+    compiled_result = compile_func(self, token)
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\defaulttags.py", line 994, in do_if
+    nodelist = parser.parse(("elif", "else", "endif"))
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\base.py", line 579, in parse
+    self.invalid_block_tag(token, command, parse_until)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\base.py", line 634, in invalid_block_tag
+    raise self.error(
+    ...<8 lines>...
+    )
+django.template.exceptions.TemplateSyntaxError: Template: C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\templates\marketplace\experience_detail_v3.html, Invalid block tag on line 392: 'endblock', expected 'elif', 'else' or 'endif'. Did you forget to register or load this tag?
+Traceback (most recent call last):
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\base.py", line 577, in parse
+    compile_func = self.tags[command]
+                   ~~~~~~~~~^^^^^^^^^
+KeyError: 'endblock'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\test_templates.py", line 9, in <module>
+    r = c.get(url)
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\test\client.py", line 1124, in get
+    response = super().get(
+        path,
+    ...<4 lines>...
+        **extra,
+    )
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\test\client.py", line 475, in get
+    return self.generic(
+           ~~~~~~~~~~~~^
+        "GET",
+        ^^^^^^
+    ...<4 lines>...
+        **extra,
+        ^^^^^^^^
+    )
+    ^
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\test\client.py", line 671, in generic
+    return self.request(**r)
+           ~~~~~~~~~~~~^^^^^
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\test\client.py", line 1087, in request
+    self.check_exception(response)
+    ~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\test\client.py", line 802, in check_exception
+    raise exc_value
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\core\handlers\exception.py", line 55, in inner
+    response = get_response(request)
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\core\handlers\base.py", line 198, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\marketplace\views.py", line 173, in listing_detail
+    return render(request, 'marketplace/experience_detail_v3.html', {'listing': listing, 'page_obj': page_obj})
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\loader.py", line 61, in render_to_string
+    template = get_template(template_name, using=using)
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\loader.py", line 15, in get_template
+    return engine.get_template(template_name)
+           ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\backends\django.py", line 79, in get_template
+    return Template(self.engine.get_template(template_name), self)
+                    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\engine.py", line 186, in get_template
+    template, origin = self.find_template(template_name)
+                       ~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\engine.py", line 159, in find_template
+    template = loader.get_template(name, skip=skip)
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\loaders\cached.py", line 57, in get_template
+    template = super().get_template(template_name, skip)
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\loaders\base.py", line 28, in get_template
+    return Template(
+        contents,
+    ...<2 lines>...
+        self.engine,
+    )
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\base.py", line 157, in __init__
+    self.nodelist = self.compile_nodelist()
+                    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\base.py", line 199, in compile_nodelist
+    nodelist = parser.parse()
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\base.py", line 585, in parse
+    raise self.error(token, e)
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\base.py", line 583, in parse
+    compiled_result = compile_func(self, token)
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\loader_tags.py", line 307, in do_extends
+    nodelist = parser.parse()
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\base.py", line 585, in parse
+    raise self.error(token, e)
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\base.py", line 583, in parse
+    compiled_result = compile_func(self, token)
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\loader_tags.py", line 235, in do_block
+    nodelist = parser.parse(("endblock",))
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\base.py", line 585, in parse
+    raise self.error(token, e)
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\base.py", line 583, in parse
+    compiled_result = compile_func(self, token)
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\defaulttags.py", line 994, in do_if
+    nodelist = parser.parse(("elif", "else", "endif"))
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\base.py", line 579, in parse
+    self.invalid_block_tag(token, command, parse_until)
+    ~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\venv\Lib\site-packages\django\template\base.py", line 634, in invalid_block_tag
+    raise self.error(
+    ...<8 lines>...
+    )
+django.template.exceptions.TemplateSyntaxError: Template: C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\templates\marketplace\experience_detail_v3.html, Invalid block tag on line 392: 'endblock', expected 'elif', 'else' or 'endif'. Did you forget to register or load this tag?
+
+--- Home (/) ---
+Home Failed: 'charmap' codec can't encode characters in position 32-33: character maps to <undefined>
+
+--- Experiences List (/experiences/) ---
+Experiences List Failed: 'charmap' codec can't encode characters in position 15-16: character maps to <undefined>
+Experience Detail Failed: Template: C:\Users\User\OneDrive - iitr.ac.in\project_01\web_v1\templates\marketplace\experience_detail_v3.html, Invalid block tag on line 392: 'endblock', expected 'elif', 'else' or 'endif'. Did you forget to register or load this tag?

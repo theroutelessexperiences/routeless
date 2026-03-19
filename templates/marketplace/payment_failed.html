@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Payment Failed - Safar{% endblock %}
+
+{% block content %}
+<div class="container text-center" style="margin-top: 15vh; min-height: 60vh;">
+    <div class="mb-4">
+        <i class="bi bi-x-circle text-danger" style="font-size: 5rem;"></i>
+    </div>
+    <h1 class="fw-bold mb-3">Payment Failed</h1>
+    <p class="text-muted mb-4">
+        Unfortunately, your payment for the booking <strong>{{ booking.experience.title }}</strong> could not be processed.
+        <br>Please try again or use a different payment method.
+    </p>
+    
+    <div class="d-flex justify-content-center gap-3">
+        <a href="{% url 'payments:retry_payment' booking_id=booking.id %}" class="btn btn-primary rounded-pill px-4">
+            Try Again
+        </a>
+        <a href="{% url 'my_bookings' %}" class="btn btn-outline-secondary rounded-pill px-4">
+            Go to My Bookings
+        </a>
+    </div>
+</div>
+{% endblock %}
