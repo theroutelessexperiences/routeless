@@ -1,0 +1,38 @@
+services:
+  - type: web
+    name: safar-hq
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn safar_hq.wsgi:application"
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: PYTHON_VERSION
+        value: "3.11.0"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: safar-hq-db
+          property: connectionString
+
+databases:
+  - name: safar-hq-db
+    databaseName: safardb
+    user: safaruser
+```
+
+---
+
+### Step 5 — Check `.gitignore`
+
+Make sure these are excluded (sensitive / local-only):
+```
+.env
+db.sqlite3
+venv/
+venv_desktop/
+__pycache__/
+*.pyc
+media/
+staticfiles/
