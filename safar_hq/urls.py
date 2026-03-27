@@ -37,6 +37,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('', include('marketplace.urls')),
     path('payments/', include('payments.urls')),
+    path("health", health_check, name="health_check_noslash"),
     path("health/", health_check, name="health_check"),
     # Password Reset (Built-in)
     path(
