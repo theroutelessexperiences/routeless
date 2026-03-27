@@ -59,10 +59,10 @@ if not PAYMENTS_DEMO_MODE:
 # -------------------------------------------------------------------
 # Hosts / CSRF
 # -------------------------------------------------------------------
-ALLOWED_HOSTS = env_list("ALLOWED_HOSTS")
-if not ALLOWED_HOSTS:
-    # Temporary safe fallback for first App Runner deployment
-    ALLOWED_HOSTS = ["*"] if not DEBUG else ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = env_list(
+    "ALLOWED_HOSTS",
+    "localhost,127.0.0.1,169.254.172.2,.awsapprunner.com"
+)
 
 CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS")
 
@@ -140,18 +140,30 @@ ASGI_APPLICATION = "safar_hq.asgi.application"
 # -------------------------------------------------------------------
 # Channels / cache
 # -------------------------------------------------------------------
-CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers.InMemoryChannelLayer",
+if "test" in sys.argv:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer",
+        }
     }
-}
-
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
-        "LOCATION": "unique-snowflake",
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "unique-snowflake",
+        }
     }
-}
+else:
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer",
+        }
+    }
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "unique-snowflake",
+        }
+    }
 
 
 # -------------------------------------------------------------------
@@ -263,11 +275,12 @@ AUTHENTICATION_BACKENDS = (
 
 
 # -------------------------------------------------------------------
-# Allauth
+# Django-Allauth configuration
 # -------------------------------------------------------------------
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
-ACCOUNT_LOGIN_METHODS = {"email"}
-ACCOUNT_SIGNUP_FIELDS = ["email*", "password1*", "password2*"]
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 
 SOCIALACCOUNT_PROVIDERS = {
@@ -287,7 +300,7 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = "DENY"
 
-# Keep these relaxed for first successful App Runner deployment
+# Keep relaxed until App Runner becomes healthy
 SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", False)
 SECURE_HSTS_SECONDS = int(os.getenv("SECURE_HSTS_SECONDS", "0"))
 SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool("SECURE_HSTS_INCLUDE_SUBDOMAINS", False)
