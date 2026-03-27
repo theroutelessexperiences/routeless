@@ -141,8 +141,13 @@ def home(request):
         categories = [c[0] for c in CATEGORY_CHOICES]
         locations = list(Location.objects.all().order_by("name")[:10])
         hero_slides = list(HeroSlide.objects.filter(is_active=True).order_by("sort_order", "id"))
+        # recent_activities = list(
+        #     ActivityFeed.objects.select_related("user", "experience").all()[:5]
+        # )
         recent_activities = list(
-            ActivityFeed.objects.select_related("user", "experience").all()[:5]
+            ActivityFeed.objects.select_related("user", "experience")
+            .filter(user__userprofile__isnull=False)
+            [:5]
         )
 
         global_data = {
