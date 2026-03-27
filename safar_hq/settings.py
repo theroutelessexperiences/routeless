@@ -59,11 +59,11 @@ if not PAYMENTS_DEMO_MODE:
 # -------------------------------------------------------------------
 # Hosts / CSRF
 # -------------------------------------------------------------------
-ALLOWED_HOSTS = env_list(
-    "ALLOWED_HOSTS",
-    "localhost,127.0.0.1,169.254.172.2,.awsapprunner.com"
-)
-
+# ALLOWED_HOSTS = env_list(
+#     "ALLOWED_HOSTS",
+#     "localhost,127.0.0.1,169.254.172.2,.awsapprunner.com"
+# )
+ALLOWED_HOSTS = ["*"]
 CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS")
 
 USE_X_FORWARDED_HOST = True
