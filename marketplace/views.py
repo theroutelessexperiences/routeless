@@ -145,9 +145,16 @@ def home(request):
         #     ActivityFeed.objects.select_related("user", "experience").all()[:5]
         # )
         recent_activities = list(
-            ActivityFeed.objects.select_related("user", "experience")
-            .filter(user__userprofile__isnull=False)
-            [:5]
+            ActivityFeed.objects.select_related(
+                "user",
+                "user__userprofile",
+                "experience",
+            )
+            .filter(
+                user__userprofile__isnull=False,
+                experience__isnull=False,
+            )
+            .order_by("-created_at")[:5]
         )
 
         global_data = {
