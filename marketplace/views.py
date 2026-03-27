@@ -109,7 +109,10 @@ CATEGORY_META = {
     },
 }
 
+from django.http import HttpResponse
 
+def health_check(request):
+    return HttpResponse("ok", status=200)
 # -------------------------------------------------------------------
 # Homepage
 # -------------------------------------------------------------------
