@@ -20,7 +20,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
 from django.views.generic import TemplateView
-
+from marketplace.views import health_check
 from marketplace.sitemaps import ExperienceSitemap, LocationSitemap, StaticViewSitemap
 
 sitemaps = {
@@ -37,7 +37,7 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('', include('marketplace.urls')),
     path('payments/', include('payments.urls')),
-    
+    path("health/", health_check, name="health_check"),
     # Password Reset (Built-in)
     path(
         "password-reset/",
