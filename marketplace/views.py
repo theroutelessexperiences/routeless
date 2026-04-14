@@ -250,6 +250,7 @@ def listing_list(request):
     min_price = (request.GET.get("min_price") or "").strip()
     max_price = (request.GET.get("max_price") or "").strip()
     sort = (request.GET.get("sort") or "newest").strip().lower()
+    search_query = (request.GET.get("q") or "").strip()
 
     start_date_str = request.GET.get("start_date", "").strip()
     end_date_str = request.GET.get("end_date", "").strip()
@@ -267,6 +268,26 @@ def listing_list(request):
         return "?" + q.urlencode() if q else "?"
 
     query = Q()
+
+    # Full-text search
+    if search_query:
+        search_q = (
+            Q(title__icontains=search_query)
+            | Q(short_description__icontains=search_query)
+            | Q(description__icontains=search_query)
+            | Q(location__icontains=search_query)
+            | Q(location_fk__name__icontains=search_query)
+            | Q(location_fk__state__icontains=search_query)
+            | Q(category__icontains=search_query)
+            | Q(host__username__icontains=search_query)
+        )
+        query &= search_q
+        active_filters.append(
+            {
+                "label": f"Search: {search_query}",
+                "remove_url": _remove_params("q"),
+            }
+        )
 
     # Location filter
     if location_slug:
@@ -456,6 +477,7 @@ def listing_list(request):
             "current_sort": sort,
             "sort_options": sort_options,
             "pagination_base_url": pagination_base_url,
+            "search_query": search_query,
         },
     )
 
@@ -760,7 +782,7 @@ def signup_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            messages.success(request, "Registration successful. Welcome to Safar!")
+            messages.success(request, "Registration successful. Welcome to Routeless!")
 
             next_url = request.GET.get("next") or request.POST.get("next")
             url_is_safe = url_has_allowed_host_and_scheme(
@@ -1026,7 +1048,7 @@ def host_dashboard(request):
                         f"Hi {booking.traveler_name or booking.user.username},\n\n"
                         f"We hope you enjoyed your trip to {booking.experience.title}!\n"
                         f"Please take a moment to leave a review for your host:\n{review_url}\n\n"
-                        "Thanks,\nThe Safar Team"
+                        "Thanks,\nThe Routeless Team"
                     ),
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     recipient_list=[booking.traveler_email or booking.user.email],
@@ -1421,7 +1443,7 @@ def become_host(request):
             verification.save()
             messages.success(
                 request,
-                "Your identity documents have been submitted for review. You will be notified once a Safar admin approves your request.",
+                "Your identity documents have been submitted for review. You will be notified once a Routeless admin approves your request.",
             )
             return redirect("home")
 

@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 {% load static cache %}
 
-{% block title %}Safar - Discover Curated Travel Experiences{% endblock %}
+{% block title %}Routeless - Discover Curated Travel Experiences{% endblock %}
 
 {% block meta_description %}Find the best homestays, thrilling adventures, and curated local travel experiences. Book
-securely with verified hosts on Safar.{% endblock %}
+securely with verified hosts on Routeless.{% endblock %}
 
 {% block og_tags %}
-<meta property="og:site_name" content="Safar" />
+<meta property="og:site_name" content="Routeless" />
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Safar - Discover Curated Travel Experiences" />
+<meta property="og:title" content="Routeless - Discover Curated Travel Experiences" />
 <meta property="og:description"
-    content="Find the best homestays, thrilling adventures, and curated local travel experiences. Book securely with verified hosts on Safar." />
+    content="Find the best homestays, thrilling adventures, and curated local travel experiences. Book securely with verified hosts on Routeless." />
 <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'home' %}" />
 <meta property="og:image"
     content="{{ request.scheme }}://{{ request.get_host }}{% static 'img/safar-og-default.jpg' %}" />
@@ -22,7 +22,7 @@ securely with verified hosts on Safar.{% endblock %}
 <!-- Hero Carousel -->
 {% if hero_slides %}
 <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000"
-    data-bs-touch="true" aria-label="Safar hero carousel">
+    data-bs-touch="true" aria-label="Routeless hero carousel">
 
     <!-- Indicators -->
     <div class="carousel-indicators mb-4">
@@ -455,7 +455,7 @@ securely with verified hosts on Safar.{% endblock %}
 
                         <h5 class="card-title mb-2 line-clamp-2">{{ listing.title }}</h5>
                         <p class="text-muted small mb-3 line-clamp-1">
-                            Hosted by {{ listing.host.username|default:"Safar Host" }}
+                            Hosted by {{ listing.host.username|default:"Routeless Host" }}
                         </p>
 
                         <div class="mt-auto d-flex justify-content-between align-items-center pt-3 border-top">
@@ -536,7 +536,7 @@ securely with verified hosts on Safar.{% endblock %}
 
                         <h5 class="card-title mb-2 line-clamp-2">{{ listing.title }}</h5>
                         <p class="text-muted small mb-3 line-clamp-1">
-                            Hosted by {{ listing.host.username|default:"Safar Host" }}
+                            Hosted by {{ listing.host.username|default:"Routeless Host" }}
                         </p>
 
                         <div class="mt-auto d-flex justify-content-between align-items-center pt-3 border-top">
@@ -632,7 +632,7 @@ securely with verified hosts on Safar.{% endblock %}
 
                         <h5 class="card-title mb-2 line-clamp-2">{{ listing.title }}</h5>
                         <p class="text-muted small mb-3 line-clamp-1">
-                            Hosted by {{ listing.host.username|default:"Safar Host" }}
+                            Hosted by {{ listing.host.username|default:"Routeless Host" }}
                         </p>
 
                         <div class="mt-auto d-flex justify-content-between align-items-center pt-3 border-top">
@@ -660,7 +660,7 @@ securely with verified hosts on Safar.{% endblock %}
     <div class="container">
         <div class="text-center mb-5">
             <div class="section-kicker">Simple Process</div>
-            <h2 class="fw-bold" style="color: var(--primary-color);">How Safar Works</h2>
+            <h2 class="fw-bold" style="color: var(--primary-color);">How Routeless Works</h2>
             <p class="text-muted mb-0">A simple, trusted way to discover and book local experiences.</p>
         </div>
 
@@ -754,16 +754,16 @@ securely with verified hosts on Safar.{% endblock %}
 </section>
 {% endif %}
 
-<!-- Why Choose Safar & Testimonials -->
+<!-- Why Choose Routeless & Testimonials -->
 <section class="bg-dark text-white" style="padding-top: 6rem; padding-bottom: 6rem;">
     <div class="container">
         <div class="row g-5 align-items-start">
 
-            <!-- Why Choose Safar -->
+            <!-- Why Choose Routeless -->
             <div class="col-lg-5">
 
-                <div class="section-kicker text-warning">Why Safar</div>
-                <h2 class="fw-bold mb-4 text-warning">Why Choose Safar?</h2>
+                <div class="section-kicker text-warning">Why Routeless</div>
+                <h2 class="fw-bold mb-4 text-warning">Why Choose Routeless?</h2>
 
                 <p class="lead mb-5" style="color: rgba(255,255,255,0.75);">
                     We're building a trusted travel marketplace for meaningful, local-first journeys.
@@ -841,7 +841,7 @@ securely with verified hosts on Safar.{% endblock %}
 
                     <div style="position: relative; z-index: 2; padding-top: 10px;">
                         <p class="fs-5 fst-italic mb-4 text-white" style="line-height: 1.6;">
-                            “Safar made finding a homestay in Kasol incredibly easy.
+                            “Routeless made finding a homestay in Kasol incredibly easy.
                             The host was warm, the place was beautiful,
                             and the whole experience felt authentic.”
                         </p>
@@ -880,7 +880,7 @@ securely with verified hosts on Safar.{% endblock %}
                     <div style="position: relative; z-index: 2; padding-top: 10px;">
                         <p class="fs-5 fst-italic mb-4 text-white" style="line-height: 1.6;">
                             “I usually struggle to find good trekking guides,
-                            but Safar helped me book a perfect guided experience.
+                            but Routeless helped me book a perfect guided experience.
                             Smooth process and great communication.”
                         </p>
 
@@ -917,7 +917,7 @@ securely with verified hosts on Safar.{% endblock %}
                 <div class="col-lg-7 mb-4 mb-lg-0">
                     <div class="section-kicker text-warning">For Creators & Hosts</div>
                     <h2 class="fw-bold mb-3 text-white">
-                        Become a Host on <span class="text-warning">Safar</span>
+                        Become a Host on <span class="text-warning">Routeless</span>
                     </h2>
 
                     <p class="text-light opacity-75 fs-5 mb-0">

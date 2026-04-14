@@ -1,5 +1,5 @@
 /*
- * Safar Marketplace — Custom Styles
+ * Routeless Marketplace — Custom Styles
  * Compatible with updated base.html / index.html
  */
 
@@ -192,7 +192,7 @@ body.is-home #mainNavbar.navbar-home-top .nav-link {
 
 
 /* =========================
-   Hero Video Slide (Safar theme)
+   Hero Video Slide (Routeless theme)
    ========================= */
 /* Hero video slide */
 .hero-video-slide .hero-video-fallback {
@@ -283,7 +283,7 @@ body.is-home #mainNavbar.navbar-home-top .nav-link {
     /* purely decorative */
 }
 
-/* Safar tinted overlay to keep text readable */
+/* Routeless tinted overlay to keep text readable */
 .hero-video-overlay {
     position: absolute;
     inset: 0;

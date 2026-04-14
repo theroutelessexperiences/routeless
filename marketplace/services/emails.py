@@ -23,7 +23,7 @@ def _send_html_email_safe(subject, template_name, context, recipient_list):
         email = EmailMultiAlternatives(
             subject=subject,
             body=text_content,
-            from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@safar.com'),
+            from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@routeless.com'),
             to=recipient_list,
         )
         email.attach_alternative(html_content, "text/html")
@@ -86,14 +86,14 @@ The status of your booking for {booking.experience.title} has been updated.
 New Status: {booking.booking_status}
 
 Thank you,
-The Safar Team
+The Routeless Team
 """
     try:
         from django.core.mail import send_mail
         send_mail(
             subject=subject,
             message=message,
-            from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@safar.com'),
+            from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@routeless.com'),
             recipient_list=[booking.traveler_email],
             fail_silently=True, 
         )
@@ -119,12 +119,12 @@ def send_otp_email(user, otp_code):
     """
     try:
         from django.core.mail import send_mail
-        subject = "Your Safar Login OTP"
+        subject = "Your Routeless Login OTP"
         message = f"Hello {user.username},\n\nYour login code is: {otp_code}\n\nThis code will expire in 5 minutes.\nIf you did not request this, please ignore."
         send_mail(
             subject=subject,
             message=message,
-            from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@safar.com'),
+            from_email=getattr(settings, 'DEFAULT_FROM_EMAIL', 'noreply@routeless.com'),
             recipient_list=[user.email],
             fail_silently=True, 
         )
