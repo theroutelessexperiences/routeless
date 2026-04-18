@@ -10,8 +10,50 @@ build:
 
 run:
   runtime-version: 3.11
-  pre-run:
-    - pip3 install -r requirements.txt
   command: python3 -m daphne -b 0.0.0.0 -p 8080 safar_hq.asgi:application
   network:
     port: 8080
+
+  env:
+    - name: DEBUG
+      value: "False"
+    - name: ALLOWED_HOSTS
+      value: "localhost,127.0.0.1,therouteless.com,www.therouteless.com,.awsapprunner.com"
+    - name: CSRF_TRUSTED_ORIGINS
+      value: "https://therouteless.com,https://www.therouteless.com"
+    - name: EMAIL_HOST
+      value: "smtp.gmail.com"
+    - name: EMAIL_PORT
+      value: "587"
+    - name: EMAIL_USE_TLS
+      value: "True"
+    - name: EMAIL_HOST_USER
+      value: "theroutelessexperiences@gmail.com"
+    - name: DEFAULT_FROM_EMAIL
+      value: "theroutelessexperiences@gmail.com"
+    - name: PAYMENTS_DEMO_MODE
+      value: "True"
+
+    # Optional media storage settings
+    - name: AWS_STORAGE_BUCKET_NAME
+      value: "YOUR_S3_BUCKET_NAME"
+    - name: AWS_S3_REGION_NAME
+      value: "ap-south-1"
+
+  secrets:
+    - name: SECRET_KEY
+      value-from: "REPLACE_WITH_SECRET_KEY_SECRET_ARN"
+    - name: DATABASE_URL
+      value-from: "REPLACE_WITH_DATABASE_URL_SECRET_ARN"
+    - name: EMAIL_HOST_PASSWORD
+      value-from: "mbec ypik mifc ebsc"
+    - name: RAZORPAY_KEY_ID
+      value-from: "REPLACE_WITH_RAZORPAY_KEY_ID_SECRET_ARN"
+    - name: RAZORPAY_KEY_SECRET
+      value-from: "REPLACE_WITH_RAZORPAY_KEY_SECRET_SECRET_ARN"
+
+    # Optional S3 credentials
+    - name: AWS_ACCESS_KEY_ID
+      value-from: "REPLACE_WITH_AWS_ACCESS_KEY_ID_SECRET_ARN"
+    - name: AWS_SECRET_ACCESS_KEY
+      value-from: "REPLACE_WITH_AWS_SECRET_ACCESS_KEY_SECRET_ARN"
