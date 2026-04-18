@@ -1,3 +1,4 @@
+my current yml file is thsi return fully edited corrected file
 version: 1.0
 runtime: python311
 
@@ -12,17 +13,6 @@ run:
   runtime-version: 3.11
   pre-run:
     - pip3 install -r requirements.txt
-  env:
-    - name: SECRET_KEY
-      value: "%q7!ge&yld@0r&md6-ww$p9aqbbf9eo2_ld5r+j4f2dd%6+1&6"
-    - name: DEBUG
-      value: "False"
-    - name: PAYMENTS_DEMO_MODE
-      value: "True"
-    - name: ALLOWED_HOSTS
-      value: "localhost,127.0.0.1,therouteless.com,www.therouteless.com,.awsapprunner.com"
-    - name: CSRF_TRUSTED_ORIGINS
-      value: "https://therouteless.com,https://www.therouteless.com"
   command: python3 -m daphne -b 0.0.0.0 -p 8080 safar_hq.asgi:application
   network:
     port: 8080
