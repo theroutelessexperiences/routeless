@@ -4,67 +4,13 @@ runtime: python311
 build:
   commands:
     build:
-      - pip3 install -r requirements.txt
       - python3 manage.py collectstatic --no-input
       - python3 manage.py migrate
 
 run:
   runtime-version: 3.11
+  pre-run:
+    - pip3 install -r requirements.txt
   command: python3 -m daphne -b 0.0.0.0 -p 8080 safar_hq.asgi:application
   network:
     port: 8080
-
-  env:
-    - name: DEBUG
-      value: "False"
-
-    - name: ALLOWED_HOSTS
-      value: "localhost,127.0.0.1,therouteless.com,www.therouteless.com,.awsapprunner.com"
-
-    - name: CSRF_TRUSTED_ORIGINS
-      value: "https://therouteless.com,https://www.therouteless.com"
-
-    - name: EMAIL_HOST
-      value: "smtp.gmail.com"
-
-    - name: EMAIL_PORT
-      value: "587"
-
-    - name: EMAIL_USE_TLS
-      value: "True"
-
-    - name: EMAIL_HOST_USER
-      value: "theroutelessexperiences@gmail.com"
-
-    - name: EMAIL_HOST_PASSWORD
-      value: "REPLACE_WITH_YOUR_GMAIL_APP_PASSWORD"
-
-    - name: DEFAULT_FROM_EMAIL
-      value: "theroutelessexperiences@gmail.com"
-
-    - name: PAYMENTS_DEMO_MODE
-      value: "True"
-
-    - name: SECRET_KEY
-      value: "REPLACE_WITH_YOUR_DJANGO_SECRET_KEY"
-
-    - name: DATABASE_URL
-      value: "REPLACE_WITH_YOUR_DATABASE_URL"
-
-    - name: RAZORPAY_KEY_ID
-      value: "REPLACE_WITH_YOUR_RAZORPAY_KEY_ID"
-
-    - name: RAZORPAY_KEY_SECRET
-      value: "REPLACE_WITH_YOUR_RAZORPAY_KEY_SECRET"
-
-    - name: AWS_STORAGE_BUCKET_NAME
-      value: "REPLACE_WITH_YOUR_S3_BUCKET_NAME"
-
-    - name: AWS_S3_REGION_NAME
-      value: "ap-south-1"
-
-    - name: AWS_ACCESS_KEY_ID
-      value: "REPLACE_WITH_YOUR_AWS_ACCESS_KEY_ID"
-
-    - name: AWS_SECRET_ACCESS_KEY
-      value: "REPLACE_WITH_YOUR_AWS_SECRET_ACCESS_KEY"
