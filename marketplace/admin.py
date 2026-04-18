@@ -1,4 +1,5 @@
 from django.contrib import admin
+from unfold.admin import ModelAdmin, TabularInline
 from .models import (
     Location,
     Experience,
@@ -42,14 +43,14 @@ def reject_experiences(modeladmin, request, queryset):
 
 
 @admin.register(Location)
-class LocationAdmin(admin.ModelAdmin):
+class LocationAdmin(ModelAdmin):
     list_display = ("name", "state", "slug")
     prepopulated_fields = {"slug": ("name",)}
     search_fields = ("name", "state", "slug")
 
 
 @admin.register(UserProfile)
-class UserProfileAdmin(admin.ModelAdmin):
+class UserProfileAdmin(ModelAdmin):
     list_display = ("user", "is_host", "phone_number", "is_flagged", "is_hidden")
     list_filter = ("is_host", "is_flagged", "is_hidden")
     search_fields = ("user__username", "phone_number")
@@ -57,13 +58,13 @@ class UserProfileAdmin(admin.ModelAdmin):
     actions = moderation_actions
 
 
-class ExperienceImageInline(admin.TabularInline):
+class ExperienceImageInline(TabularInline):
     model = ExperienceImage
     extra = 1
 
 
 @admin.register(Experience)
-class ExperienceAdmin(admin.ModelAdmin):
+class ExperienceAdmin(ModelAdmin):
     list_display = (
         "title",
         "location",
@@ -93,7 +94,7 @@ class ExperienceAdmin(admin.ModelAdmin):
 
 
 @admin.register(Booking)
-class BookingAdmin(admin.ModelAdmin):
+class BookingAdmin(ModelAdmin):
     list_display = (
         "experience",
         "traveler_name",
@@ -109,7 +110,7 @@ class BookingAdmin(admin.ModelAdmin):
 
 
 @admin.register(Review)
-class ReviewAdmin(admin.ModelAdmin):
+class ReviewAdmin(ModelAdmin):
     list_display = ("experience", "rating", "reviewer", "host", "is_flagged", "is_hidden", "created_at")
     list_filter = ("rating", "is_flagged", "is_hidden", "created_at")
     search_fields = ("experience__title", "reviewer__username", "host__username", "comment")
@@ -118,7 +119,7 @@ class ReviewAdmin(admin.ModelAdmin):
     actions = moderation_actions
 
 @admin.register(Message)
-class MessageAdmin(admin.ModelAdmin):
+class MessageAdmin(ModelAdmin):
     list_display = ("sender", "conversation", "is_flagged", "is_hidden", "created_at")
     list_filter = ("is_flagged", "is_hidden", "created_at")
     search_fields = ("text", "sender__username")
@@ -134,7 +135,7 @@ def delete_flagged_reviews(modeladmin, request, queryset):
     modeladmin.message_user(request, f"{count} underlying review(s) deleted.")
 
 @admin.register(ReviewReport)
-class ReviewReportAdmin(admin.ModelAdmin):
+class ReviewReportAdmin(ModelAdmin):
     list_display = ("review", "reporter", "created_at")
     search_fields = ("review__comment", "reporter__username", "reason")
     actions = [delete_flagged_reviews]
@@ -142,7 +143,7 @@ class ReviewReportAdmin(admin.ModelAdmin):
 
 
 @admin.register(HostRequest)
-class HostRequestAdmin(admin.ModelAdmin):
+class HostRequestAdmin(ModelAdmin):
     list_display = ("user", "phone_number", "is_approved", "created_at")
     list_filter = ("is_approved", "created_at")
     search_fields = ("user__username", "user__email", "phone_number")
@@ -171,7 +172,7 @@ class HostRequestAdmin(admin.ModelAdmin):
 
 
 @admin.register(HostVerification)
-class HostVerificationAdmin(admin.ModelAdmin):
+class HostVerificationAdmin(ModelAdmin):
     list_display = ("user", "verified")
     list_filter = ("verified",)
     search_fields = ("user__username", "user__email")
@@ -200,7 +201,7 @@ class HostVerificationAdmin(admin.ModelAdmin):
 
 
 @admin.register(HeroSlide)
-class HeroSlideAdmin(admin.ModelAdmin):
+class HeroSlideAdmin(ModelAdmin):
     list_display = (
         "sort_order",
         "title",

@@ -61,10 +61,22 @@ if not PAYMENTS_DEMO_MODE:
 # -------------------------------------------------------------------
 # ALLOWED_HOSTS = env_list(
 #     "ALLOWED_HOSTS",
-#     "localhost,127.0.0.1,169.254.172.2,.awsapprunner.com"
+#     "localhost,127.0.0.1,.awsapprunner.com"
 # )
-ALLOWED_HOSTS = ["*"]
-CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS")
+# CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS")
+
+# USE_X_FORWARDED_HOST = True
+# SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+ALLOWED_HOSTS = env_list(
+    "ALLOWED_HOSTS",
+    "localhost,127.0.0.1,therouteless.com,www.therouteless.com,.awsapprunner.com"
+)
+
+CSRF_TRUSTED_ORIGINS = env_list(
+    "CSRF_TRUSTED_ORIGINS",
+    "https://therouteless.com,https://www.therouteless.com"
+)
 
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -75,6 +87,7 @@ SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 # -------------------------------------------------------------------
 INSTALLED_APPS = [
     "daphne",
+    "unfold",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -90,11 +103,18 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     "allauth.socialaccount.providers.google",
 
+    # UI Apps
+    "crispy_forms",
+    "crispy_bootstrap5",
+
     # Local apps
     "marketplace",
     "payments",
     "chat",
 ]
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = "http" if DEBUG else "https"
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+CRISPY_TEMPLATE_PACK = "bootstrap5"
 
 SITE_ID = 1
 
@@ -140,11 +160,11 @@ ASGI_APPLICATION = "safar_hq.asgi.application"
 # -------------------------------------------------------------------
 # Channels / cache
 # -------------------------------------------------------------------
+REDIS_URL = os.getenv("REDIS_URL", "").strip()
+
 if "test" in sys.argv:
     CHANNEL_LAYERS = {
-        "default": {
-            "BACKEND": "channels.layers.InMemoryChannelLayer",
-        }
+        "default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}
     }
     CACHES = {
         "default": {
@@ -152,11 +172,24 @@ if "test" in sys.argv:
             "LOCATION": "unique-snowflake",
         }
     }
-else:
+elif REDIS_URL:
     CHANNEL_LAYERS = {
         "default": {
-            "BACKEND": "channels.layers.InMemoryChannelLayer",
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [REDIS_URL],
+            },
+        },
+    }
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": REDIS_URL,
         }
+    }
+else:
+    CHANNEL_LAYERS = {
+        "default": {"BACKEND": "channels.layers.InMemoryChannelLayer"}
     }
     CACHES = {
         "default": {
@@ -234,17 +267,35 @@ else:
 #     },
 # }
 
-STORAGES = {
-    "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-    },
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",  # removed "Manifest"
-    },
-}
+AWS_ACCESS_KEY_ID = os.getenv("AWS_ACCESS_KEY_ID", "").strip()
+AWS_SECRET_ACCESS_KEY = os.getenv("AWS_SECRET_ACCESS_KEY", "").strip()
+AWS_STORAGE_BUCKET_NAME = os.getenv("AWS_STORAGE_BUCKET_NAME", "").strip()
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = BASE_DIR / "media"
+if AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY and AWS_STORAGE_BUCKET_NAME:
+    AWS_S3_REGION_NAME = os.getenv("AWS_S3_REGION_NAME", "us-east-1")
+    AWS_S3_CUSTOM_DOMAIN = f"{AWS_STORAGE_BUCKET_NAME}.s3.amazonaws.com"
+    AWS_S3_FILE_OVERWRITE = False
+    
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+        },
+    }
+    MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
+else:
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedStaticFilesStorage",
+        },
+    }
+    MEDIA_URL = "/media/"
+    MEDIA_ROOT = BASE_DIR / "media"
 
 
 # -------------------------------------------------------------------
@@ -288,7 +339,7 @@ AUTHENTICATION_BACKENDS = (
 # -------------------------------------------------------------------
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_AUTHENTICATION_METHOD = "email"
+ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 
@@ -314,3 +365,72 @@ SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", False)
 SECURE_HSTS_SECONDS = int(os.getenv("SECURE_HSTS_SECONDS", "0"))
 SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool("SECURE_HSTS_INCLUDE_SUBDOMAINS", False)
 SECURE_HSTS_PRELOAD = env_bool("SECURE_HSTS_PRELOAD", False)
+
+
+# -------------------------------------------------------------------
+# Logging
+# -------------------------------------------------------------------
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": "[{asctime}] {levelname} [{name}:{lineno}] {message}",
+            "style": "{",
+        },
+    },
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "formatter": "verbose",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": os.getenv("DJANGO_LOG_LEVEL", "INFO"),
+    },
+}
+
+# -------------------------------------------------------------------
+# Unfold Admin Configuration
+# -------------------------------------------------------------------
+UNFOLD = {
+    "SITE_TITLE": "THEROUTELESS Platform",
+    "SITE_HEADER": "THEROUTELESS Admin Dashboard",
+    "SITE_URL": "/",
+    "SITE_SYMBOL": "explore",
+    "SHOW_HISTORY": True,
+    "SHOW_VIEW_ON_SITE": True,
+    "COLORS": {
+        "primary": {
+            "50": "254 252 232",
+            "100": "254 249 195",
+            "200": "254 240 138",
+            "300": "253 224 71",
+            "400": "250 204 21",
+            "500": "234 179 8",
+            "600": "202 138 4",     # Primary brand color approx
+            "700": "161 98 7",
+            "800": "133 77 14",
+            "900": "113 63 18",
+            "950": "66 32 6",
+        },
+    },
+    "SIDEBAR": {
+        "show_search": True,
+        "show_all_applications": True,
+        "navigation": [
+            {
+                "title": "Platform Analytics",
+                "separator": True,
+                "items": [
+                    {
+                        "title": "Analytics Dashboard",
+                        "icon": "query_stats",
+                        "link": "/platform-analytics/",
+                    },
+                ],
+            },
+        ],
+    },
+}

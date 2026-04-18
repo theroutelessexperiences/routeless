@@ -14,23 +14,23 @@
     <div class="container">
         <h1>Booking Request Submitted</h1>
         <p>Hi {{ traveler_name }},</p>
-        <p>Thank you for submitting a booking request on Routeless! We've received your request for <span class="highlight">{{ experience.title }}</span>.</p>
+        <p>Thank you for submitting a booking request on THEROUTELESS! We've received your request for <span class="highlight">{{ experience.title }}</span>.</p>
         
         <div class="info-block">
             <p><strong>Booking ID:</strong> #{{ booking.id }}</p>
             <p><strong>Check-in:</strong> {{ booking.start_date|date:"F j, Y" }}</p>
             <p><strong>Check-out:</strong> {{ booking.end_date|date:"F j, Y" }}</p>
             <p><strong>Guests:</strong> {{ booking.guests }}</p>
-            <p><strong>Total Price:</strong> â‚¹{{ booking.total_price }}</p>
+            <p><strong>Total Price:</strong> &#8377;{{ booking.total_price }}</p>
             <p><strong>Status:</strong> {{ booking.booking_status }}</p>
         </div>
 
-        <p>Please note that this is a <strong>request</strong>. If you haven't completed the Razorpay checkout popup, your booking is still pending payment. Visit your Routeless dashboard to complete the payment and confirm your trip.</p>
+        <p>Please note that this is a <strong>request</strong>. If you haven't completed the Razorpay checkout popup, your booking is still pending payment. Visit your THEROUTELESS dashboard to complete the payment and confirm your trip.</p>
         
         <p>If you have any questions, feel free to contact us.</p>
         
         <div class="footer">
-            &copy; {% now "Y" %} Routeless Travels. All rights reserved.
+            &copy; {% now "Y" %} THEROUTELESS Travels. All rights reserved.
         </div>
     </div>
 </body>

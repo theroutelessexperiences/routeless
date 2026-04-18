@@ -86,7 +86,7 @@ The status of your booking for {booking.experience.title} has been updated.
 New Status: {booking.booking_status}
 
 Thank you,
-The Routeless Team
+The THEROUTELESS Team
 """
     try:
         from django.core.mail import send_mail
@@ -119,7 +119,7 @@ def send_otp_email(user, otp_code):
     """
     try:
         from django.core.mail import send_mail
-        subject = "Your Routeless Login OTP"
+        subject = "Your THEROUTELESS Login OTP"
         message = f"Hello {user.username},\n\nYour login code is: {otp_code}\n\nThis code will expire in 5 minutes.\nIf you did not request this, please ignore."
         send_mail(
             subject=subject,

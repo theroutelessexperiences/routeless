@@ -782,7 +782,7 @@ def signup_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            messages.success(request, "Registration successful. Welcome to Routeless!")
+            messages.success(request, "Registration successful. Welcome to THEROUTELESS!")
 
             next_url = request.GET.get("next") or request.POST.get("next")
             url_is_safe = url_has_allowed_host_and_scheme(
@@ -802,7 +802,14 @@ def signup_view(request):
 @ratelimit(key="ip", rate="5/m", block=True)
 def login_view(request):
     if request.method == "POST":
-        form = AuthenticationForm(request, data=request.POST)
+        post_data = request.POST.copy()
+        username_input = post_data.get("username", "")
+        if "@" in username_input:
+            user_obj = User.objects.filter(email=username_input.lower()).first()
+            if user_obj:
+                post_data["username"] = user_obj.username
+                
+        form = AuthenticationForm(request, data=post_data)
         if form.is_valid():
             username = form.cleaned_data.get("username")
             password = form.cleaned_data.get("password")
@@ -817,9 +824,12 @@ def login_view(request):
                 )
                 messages.success(request, f"Welcome back, {username}!")
                 return redirect(next_url if url_is_safe else "home")
-        messages.error(request, "Invalid username or password.")
+        messages.error(request, "Invalid credentials.")
     else:
         form = AuthenticationForm()
+
+    form.fields['username'].label = "Username or Email address"
+    form.fields['username'].widget.attrs['placeholder'] = "Enter username or email"
 
     return render(
         request,
@@ -1048,7 +1058,7 @@ def host_dashboard(request):
                         f"Hi {booking.traveler_name or booking.user.username},\n\n"
                         f"We hope you enjoyed your trip to {booking.experience.title}!\n"
                         f"Please take a moment to leave a review for your host:\n{review_url}\n\n"
-                        "Thanks,\nThe Routeless Team"
+                        "Thanks,\nThe THEROUTELESS Team"
                     ),
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     recipient_list=[booking.traveler_email or booking.user.email],
@@ -1443,7 +1453,7 @@ def become_host(request):
             verification.save()
             messages.success(
                 request,
-                "Your identity documents have been submitted for review. You will be notified once a Routeless admin approves your request.",
+                "Your identity documents have been submitted for review. You will be notified once a THEROUTELESS admin approves your request.",
             )
             return redirect("home")
 

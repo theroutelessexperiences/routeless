@@ -1,17 +1,17 @@
 {% extends "base.html" %}
 {% load static cache %}
 
-{% block title %}Routeless - Discover Curated Travel Experiences{% endblock %}
+{% block title %}THEROUTELESS - Discover Curated Travel Experiences{% endblock %}
 
 {% block meta_description %}Find the best homestays, thrilling adventures, and curated local travel experiences. Book
-securely with verified hosts on Routeless.{% endblock %}
+securely with verified hosts on THEROUTELESS.{% endblock %}
 
 {% block og_tags %}
-<meta property="og:site_name" content="Routeless" />
+<meta property="og:site_name" content="THEROUTELESS" />
 <meta property="og:type" content="website" />
-<meta property="og:title" content="Routeless - Discover Curated Travel Experiences" />
+<meta property="og:title" content="THEROUTELESS - Discover Curated Travel Experiences" />
 <meta property="og:description"
-    content="Find the best homestays, thrilling adventures, and curated local travel experiences. Book securely with verified hosts on Routeless." />
+    content="Find the best homestays, thrilling adventures, and curated local travel experiences. Book securely with verified hosts on THEROUTELESS." />
 <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'home' %}" />
 <meta property="og:image"
     content="{{ request.scheme }}://{{ request.get_host }}{% static 'img/safar-og-default.jpg' %}" />
@@ -22,7 +22,7 @@ securely with verified hosts on Routeless.{% endblock %}
 <!-- Hero Carousel -->
 {% if hero_slides %}
 <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000"
-    data-bs-touch="true" aria-label="Routeless hero carousel">
+    data-bs-touch="true" aria-label="THEROUTELESS hero carousel">
 
     <!-- Indicators -->
     <div class="carousel-indicators mb-4">
@@ -153,20 +153,20 @@ securely with verified hosts on Routeless.{% endblock %}
 
                             {% if slide.show_search_card %}
                             <div
-                                class="bg-white rounded-4 shadow-lg p-3 p-md-4 text-start mx-auto {% if forloop.first %}slide-up delay-2{% endif %} hero-search-card">
+                                class="glass-panel text-dark rounded-4 shadow-lg p-3 p-md-4 text-start mx-auto {% if forloop.first %}slide-up delay-2{% endif %} hero-search-card">
                                 <form method="get" action="{% url 'listing_list' %}">
                                     <div class="row g-2 align-items-end">
                                         <div class="col-md-4">
                                             <label class="form-label small fw-bold text-muted mb-1">Location</label>
                                             <input type="text" name="location"
-                                                class="form-control form-control-lg border-0 bg-light"
+                                                class="form-control form-control-lg border-0 bg-white"
                                                 placeholder="e.g., Manali / Rishikesh">
                                         </div>
 
                                         <div class="col-md-3">
                                             <label class="form-label small fw-bold text-muted mb-1">Category</label>
                                             <select name="category"
-                                                class="form-select form-select-lg border-0 bg-light">
+                                                class="form-select form-select-lg border-0 bg-white">
                                                 <option value="">All categories</option>
                                                 {% for category in categories %}
                                                 <option value="{{ category|slugify }}">{{ category|title }}</option>
@@ -239,29 +239,29 @@ securely with verified hosts on Routeless.{% endblock %}
 {% endif %}
 
 <!-- Stats / Trust Strip -->
-<section class="py-4 border-bottom bg-white">
+<section class="py-4 border-bottom bg-white" data-aos="fade-up">
     <div class="container">
         <div class="row text-center g-3">
             <div class="col-6 col-md-3">
-                <div class="p-3 rounded-4 bg-light h-100 stats-card">
+                <div class="p-3 rounded-4 glass-panel border-0 shadow-sm h-100 stats-card">
                     <div class="fw-bold fs-4" style="color: var(--primary-color);">{{ featured_listings|length }}+</div>
                     <div class="small text-muted">Featured Experiences</div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
-                <div class="p-3 rounded-4 bg-light h-100 stats-card">
+                <div class="p-3 rounded-4 glass-panel border-0 shadow-sm h-100 stats-card">
                     <div class="fw-bold fs-4" style="color: var(--primary-color);">{{ categories|length }}+</div>
                     <div class="small text-muted">Categories</div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
-                <div class="p-3 rounded-4 bg-light h-100 stats-card">
+                <div class="p-3 rounded-4 glass-panel border-0 shadow-sm h-100 stats-card">
                     <div class="fw-bold fs-4" style="color: var(--primary-color);">{{ locations|length }}+</div>
                     <div class="small text-muted">Destinations</div>
                 </div>
             </div>
             <div class="col-6 col-md-3">
-                <div class="p-3 rounded-4 bg-light h-100 stats-card">
+                <div class="p-3 rounded-4 glass-panel border-0 shadow-sm h-100 stats-card">
                     <div class="fw-bold fs-4 text-success"><i class="bi bi-shield-check"></i></div>
                     <div class="small text-muted">Secure Booking Flow</div>
                 </div>
@@ -272,7 +272,7 @@ securely with verified hosts on Routeless.{% endblock %}
 
 <!-- Explore by Category -->
 {% cache 3600 homepage_categories_section %}
-<section id="explore-categories" class="py-5 mt-2">
+<section id="explore-categories" class="py-5 mt-2" data-aos="fade-up" data-aos-delay="100">
     <div class="container">
         <div class="d-flex justify-content-between align-items-end mb-4">
             <div>
@@ -287,9 +287,9 @@ securely with verified hosts on Routeless.{% endblock %}
 
         <div class="row row-cols-2 row-cols-md-4 g-4">
             {% for category in categories|slice:":8" %}
-            <div class="col">
+            <div class="col" data-aos="zoom-in" data-aos-delay="0">
                 <a href="{% url 'listing_list' %}?category={{ category|slugify }}" class="text-decoration-none">
-                    <div class="card experience-card h-100 border-0 text-center p-4 category-card shadow-sm">
+                    <div class="card experience-card glass-panel h-100 border-0 text-center p-4 category-card shadow-sm">
                         <div class="mb-3">
                             {% with cat=category|lower %}
                             {% if "adventure" in cat %}
@@ -337,7 +337,7 @@ securely with verified hosts on Routeless.{% endblock %}
 
 <!-- Top Destinations -->
 {% cache 3600 homepage_destinations_section %}
-<section id="top-destinations" class="py-5 bg-light feature-section">
+<section id="top-destinations" class="py-5 bg-light feature-section" data-aos="fade-up" data-aos-delay="100">
     <div class="container">
         <div class="d-flex justify-content-between align-items-end mb-4">
             <div>
@@ -352,8 +352,8 @@ securely with verified hosts on Routeless.{% endblock %}
 
         <div class="d-flex overflow-auto pb-3 custom-scrollbar" style="gap: 20px; scroll-snap-type: x mandatory;">
             {% for loc in locations %}
-            <div class="card experience-card border-0 shadow-sm flex-shrink-0 rounded-4 overflow-hidden destination-card"
-                style="width: 290px; scroll-snap-align: start;">
+            <div class="card experience-card glass-panel border-0 shadow-sm flex-shrink-0 rounded-4 overflow-hidden destination-card"
+                style="width: 290px; scroll-snap-align: start;" data-aos="fade-left">
 
                 {% if loc.image %}
                 <img src="{{ loc.image.url }}" alt="{{ loc.name }}" loading="lazy" width="290" height="190"
@@ -402,7 +402,7 @@ securely with verified hosts on Routeless.{% endblock %}
 
 <!-- Personalized Recommendations -->
 {% if recommended_listings %}
-<section id="recommended-experiences" class="py-5 bg-white border-top">
+<section id="recommended-experiences" class="py-5 bg-white border-top" data-aos="fade-up">
     <div class="container my-3">
         <div class="d-flex justify-content-between align-items-end mb-4">
             <div>
@@ -414,8 +414,8 @@ securely with verified hosts on Routeless.{% endblock %}
 
         <div class="row g-4 flex-nowrap overflow-auto custom-scrollbar pb-3" style="scroll-snap-type: x mandatory;">
             {% for listing in recommended_listings %}
-            <div class="col-10 col-md-5 col-lg-4" style="scroll-snap-align: start;">
-                <div class="card experience-card h-100 border-0 shadow-sm rounded-4 overflow-hidden featured-card">
+            <div class="col-10 col-md-5 col-lg-4" style="scroll-snap-align: start;" data-aos="fade-up">
+                <div class="card experience-card glass-panel h-100 border-0 shadow-sm rounded-4 overflow-hidden featured-card">
                     <div class="position-relative">
                         <span class="position-absolute top-0 end-0 m-3 badge bg-success text-white rounded-pill px-3 py-2 z-1 shadow-sm">
                             Match
@@ -455,7 +455,7 @@ securely with verified hosts on Routeless.{% endblock %}
 
                         <h5 class="card-title mb-2 line-clamp-2">{{ listing.title }}</h5>
                         <p class="text-muted small mb-3 line-clamp-1">
-                            Hosted by {{ listing.host.username|default:"Routeless Host" }}
+                            Hosted by {{ listing.host.username|default:"THEROUTELESS Host" }}
                         </p>
 
                         <div class="mt-auto d-flex justify-content-between align-items-center pt-3 border-top">
@@ -479,7 +479,7 @@ securely with verified hosts on Routeless.{% endblock %}
 {% endif %}
 
 <!-- Featured Experiences -->
-<section id="featured-experiences" class="py-5 bg-light border-top">
+<section id="featured-experiences" class="py-5 bg-light border-top" data-aos="fade-up">
     <div class="container my-3">
         <div class="d-flex justify-content-between align-items-end mb-4">
             <div>
@@ -494,8 +494,8 @@ securely with verified hosts on Routeless.{% endblock %}
 
         <div class="row g-4">
             {% for listing in featured_listings %}
-            <div class="col-md-6 col-lg-4">
-                <div class="card experience-card h-100 border-0 shadow-sm rounded-4 overflow-hidden featured-card">
+            <div class="col-md-6 col-lg-4" data-aos="fade-up">
+                <div class="card experience-card glass-panel h-100 border-0 shadow-sm rounded-4 overflow-hidden featured-card">
                     <div class="position-relative">
                         <span
                             class="position-absolute top-0 end-0 m-3 badge bg-white text-dark rounded-pill px-3 py-2 z-1 shadow-sm">
@@ -536,7 +536,7 @@ securely with verified hosts on Routeless.{% endblock %}
 
                         <h5 class="card-title mb-2 line-clamp-2">{{ listing.title }}</h5>
                         <p class="text-muted small mb-3 line-clamp-1">
-                            Hosted by {{ listing.host.username|default:"Routeless Host" }}
+                            Hosted by {{ listing.host.username|default:"THEROUTELESS Host" }}
                         </p>
 
                         <div class="mt-auto d-flex justify-content-between align-items-center pt-3 border-top">
@@ -579,7 +579,7 @@ securely with verified hosts on Routeless.{% endblock %}
 
 <!-- Trending Experiences (Dynamic Intelligence) -->
 {% if trending_listings %}
-<section id="trending-experiences" class="py-5 bg-light border-top">
+<section id="trending-experiences" class="py-5 bg-light border-top" data-aos="fade-up">
     <div class="container my-3">
         <div class="d-flex justify-content-between align-items-end mb-4">
             <div>
@@ -591,8 +591,8 @@ securely with verified hosts on Routeless.{% endblock %}
 
         <div class="row g-4 flex-nowrap overflow-auto custom-scrollbar pb-3" style="scroll-snap-type: x mandatory;">
             {% for listing in trending_listings %}
-            <div class="col-10 col-md-5 col-lg-4" style="scroll-snap-align: start;">
-                <div class="card experience-card h-100 border-0 shadow-sm rounded-4 overflow-hidden featured-card">
+            <div class="col-10 col-md-5 col-lg-4" style="scroll-snap-align: start;" data-aos="fade-up" data-aos-delay="100">
+                <div class="card experience-card glass-panel h-100 border-0 shadow-sm rounded-4 overflow-hidden featured-card">
                     <div class="position-relative">
                         <span class="position-absolute top-0 end-0 m-3 badge bg-danger text-white rounded-pill px-3 py-2 z-1 shadow-sm">
                             Trending #{{ forloop.counter }}
@@ -632,7 +632,7 @@ securely with verified hosts on Routeless.{% endblock %}
 
                         <h5 class="card-title mb-2 line-clamp-2">{{ listing.title }}</h5>
                         <p class="text-muted small mb-3 line-clamp-1">
-                            Hosted by {{ listing.host.username|default:"Routeless Host" }}
+                            Hosted by {{ listing.host.username|default:"THEROUTELESS Host" }}
                         </p>
 
                         <div class="mt-auto d-flex justify-content-between align-items-center pt-3 border-top">
@@ -660,7 +660,7 @@ securely with verified hosts on Routeless.{% endblock %}
     <div class="container">
         <div class="text-center mb-5">
             <div class="section-kicker">Simple Process</div>
-            <h2 class="fw-bold" style="color: var(--primary-color);">How Routeless Works</h2>
+            <h2 class="fw-bold" style="color: var(--primary-color);">How THEROUTELESS Works</h2>
             <p class="text-muted mb-0">A simple, trusted way to discover and book local experiences.</p>
         </div>
 
@@ -708,6 +708,7 @@ securely with verified hosts on Routeless.{% endblock %}
 </section>
 
 <!-- Recent Activity Feed -->
+{% comment %}
 {% if recent_activities %}
 <section id="recent-activity" class="py-5 bg-white border-top">
     <div class="container">
@@ -753,17 +754,18 @@ securely with verified hosts on Routeless.{% endblock %}
     </div>
 </section>
 {% endif %}
+{% endcomment %}
 
-<!-- Why Choose Routeless & Testimonials -->
+<!-- Why Choose THEROUTELESS & Testimonials -->
 <section class="bg-dark text-white" style="padding-top: 6rem; padding-bottom: 6rem;">
     <div class="container">
         <div class="row g-5 align-items-start">
 
-            <!-- Why Choose Routeless -->
+            <!-- Why Choose THEROUTELESS -->
             <div class="col-lg-5">
 
-                <div class="section-kicker text-warning">Why Routeless</div>
-                <h2 class="fw-bold mb-4 text-warning">Why Choose Routeless?</h2>
+                <div class="section-kicker text-warning">Why THEROUTELESS</div>
+                <h2 class="fw-bold mb-4 text-warning">Why Choose THEROUTELESS?</h2>
 
                 <p class="lead mb-5" style="color: rgba(255,255,255,0.75);">
                     We're building a trusted travel marketplace for meaningful, local-first journeys.
@@ -841,7 +843,7 @@ securely with verified hosts on Routeless.{% endblock %}
 
                     <div style="position: relative; z-index: 2; padding-top: 10px;">
                         <p class="fs-5 fst-italic mb-4 text-white" style="line-height: 1.6;">
-                            “Routeless made finding a homestay in Kasol incredibly easy.
+                            “THEROUTELESS made finding a homestay in Kasol incredibly easy.
                             The host was warm, the place was beautiful,
                             and the whole experience felt authentic.”
                         </p>
@@ -880,7 +882,7 @@ securely with verified hosts on Routeless.{% endblock %}
                     <div style="position: relative; z-index: 2; padding-top: 10px;">
                         <p class="fs-5 fst-italic mb-4 text-white" style="line-height: 1.6;">
                             “I usually struggle to find good trekking guides,
-                            but Routeless helped me book a perfect guided experience.
+                            but THEROUTELESS helped me book a perfect guided experience.
                             Smooth process and great communication.”
                         </p>
 
@@ -917,7 +919,7 @@ securely with verified hosts on Routeless.{% endblock %}
                 <div class="col-lg-7 mb-4 mb-lg-0">
                     <div class="section-kicker text-warning">For Creators & Hosts</div>
                     <h2 class="fw-bold mb-3 text-white">
-                        Become a Host on <span class="text-warning">Routeless</span>
+                        Become a Host on <span class="text-warning">THEROUTELESS</span>
                     </h2>
 
                     <p class="text-light opacity-75 fs-5 mb-0">
@@ -1484,5 +1486,14 @@ securely with verified hosts on Routeless.{% endblock %}
             }
         });
     });
+    
+    // Initialize animations
+    if (typeof AOS !== 'undefined') {
+        AOS.init({
+            once: true,
+            offset: 50,
+            duration: 500
+        });
+    }
 </script>
 {% endblock %}

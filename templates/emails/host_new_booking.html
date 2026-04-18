@@ -21,7 +21,7 @@
             <p><strong>Check-in:</strong> {{ booking.start_date|date:"F j, Y" }}</p>
             <p><strong>Check-out:</strong> {{ booking.end_date|date:"F j, Y" }}</p>
             <p><strong>Guests:</strong> {{ booking.guests }}</p>
-            <p><strong>Total Price:</strong> â‚¹{{ booking.total_price }}</p>
+            <p><strong>Total Price:</strong> &#8377;{{ booking.total_price }}</p>
             <p><strong>Message:</strong> {{ booking.message|default:"No special request provided." }}</p>
         </div>
 
@@ -30,7 +30,7 @@
         <a href="{{ site_url }}/host/dashboard/" class="btn">View Host Dashboard</a>
         
         <div class="footer">
-            &copy; {% now "Y" %} Routeless Travels. All rights reserved.
+            &copy; {% now "Y" %} THEROUTELESS Travels. All rights reserved.
         </div>
     </div>
 </body>

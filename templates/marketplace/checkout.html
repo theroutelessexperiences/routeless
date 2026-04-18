@@ -1,197 +1,199 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Checkout - Routeless{% endblock %}
+{% block title %}Checkout - THEROUTELESS{% endblock %}
 
 {% block meta_description %}
-Complete your booking payment securely on Routeless.
+Complete your booking payment securely on THEROUTELESS.
 {% endblock %}
 
 {% block content %}
-<div class="container" style="margin-top: 100px; min-height: 80vh;">
-    <div class="row g-4">
-        <!-- Left: Booking Summary -->
-        <div class="col-12 col-lg-7">
-            <div class="checkout-card p-4 p-md-4">
-                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
-                    <div>
-                        <div class="small text-muted fw-semibold mb-1">Booking Checkout</div>
-                        <h1 class="h3 fw-bold section-heading mb-0">Review & Pay</h1>
-                    </div>
-                    <span class="status-pill
-                        {% if payment.payment_status == 'success' %}status-paid
-                        {% elif payment.payment_status == 'failed' %}status-failed
-                        {% else %}status-created{% endif %}">
-                        {{ payment.payment_status|default:"Pending"|title }}
-                    </span>
-                </div>
-
-                <div class="experience-summary d-flex gap-3 align-items-start mb-4">
-                    <div class="experience-thumb-wrap">
-                        {% if booking.experience.main_image %}
-                        <img src="{{ booking.experience.main_image.url }}" alt="{{ booking.experience.title }}"
-                            class="experience-thumb" loading="lazy">
-                        {% else %}
-                        <div
-                            class="experience-thumb placeholder-thumb d-flex align-items-center justify-content-center">
-                            <i class="bi bi-image text-muted"></i>
-                        </div>
-                        {% endif %}
-                    </div>
-
-                    <div class="flex-grow-1">
-                        <h5 class="fw-bold mb-1">{{ booking.experience.title }}</h5>
-                        <div class="small text-muted mb-2">
-                            <i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ booking.experience.location }}
-                        </div>
-                        <span class="badge rounded-pill bg-light text-dark border">
-                            {{ booking.experience.category }}
-                        </span>
-                    </div>
-                </div>
-
-                <div class="summary-grid">
-                    <div class="summary-row">
-                        <span class="summary-label">Traveler</span>
-                        <span class="summary-value">{{ booking.traveler_name }}</span>
-                    </div>
-                    <div class="summary-row">
-                        <span class="summary-label">Email</span>
-                        <span class="summary-value text-break">{{ booking.traveler_email }}</span>
-                    </div>
-                    <div class="summary-row">
-                        <span class="summary-label">Phone</span>
-                        <span class="summary-value">{{ booking.traveler_phone }}</span>
-                    </div>
-                    <div class="summary-row">
-                        <span class="summary-label">Check-in</span>
-                        <span class="summary-value">{{ booking.check_in_date|date:"d M Y" }}</span>
-                    </div>
-                    <div class="summary-row">
-                        <span class="summary-label">Check-out</span>
-                        <span class="summary-value">{{ booking.check_out_date|date:"d M Y" }}</span>
-                    </div>
-                    <div class="summary-row">
-                        <span class="summary-label">Guests</span>
-                        <span class="summary-value">{{ booking.guests_count }}</span>
-                    </div>
-                    <div class="summary-row">
-                        <span class="summary-label">Booking status</span>
-                        <span class="summary-value">{{ booking.status }}</span>
-                    </div>
-                </div>
-
-                {% if booking.message %}
-                <div class="note-box mt-4">
-                    <div class="small fw-semibold mb-1" style="color: var(--primary-color);">
-                        <i class="bi bi-chat-left-text me-1"></i>Traveler Note
-                    </div>
-                    <p class="mb-0 small text-muted">{{ booking.message }}</p>
-                </div>
-                {% endif %}
+<div class="bg-light min-vh-100" style="padding-top: calc(var(--navbar-height) + 40px); padding-bottom: 80px;">
+    <div class="container">
+        
+        <div class="row mb-5" data-aos="fade-down">
+            <div class="col-12 text-center">
+                <span class="badge bg-white text-primary border border-primary-subtle rounded-pill px-3 py-2 mb-3 shadow-sm">
+                    <i class="bi bi-shield-lock me-1"></i> Secure Checkout
+                </span>
+                <h1 class="display-5 fw-bold text-dark mb-2">Review & Pay</h1>
+                <p class="text-muted">Almost there! Confirm your details and finalize your experience.</p>
             </div>
         </div>
 
-        <!-- Right: Payment Panel -->
-        <div class="col-12 col-lg-5">
-            <div class="checkout-card payment-panel p-4">
-                <div class="d-flex align-items-center justify-content-between mb-3">
-                    <h2 class="h5 fw-bold mb-0">Payment Summary</h2>
-                    <span class="secure-chip">
-                        <i class="bi bi-shield-lock me-1"></i>Secure
-                    </span>
-                </div>
-
-                <div class="price-panel mb-4">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <span class="text-muted">Total Amount</span>
-                        <span class="amount-lg">â‚¹{{ booking.total_price|floatformat:2 }}</span>
+        <div class="row g-5">
+            <!-- Left: Booking Summary -->
+            <div class="col-12 col-lg-7" data-aos="fade-right" data-aos-delay="100">
+                <div class="checkout-card glass-panel p-4 p-md-5 h-100">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-4 pb-3 border-bottom">
+                        <h2 class="h4 fw-bold mb-0">Booking Details</h2>
+                        <span class="status-pill
+                            {% if payment.payment_status == 'success' %}status-paid
+                            {% elif payment.payment_status == 'failed' %}status-failed
+                            {% else %}status-created{% endif %}">
+                            {{ payment.payment_status|default:"Pending"|title }}
+                        </span>
                     </div>
-                    <div class="small text-muted">
-                        Payment for booking #{{ booking.id }}
-                    </div>
-                </div>
 
-                {% if payment.payment_status == "success" %}
-                <div class="alert alert-success rounded-4 border-0">
-                    <div class="d-flex">
-                        <i class="bi bi-check-circle-fill me-2 mt-1"></i>
-                        <div>
-                            <div class="fw-semibold">Payment already completed</div>
-                            <div class="small">This booking has already been paid successfully.</div>
+                    <div class="experience-summary d-flex gap-4 align-items-center mb-5">
+                        <div class="experience-thumb-wrap shadow-sm flex-shrink-0">
+                            {% if booking.experience.main_image %}
+                            <img src="{{ booking.experience.main_image.url }}" alt="{{ booking.experience.title }}"
+                                class="experience-thumb rounded-4" loading="lazy">
+                            {% else %}
+                            <div class="experience-thumb rounded-4 placeholder-thumb d-flex align-items-center justify-content-center bg-secondary text-white">
+                                <i class="bi bi-image fs-1"></i>
+                            </div>
+                            {% endif %}
                         </div>
-                    </div>
-                </div>
 
-                <div class="d-grid gap-2">
-                    <a href="{% url 'booking_success' %}?booking_id={{ booking.id }}"
-                        class="btn btn-primary rounded-pill">
-                        View Booking Success
-                    </a>
-                    <a href="{% url 'my_bookings' %}" class="btn btn-outline-secondary rounded-pill">
-                        Go to My Bookings
-                    </a>
-                </div>
-
-                {% else %}
-                {% if payment.razorpay_order_id %}
-                <div class="real-mode-box mb-4">
-                    <div class="fw-semibold mb-1" style="color: var(--primary-color);">
-                        <i class="bi bi-credit-card-2-front me-1"></i>Razorpay Checkout
-                    </div>
-                    <p class="small text-muted mb-0">
-                        Click below to proceed with secure payment via Razorpay.
-                    </p>
-                </div>
-
-                <button id="rzp-pay-btn" type="button" class="btn btn-accent rounded-pill fw-bold py-2 w-100 mb-2">
-                    <i class="bi bi-lock-fill me-1"></i>Pay Now
-                </button>
-
-                <a href="{% url 'my_bookings' %}" class="btn btn-outline-secondary rounded-pill w-100">
-                    Pay Later
-                </a>
-
-                <!-- Hidden form for payment verification -->
-                <form id="payment-verify-form" method="post" action="{% url 'payments:checkout_verify' %}" class="d-none">
-                    {% csrf_token %}
-                    <input type="hidden" name="booking_id" value="{{ booking.id }}">
-                    <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id">
-                    <input type="hidden" name="razorpay_order_id" id="razorpay_order_id"
-                        value="{{ payment.razorpay_order_id }}">
-                    <input type="hidden" name="razorpay_signature" id="razorpay_signature">
-                </form>
-                {% else %}
-                <div class="alert alert-warning rounded-4 border-0 mb-4">
-                    <div class="d-flex">
-                        <i class="bi bi-exclamation-triangle-fill me-2 mt-1"></i>
-                        <div>
-                            <div class="fw-semibold">Payment order not ready</div>
-                            <div class="small">
-                                Payment gateway order could not be created yet. You can try again shortly.
+                        <div class="flex-grow-1">
+                            <span class="badge rounded-pill bg-light text-dark border mb-2">
+                                {{ booking.experience.category }}
+                            </span>
+                            <h4 class="fw-bold mb-1">{{ booking.experience.title }}</h4>
+                            <div class="text-muted small">
+                                <i class="bi bi-geo-alt-fill text-danger me-1"></i>{{ booking.experience.location }}
                             </div>
                         </div>
                     </div>
+
+                    <h5 class="fw-bold mb-3 text-dark">Traveler Information</h5>
+                    <div class="summary-grid bg-white rounded-4 p-4 shadow-sm mb-4 border">
+                        <div class="row g-3">
+                            <div class="col-sm-6">
+                                <div class="small text-muted mb-1">Name</div>
+                                <div class="fw-semibold">{{ booking.traveler_name }}</div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="small text-muted mb-1">Email</div>
+                                <div class="fw-semibold text-break">{{ booking.traveler_email }}</div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="small text-muted mb-1">Phone</div>
+                                <div class="fw-semibold">{{ booking.traveler_phone }}</div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="small text-muted mb-1">Guests</div>
+                                <div class="fw-semibold"><i class="bi bi-person me-1"></i>{{ booking.guests_count }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h5 class="fw-bold mb-3 text-dark">Trip Dates</h5>
+                    <div class="summary-grid bg-white rounded-4 p-4 shadow-sm mb-4 border d-flex justify-content-between align-items-center">
+                        <div>
+                            <div class="small text-muted mb-1">Check-in</div>
+                            <div class="fw-bold fs-5 text-primary">{{ booking.check_in_date|date:"d M Y" }}</div>
+                        </div>
+                        <div class="text-muted"><i class="bi bi-arrow-right fs-4"></i></div>
+                        <div class="text-end">
+                            <div class="small text-muted mb-1">Check-out</div>
+                            <div class="fw-bold fs-5 text-primary">{{ booking.check_out_date|date:"d M Y" }}</div>
+                        </div>
+                    </div>
+
+                    {% if booking.message %}
+                    <div class="note-box bg-light rounded-4 p-4 border mt-4 border-start border-4 border-accent">
+                        <div class="fw-bold mb-2">
+                            <i class="bi bi-chat-left-text me-2 text-accent"></i>Traveler Note
+                        </div>
+                        <p class="mb-0 text-muted fst-italic">"{{ booking.message }}"</p>
+                    </div>
+                    {% endif %}
                 </div>
+            </div>
 
-                <div class="d-grid gap-2">
-                    <a href="" class="btn btn-primary rounded-pill">
-                        Retry Checkout
-                    </a>
-                    <a href="{% url 'my_bookings' %}" class="btn btn-outline-secondary rounded-pill">
-                        Go to My Bookings
-                    </a>
-                </div>
-                {% endif %}
-                {% endif %}
+            <!-- Right: Payment Panel -->
+            <div class="col-12 col-lg-5" data-aos="fade-left" data-aos-delay="200">
+                <div class="checkout-card glass-panel payment-panel p-4 p-md-5">
+                    
+                    <div class="text-center mb-4">
+                        <h3 class="fw-bold mb-1">Total Payment</h3>
+                        <div class="display-4 fw-bold text-dark my-3">
+                            <sup class="fs-4 text-muted">₹</sup>{{ booking.total_price|floatformat:2 }}
+                        </div>
+                        <div class="small text-muted">Booking Reference: #{{ booking.id }}</div>
+                    </div>
 
-                <hr class="my-4">
+                    <hr class="mb-4 opacity-25">
 
-                <div class="small text-muted">
-                    <div class="mb-1"><i class="bi bi-shield-check me-1"></i>Your payment details are processed
-                        securely.</div>
-                    <div><i class="bi bi-receipt me-1"></i>Booking confirmation will appear after successful payment
-                        verification.</div>
+                    {% if payment.payment_status == "success" %}
+                    <div class="alert alert-success rounded-4 border-0 d-flex align-items-center shadow-sm p-4 mb-4">
+                        <i class="bi bi-check-circle-fill text-success fs-1 me-3"></i>
+                        <div>
+                            <h5 class="fw-bold mb-1">Payment Successful</h5>
+                            <div class="small">This booking is confirmed!</div>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-3">
+                        <a href="{% url 'booking_success' %}?booking_id={{ booking.id }}" class="btn btn-primary py-3 rounded-pill fw-bold fs-6">
+                            View Receipt
+                        </a>
+                        <a href="{% url 'my_bookings' %}" class="btn btn-outline-dark py-3 rounded-pill fw-bold fs-6">
+                            My Dashboard
+                        </a>
+                    </div>
+
+                    {% else %}
+                    
+                        {% if payment.razorpay_order_id %}
+                        
+                        <div class="d-flex align-items-center justify-content-between p-3 rounded-4 bg-white border mb-4">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-credit-card-2-front text-primary fs-3 me-3"></i>
+                                <div>
+                                    <div class="fw-bold">Razorpay Secure</div>
+                                    <div class="small text-muted">Cards, UPI, NetBanking</div>
+                                </div>
+                            </div>
+                            <i class="bi bi-shield-check text-success fs-4"></i>
+                        </div>
+
+                        <button id="rzp-pay-btn" type="button" class="btn btn-accent rounded-pill fw-bold py-3 fs-5 w-100 mb-3 shadow animated-btn">
+                            <i class="bi bi-lock-fill me-2"></i>Pay Securely
+                        </button>
+
+                        <a href="{% url 'my_bookings' %}" class="btn btn-light border py-3 rounded-pill w-100 fw-bold">
+                            Review Later
+                        </a>
+
+                        <!-- Hidden form for payment verification -->
+                        <form id="payment-verify-form" method="post" action="{% url 'payments:checkout_verify' %}" class="d-none">
+                            {% csrf_token %}
+                            <input type="hidden" name="booking_id" value="{{ booking.id }}">
+                            <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id">
+                            <input type="hidden" name="razorpay_order_id" id="razorpay_order_id" value="{{ payment.razorpay_order_id }}">
+                            <input type="hidden" name="razorpay_signature" id="razorpay_signature">
+                        </form>
+                        
+                        {% else %}
+                        <div class="alert alert-warning rounded-4 border-0 mb-4 shadow-sm p-4 text-center">
+                            <i class="bi bi-exclamation-triangle-fill fs-1 text-warning mb-2 d-block"></i>
+                            <h5 class="fw-bold">Order Generation Delayed</h5>
+                            <div class="small text-muted">
+                                We couldn't generate a secure payment link right now. Please try again or return later.
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-3">
+                            <a href="" class="btn btn-primary py-3 rounded-pill fw-bold">
+                                Retry Connection
+                            </a>
+                            <a href="{% url 'my_bookings' %}" class="btn btn-outline-dark py-3 rounded-pill fw-bold">
+                                Return to Dashboard
+                            </a>
+                        </div>
+                        {% endif %}
+                        
+                    {% endif %}
+
+                    <div class="text-center mt-5">
+                        <div class="small text-muted">
+                            <i class="bi bi-lock text-success me-1"></i> 256-bit SSL encrypted checkout
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -206,12 +208,17 @@ Complete your booking payment securely on Routeless.
         if (!payBtn) return;
 
         payBtn.addEventListener("click", function () {
+            payBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Securely Connecting...';
+            payBtn.classList.add('disabled');
+            
             const isDemoMode = "{{ is_demo_mode|yesno:'true,false' }}" === "true";
             if (isDemoMode) {
-                document.getElementById("razorpay_payment_id").value = "demo_payment_" + Math.random().toString(36).substring(7);
-                document.getElementById("razorpay_order_id").value = "{{ payment.razorpay_order_id|default:''|escapejs }}";
-                document.getElementById("razorpay_signature").value = "demo_signature";
-                document.getElementById("payment-verify-form").submit();
+                setTimeout(() => {
+                    document.getElementById("razorpay_payment_id").value = "demo_payment_" + Math.random().toString(36).substring(7);
+                    document.getElementById("razorpay_order_id").value = "{{ payment.razorpay_order_id|default:''|escapejs }}";
+                    document.getElementById("razorpay_signature").value = "demo_signature";
+                    document.getElementById("payment-verify-form").submit();
+                }, 1000);
                 return;
             }
 
@@ -219,10 +226,11 @@ Complete your booking payment securely on Routeless.
                 key: "{{ razorpay_key_id|escapejs }}",
                 amount: "{{ amount }}",
                 currency: "INR",
-                name: "Routeless",
+                name: "THEROUTELESS",
                 description: "Booking Payment #{{ booking.id }}",
                 order_id: "{{ payment.razorpay_order_id|default:''|escapejs }}",
                 handler: function (response) {
+                    payBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Verifying Payment...';
                     document.getElementById("razorpay_payment_id").value = response.razorpay_payment_id || "";
                     document.getElementById("razorpay_order_id").value = response.razorpay_order_id || "";
                     document.getElementById("razorpay_signature").value = response.razorpay_signature || "";
@@ -233,17 +241,20 @@ Complete your booking payment securely on Routeless.
                     email: "{{ booking.traveler_email|default:''|escapejs }}",
                     contact: "{{ booking.traveler_phone|default:''|escapejs }}"
                 },
-                theme: {
-                    color: "#2b6777"
-                },
+                theme: { color: "#0f172a" },
                 modal: {
                     ondismiss: function () {
-                        // Optional: user closed modal
+                        payBtn.innerHTML = '<i class="bi bi-lock-fill me-2"></i>Pay Securely';
+                        payBtn.classList.remove('disabled');
                     }
                 }
             };
 
             const rzp = new Razorpay(options);
+            rzp.on('payment.failed', function (response){
+                 payBtn.innerHTML = '<i class="bi bi-lock-fill me-2"></i>Pay Securely';
+                 payBtn.classList.remove('disabled');
+            });
             rzp.open();
         });
     })();
@@ -254,169 +265,56 @@ Complete your booking payment securely on Routeless.
 {% block extra_css %}
 <style>
     .checkout-card {
-        background: #fff;
-        border: 1px solid rgba(15, 23, 42, 0.06);
-        border-radius: 1rem;
-        box-shadow: 0 10px 28px rgba(43, 103, 119, 0.07);
+        border-radius: 24px;
     }
 
     .payment-panel {
         position: sticky;
-        top: 100px;
+        top: calc(var(--navbar-height) + 40px);
     }
 
     .status-pill {
         display: inline-flex;
         align-items: center;
         border-radius: 999px;
-        padding: 0.4rem 0.75rem;
-        font-size: 0.82rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
         font-weight: 700;
-        border: 1px solid transparent;
+        text-transform: uppercase;
+        letter-spacing: 1px;
     }
 
-    .status-created {
-        background: rgba(59, 130, 246, 0.1);
-        color: #1d4ed8;
-        border-color: rgba(59, 130, 246, 0.15);
-    }
+    .status-created { background: rgba(59, 130, 246, 0.1); color: #1d4ed8; }
+    .status-paid { background: rgba(16, 185, 129, 0.15); color: #047857; }
+    .status-failed { background: rgba(239, 68, 68, 0.1); color: #b91c1c; }
 
-    .status-paid {
-        background: rgba(16, 185, 129, 0.12);
-        color: #047857;
-        border-color: rgba(16, 185, 129, 0.18);
+    .animated-btn {
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        text-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
-
-    .status-failed {
-        background: rgba(239, 68, 68, 0.1);
-        color: #b91c1c;
-        border-color: rgba(239, 68, 68, 0.15);
-    }
-
-    .experience-summary {
-        background: #fbfdff;
-        border: 1px solid rgba(43, 103, 119, 0.07);
-        border-radius: 0.95rem;
-        padding: 0.85rem;
-    }
-
-    .experience-thumb-wrap {
-        flex: 0 0 110px;
+    .animated-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 28px rgba(245, 158, 11, 0.4) !important;
     }
 
     .experience-thumb {
-        width: 110px;
-        height: 82px;
+        width: 140px;
+        height: 140px;
         object-fit: cover;
-        border-radius: 0.75rem;
-        display: block;
-        border: 1px solid rgba(15, 23, 42, 0.06);
-    }
-
-    .placeholder-thumb {
-        background: #f8fafc;
-        font-size: 1.5rem;
-    }
-
-    .summary-grid {
-        display: grid;
-        gap: 0.65rem;
-    }
-
-    .summary-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 1rem;
-        padding: 0.55rem 0.25rem;
-        border-bottom: 1px dashed rgba(15, 23, 42, 0.08);
-    }
-
-    .summary-row:last-child {
-        border-bottom: none;
-    }
-
-    .summary-label {
-        color: var(--text-muted);
-        font-size: 0.92rem;
-    }
-
-    .summary-value {
-        font-weight: 600;
-        color: var(--text-dark);
-        text-align: right;
-    }
-
-    .note-box {
-        background: rgba(43, 103, 119, 0.04);
-        border: 1px solid rgba(43, 103, 119, 0.08);
-        border-radius: 0.85rem;
-        padding: 0.85rem;
-    }
-
-    .secure-chip {
-        display: inline-flex;
-        align-items: center;
-        background: rgba(16, 185, 129, 0.08);
-        color: #047857;
-        border: 1px solid rgba(16, 185, 129, 0.15);
-        border-radius: 999px;
-        padding: 0.35rem 0.65rem;
-        font-size: 0.78rem;
-        font-weight: 700;
-    }
-
-    .price-panel {
-        background: #fbfdff;
-        border: 1px solid rgba(43, 103, 119, 0.07);
-        border-radius: 0.95rem;
-        padding: 1rem;
-    }
-
-    .amount-lg {
-        font-size: 1.35rem;
-        font-weight: 800;
-        color: var(--primary-color);
-    }
-
-    .demo-mode-box,
-    .real-mode-box {
-        border-radius: 0.95rem;
-        padding: 0.9rem;
-        border: 1px solid rgba(15, 23, 42, 0.06);
-        background: #fff;
-    }
-
-    .demo-mode-box {
-        background: rgba(242, 169, 0, 0.08);
-        border-color: rgba(242, 169, 0, 0.18);
     }
 
     @media (max-width: 991.98px) {
         .payment-panel {
             position: static;
-            top: auto;
         }
     }
-
     @media (max-width: 575.98px) {
-        .experience-thumb-wrap {
-            flex-basis: 92px;
-        }
-
-        .experience-thumb {
-            width: 92px;
-            height: 72px;
-        }
-
-        .summary-row {
-            flex-direction: column;
-            gap: 0.25rem;
-        }
-
-        .summary-value {
-            text-align: left;
-        }
+        .experience-summary { flex-direction: column; text-align: center; }
+        .experience-thumb-wrap { margin: 0 auto; }
+        .experience-thumb { width: 100%; height: 200px; }
+        .summary-grid.d-flex { flex-direction: column; gap: 1rem; text-align: center; }
+        .bi-arrow-right { display: none; }
     }
 </style>
+<script>AOS.init();</script>
 {% endblock %}

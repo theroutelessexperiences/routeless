@@ -1,17 +1,18 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Host Dashboard - Routeless{% endblock %}
+{% block title %}Host Dashboard - THEROUTELESS{% endblock %}
 
 {% block meta_description %}
-Manage your hosted experiences, track bookings, update booking status, and monitor earnings on Routeless.
+Manage your hosted experiences, track bookings, update booking status, and monitor earnings on THEROUTELESS.
 {% endblock %}
 
 {% block content %}
-<div class="container" style="margin-top: 100px; min-height: 80vh;">
+<div class="bg-light min-vh-100" style="padding-top: calc(var(--navbar-height) + 40px); padding-bottom: 80px;">
+<div class="container">
 
     <!-- Header -->
-    <div class="host-hero mb-4">
+    <div class="host-hero mb-4 glass-panel" data-aos="fade-down">
         <div class="row g-3 align-items-center">
             <div class="col-12 col-lg-8">
                 <div class="d-flex align-items-center gap-3 mb-2">
@@ -60,51 +61,51 @@ Manage your hosted experiences, track bookings, update booking status, and monit
 
     <!-- Analytics -->
     <div class="row g-3 mb-4">
-        <div class="col-6 col-md-4 col-xl-2">
-            <div class="stat-card">
+        <div class="col-6 col-md-4 col-xl-2" data-aos="fade-up" data-aos-delay="0">
+            <div class="stat-card glass-panel text-center">
                 <div class="stat-icon bg-soft-primary"><i class="bi bi-grid-3x3-gap"></i></div>
                 <div class="stat-label">Listings</div>
                 <div class="stat-value">{{ analytics.total_listings|default:0 }}</div>
             </div>
         </div>
 
-        <div class="col-6 col-md-4 col-xl-2">
-            <div class="stat-card">
+        <div class="col-6 col-md-4 col-xl-2" data-aos="fade-up" data-aos-delay="0">
+            <div class="stat-card glass-panel text-center">
                 <div class="stat-icon bg-soft-indigo"><i class="bi bi-calendar-check"></i></div>
                 <div class="stat-label">Bookings</div>
                 <div class="stat-value">{{ analytics.total_bookings|default:0 }}</div>
             </div>
         </div>
 
-        <div class="col-6 col-md-4 col-xl-2">
-            <div class="stat-card">
+        <div class="col-6 col-md-4 col-xl-2" data-aos="fade-up" data-aos-delay="0">
+            <div class="stat-card glass-panel text-center">
                 <div class="stat-icon bg-soft-success"><i class="bi bi-patch-check"></i></div>
                 <div class="stat-label">Confirmed</div>
                 <div class="stat-value">{{ analytics.confirmed_bookings|default:0 }}</div>
             </div>
         </div>
 
-        <div class="col-6 col-md-4 col-xl-2">
-            <div class="stat-card">
+        <div class="col-6 col-md-4 col-xl-2" data-aos="fade-up" data-aos-delay="0">
+            <div class="stat-card glass-panel text-center">
                 <div class="stat-icon bg-soft-info"><i class="bi bi-flag"></i></div>
                 <div class="stat-label">Completed</div>
                 <div class="stat-value">{{ analytics.completed_bookings|default:0 }}</div>
             </div>
         </div>
 
-        <div class="col-6 col-md-4 col-xl-2">
-            <div class="stat-card">
+        <div class="col-6 col-md-4 col-xl-2" data-aos="fade-up" data-aos-delay="0">
+            <div class="stat-card glass-panel text-center">
                 <div class="stat-icon bg-soft-warning"><i class="bi bi-hourglass-split"></i></div>
                 <div class="stat-label">Upcoming</div>
                 <div class="stat-value">{{ analytics.upcoming_checkins|default:0 }}</div>
             </div>
         </div>
 
-        <div class="col-6 col-md-4 col-xl-2">
-            <div class="stat-card">
+        <div class="col-6 col-md-4 col-xl-2" data-aos="fade-up" data-aos-delay="0">
+            <div class="stat-card glass-panel text-center">
                 <div class="stat-icon bg-soft-accent"><i class="bi bi-currency-rupee"></i></div>
                 <div class="stat-label">Earnings</div>
-                <div class="stat-value stat-money">â‚¹{{ analytics.total_earnings|default:0|floatformat:0 }}</div>
+                <div class="stat-value stat-money">&#8377;{{ analytics.total_earnings|default:0|floatformat:0 }}</div>
             </div>
         </div>
     </div>
@@ -210,7 +211,7 @@ Manage your hosted experiences, track bookings, update booking status, and monit
 
         <!-- Trust & Reputation Panel -->
         <div class="col-12 col-lg-12">
-            <div class="panel-card mt-0">
+            <div class="panel-card glass-panel mt-0">
                 <div class="panel-card-header">
                     <h5 class="mb-0 fw-bold">
                         <i class="bi bi-shield-check me-2"></i>Trust & Reputation
@@ -248,7 +249,7 @@ Manage your hosted experiences, track bookings, update booking status, and monit
     <!-- Analytics Charts Row -->
     <div class="row g-4 mb-4">
         <div class="col-12 col-lg-6">
-            <div class="panel-card h-100">
+            <div class="panel-card glass-panel h-100">
                 <div class="panel-card-header">
                     <h5 class="mb-0 fw-bold"><i class="bi bi-graph-up me-2"></i>Bookings Trend</h5>
                 </div>
@@ -258,7 +259,7 @@ Manage your hosted experiences, track bookings, update booking status, and monit
             </div>
         </div>
         <div class="col-12 col-lg-6">
-            <div class="panel-card h-100">
+            <div class="panel-card glass-panel h-100">
                 <div class="panel-card-header">
                     <h5 class="mb-0 fw-bold"><i class="bi bi-cash-stack me-2"></i>Revenue Trend</h5>
                 </div>
@@ -270,7 +271,7 @@ Manage your hosted experiences, track bookings, update booking status, and monit
     </div>
 
     <!-- Listings -->
-    <div class="panel-card mb-4">
+    <div class="panel-card glass-panel mb-4">
         <div class="panel-card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
             <h5 class="mb-0 fw-bold">
                 <i class="bi bi-collection me-2"></i>My Experiences
@@ -325,7 +326,7 @@ Manage your hosted experiences, track bookings, update booking status, and monit
                         <div class="d-flex justify-content-between align-items-center mt-auto pt-2 border-top">
                             <div class="small text-muted">Price</div>
                             <div class="fw-bold" style="color: var(--primary-color);">
-                                â‚¹{{ listing.price_per_person }}/person</div>
+                                &#8377;{{ listing.price_per_person }}/person</div>
                         </div>
                     </div>
                 </div>
@@ -345,7 +346,7 @@ Manage your hosted experiences, track bookings, update booking status, and monit
     </div>
 
     <!-- Dynamic Pricing Rules -->
-    <div class="panel-card mb-4">
+    <div class="panel-card glass-panel mb-4">
         <div class="panel-card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
             <h5 class="mb-0 fw-bold">
                 <i class="bi bi-tags me-2"></i>Dynamic Pricing Rules
@@ -413,7 +414,7 @@ Manage your hosted experiences, track bookings, update booking status, and monit
     </div>
 
     <!-- Bookings Management -->
-    <div class="panel-card mb-5">
+    <div class="panel-card glass-panel mb-5">
         <div class="panel-card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
             <h5 class="mb-0 fw-bold">
                 <i class="bi bi-calendar2-week me-2"></i>Booking Management
@@ -466,7 +467,7 @@ Manage your hosted experiences, track bookings, update booking status, and monit
                                 {{ booking.user.username }}
                                 {% else %}Guest{% endif %}
                                 {% if booking.traveler_email %}
-                                <span class="mx-1">â€¢</span><i class="bi bi-envelope me-1"></i>
+                                <span class="mx-1">&bull;</span><i class="bi bi-envelope me-1"></i>
                                 {{ booking.traveler_email }}
                                 {% endif %}
                             </p>
@@ -567,7 +568,7 @@ Manage your hosted experiences, track bookings, update booking status, and monit
 
     <!-- Calendar Tab -->
     <div class="tab-pane fade" id="calendar" role="tabpanel" aria-labelledby="calendar-tab">
-        <div class="panel-card mb-4">
+        <div class="panel-card glass-panel mb-4">
             <div class="panel-card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0 fw-bold">
                     <i class="bi bi-calendar3 me-2"></i>Availability Calendar
@@ -1120,8 +1121,8 @@ document.addEventListener("DOMContentLoaded", function () {
             datasets: [{
                 label: 'Confirmed & Completed Bookings',
                 data: chartData.bookings,
-                borderColor: '#2b6777',
-                backgroundColor: 'rgba(43, 103, 119, 0.1)',
+                borderColor: '#0f172a',
+                backgroundColor: 'rgba(15, 23, 42, 0.1)',
                 tension: 0.3,
                 fill: true
             }]
@@ -1136,12 +1137,17 @@ document.addEventListener("DOMContentLoaded", function () {
             datasets: [{
                 label: 'Revenue (₹)',
                 data: chartData.revenue,
-                backgroundColor: '#f2a900',
+                backgroundColor: '#f59e0b',
                 borderRadius: 4
             }]
         },
         options: { responsive: true, maintainAspectRatio: false }
     });
 });
+
+// Initialize animations
+if (typeof AOS !== 'undefined') {
+    AOS.init({ once: true, offset: 50, duration: 500 });
+}
 </script>
 {% endblock %}
