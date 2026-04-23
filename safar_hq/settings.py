@@ -395,8 +395,8 @@ LOGGING = {
 # Unfold Admin Configuration
 # -------------------------------------------------------------------
 UNFOLD = {
-    "SITE_TITLE": "THEROUTELESS Platform",
-    "SITE_HEADER": "THEROUTELESS Admin Dashboard",
+    "SITE_TITLE": "The Routeless Platform",
+    "SITE_HEADER": "The Routeless Admin Dashboard",
     "SITE_URL": "/",
     "SITE_SYMBOL": "explore",
     "SHOW_HISTORY": True,

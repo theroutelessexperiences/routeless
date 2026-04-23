@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Sign In with {{ provider.name }} — The Routeless{% endblock %}
+
+{% block content %}
+<section class="py-5" style="min-height: 70vh;">
+    <div class="container d-flex justify-content-center align-items-center" style="min-height: 60vh;">
+        <div class="glass-panel rounded-4 p-4 p-md-5 shadow-lg text-center" style="max-width: 480px; width: 100%;">
+
+            <!-- Provider Icon -->
+            <div class="mb-4">
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle"
+                    style="width: 72px; height: 72px; background: linear-gradient(135deg, #4285F4, #34A853, #FBBC05, #EA4335);">
+                    <i class="bi bi-google text-white" style="font-size: 2rem;"></i>
+                </div>
+            </div>
+
+            <h2 class="fw-bold mb-2">Continue with {{ provider.name }}</h2>
+            <p class="text-muted mb-4">
+                You're about to sign in to <strong>The Routeless</strong> using your <strong>{{ provider.name }}</strong> account.
+            </p>
+
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-accent w-100 py-3 fw-bold fs-5 rounded-pill mb-3">
+                    <i class="bi bi-box-arrow-in-right me-2"></i>Continue
+                </button>
+            </form>
+
+            <p class="small text-muted mb-0">
+                By continuing, you agree to our
+                <a href="{% url 'terms_of_service' %}" class="text-accent">Terms of Service</a> and
+                <a href="{% url 'privacy_policy' %}" class="text-accent">Privacy Policy</a>.
+            </p>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    section {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    }
+
+    .glass-panel {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    if (typeof AOS !== 'undefined') { AOS.init(); }
+</script>
+{% endblock %}

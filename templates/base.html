@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{% block title %}THEROUTELESS{% endblock %}</title>
+    <title>{% block title %}THE ROUTELESS{% endblock %}</title>
 
     <!-- SEO Essentials -->
     <meta name="description"
@@ -14,9 +14,9 @@
 
     <!-- Open Graph Default Tags -->
     {% block og_tags %}
-    <meta property="og:site_name" content="THEROUTELESS" />
+    <meta property="og:site_name" content="THE ROUTELESS" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="THEROUTELESS" />
+    <meta property="og:title" content="THE ROUTELESS" />
     <meta property="og:description"
         content="Authentic local travel experiences &mdash; homestays, adventures, and meaningful journeys." />
     <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{{ request.path }}" />
@@ -32,7 +32,9 @@
     <!-- Optional Google Font -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@400;600;700;800;900&display=swap"
+        rel="stylesheet">
 
     <!-- AOS Animations for Scroll -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
@@ -40,19 +42,23 @@
 
     <style>
         :root {
-            --primary-color: #0f172a;      /* Rich dark slate instead of flat teal */
+            --primary-color: #0f172a;
+            /* Rich dark slate instead of flat teal */
             --primary-light: #1e293b;
-            --accent-color: #f59e0b;       /* Warmer premium amber */
+            --accent-color: #f59e0b;
+            /* Warmer premium amber */
             --accent-hover: #d97706;
             --dark-color: #020617;
             --muted-color: #64748b;
             --light-bg: #f8fafc;
             --surface-color: #ffffff;
-            --card-radius: 20px;           /* Softer, more modern rounded corners */
+            --card-radius: 20px;
+            /* Softer, more modern rounded corners */
             --navbar-height: 80px;
         }
 
-        html, body {
+        html,
+        body {
             height: 100%;
             scroll-behavior: smooth;
         }
@@ -65,16 +71,34 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        h1, h2, h3, h4, h5, h6, .navbar-brand, .display-1, .display-2, .display-3, .display-4 {
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        .navbar-brand,
+        .display-1,
+        .display-2,
+        .display-3,
+        .display-4 {
             font-family: 'Outfit', sans-serif;
             font-weight: 700;
             letter-spacing: -0.02em;
         }
 
-        a { text-decoration: none; }
+        a {
+            text-decoration: none;
+        }
 
-        .text-accent { color: var(--accent-color) !important; }
-        .bg-accent { background-color: var(--accent-color) !important; color: #fff !important; }
+        .text-accent {
+            color: var(--accent-color) !important;
+        }
+
+        .bg-accent {
+            background-color: var(--accent-color) !important;
+            color: #fff !important;
+        }
 
         .btn-accent {
             background-color: var(--accent-color);
@@ -86,7 +110,8 @@
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .btn-accent:hover, .btn-accent:focus {
+        .btn-accent:hover,
+        .btn-accent:focus {
             background-color: var(--accent-hover);
             border-color: var(--accent-hover);
             color: #fff;
@@ -103,7 +128,8 @@
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        .btn-primary:hover, .btn-primary:focus {
+        .btn-primary:hover,
+        .btn-primary:focus {
             background-color: var(--primary-light);
             border-color: var(--primary-light);
             transform: translateY(-2px);
@@ -432,7 +458,7 @@
             <!-- Brand -->
             <a class="navbar-brand" href="{% url 'home' %}">
                 <span class="brand-mark">R</span>
-                <span>THEROUTELESS</span>
+                <span>The Routeless</span>
             </a>
 
             <!-- Right-side quick actions on mobile -->
@@ -497,20 +523,30 @@
 
                     <!-- Notification Bell Dropdown -->
                     <div class="dropdown me-2">
-                        <button class="btn btn-outline-secondary rounded-circle position-relative" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="notificationDropdownBtn">
+                        <button class="btn btn-outline-secondary rounded-circle position-relative" type="button"
+                            data-bs-toggle="dropdown" aria-expanded="false" id="notificationDropdownBtn">
                             <i class="bi bi-bell"></i>
-                            <span id="notificationBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" style="font-size: 0.65em;">
+                            <span id="notificationBadge"
+                                class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none"
+                                style="font-size: 0.65em;">
                                 0
                             </span>
                         </button>
-                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4 p-2" style="width: 320px; max-height: 400px; overflow-y: auto;" id="notificationMenuContent">
-                            <li><h6 class="dropdown-header text-dark fw-bold">Notifications</h6></li>
-                            <div id="notificationListPreview">
-                                <li><span class="dropdown-item text-muted small text-center">No new notifications</span></li>
-                            </div>
-                            <li><hr class="dropdown-divider my-2"></li>
+                        <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-4 p-2"
+                            style="width: 320px; max-height: 400px; overflow-y: auto;" id="notificationMenuContent">
                             <li>
-                                <a class="dropdown-item text-center text-primary fw-semibold" href="{% url 'notifications' %}">
+                                <h6 class="dropdown-header text-dark fw-bold">Notifications</h6>
+                            </li>
+                            <div id="notificationListPreview">
+                                <li><span class="dropdown-item text-muted small text-center">No new notifications</span>
+                                </li>
+                            </div>
+                            <li>
+                                <hr class="dropdown-divider my-2">
+                            </li>
+                            <li>
+                                <a class="dropdown-item text-center text-primary fw-semibold"
+                                    href="{% url 'notifications' %}">
                                     View All Notifications
                                 </a>
                             </li>
@@ -592,7 +628,7 @@
     <div class="offcanvas offcanvas-end" tabindex="-1" id="mobileNav" aria-labelledby="mobileNavLabel">
         <div class="offcanvas-header border-bottom">
             <h5 class="offcanvas-title fw-bold" id="mobileNavLabel">
-                <span class="brand-mark me-2">R</span> THEROUTELESS
+                <span class="brand-mark me-2">R</span> The Routeless
             </h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
@@ -797,7 +833,7 @@
         document.addEventListener("DOMContentLoaded", function () {
             const badge = document.getElementById("notificationBadge");
             const previewList = document.getElementById("notificationListPreview");
-            
+
             // Helper to render preview items
             function addPreviewItem(item) {
                 const html = `
@@ -816,7 +852,7 @@
                     badge.textContent = '0';
                 }
                 previewList.insertAdjacentHTML('afterbegin', html);
-                
+
                 // Update badge count
                 let currentCount = parseInt(badge.textContent) || 0;
                 currentCount++;
@@ -854,15 +890,15 @@
                 wsProtocol + '//' + window.location.host + '/ws/notifications/'
             );
 
-            notifySocket.onmessage = function(e) {
+            notifySocket.onmessage = function (e) {
                 const data = JSON.parse(e.data);
                 addPreviewItem(data);
-                
+
                 // Optional: show a browser toast or alert if they aren't looking at the menu
                 console.log("New realtime notification received:", data.title);
             };
 
-            notifySocket.onclose = function(e) {
+            notifySocket.onclose = function (e) {
                 console.error('Notification socket closed unexpectedly');
             };
         });

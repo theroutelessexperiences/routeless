@@ -801,7 +801,7 @@ def signup_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            messages.success(request, "Registration successful. Welcome to THEROUTELESS!")
+            messages.success(request, "Registration successful. Welcome to The Routeless!")
 
             next_url = request.GET.get("next") or request.POST.get("next")
             url_is_safe = url_has_allowed_host_and_scheme(
@@ -1077,7 +1077,7 @@ def host_dashboard(request):
                         f"Hi {booking.traveler_name or booking.user.username},\n\n"
                         f"We hope you enjoyed your trip to {booking.experience.title}!\n"
                         f"Please take a moment to leave a review for your host:\n{review_url}\n\n"
-                        "Thanks,\nThe THEROUTELESS Team"
+                        "Thanks,\nThe The Routeless Team"
                     ),
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     recipient_list=[booking.traveler_email or booking.user.email],
