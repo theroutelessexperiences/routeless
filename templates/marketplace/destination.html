@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Explore {{ location.name }} - The Routeless Experiences{% endblock %}
+{% block title %}Explore {{ location.name }} - THEROUTELESS Experiences{% endblock %}
 
 {% block meta_description %}
 Discover {{ total_experiences }} unique local experiences in {{ location.name }}, {{ location.state }}. Book tours, homestays, and adventures starting from &#8377;{{ avg_price }} per person.
@@ -9,7 +9,7 @@ Discover {{ total_experiences }} unique local experiences in {{ location.name }}
 
 {% block extra_head %}
 <!-- Open Graph tags for social sharing -->
-<meta property="og:title" content="Top Experiences in {{ location.name }} | The Routeless">
+<meta property="og:title" content="Top Experiences in {{ location.name }} | THEROUTELESS">
 <meta property="og:description" content="Discover {{ total_experiences }} amazing things to do in {{ location.name }}.">
 {% if location.image %}
 <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{{ location.image.url }}">

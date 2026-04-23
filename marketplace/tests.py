@@ -33,7 +33,7 @@ class MarketplaceE2ETests(TestCase):
     def test_homepage_loads(self):
         response = self.client.get(reverse('home'))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'The Routeless')
+        self.assertContains(response, 'THEROUTELESS')
         
     def test_listing_list_and_search(self):
         response = self.client.get(reverse('listing_list'))

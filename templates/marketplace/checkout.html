@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Checkout - The Routeless{% endblock %}
+{% block title %}Checkout - THEROUTELESS{% endblock %}
 
 {% block meta_description %}
-Complete your booking payment securely on The Routeless.
+Complete your booking payment securely on THEROUTELESS.
 {% endblock %}
 
 {% block content %}
@@ -226,7 +226,7 @@ Complete your booking payment securely on The Routeless.
                 key: "{{ razorpay_key_id|escapejs }}",
                 amount: "{{ amount }}",
                 currency: "INR",
-                name: "The Routeless",
+                name: "THEROUTELESS",
                 description: "Booking Payment #{{ booking.id }}",
                 order_id: "{{ payment.razorpay_order_id|default:''|escapejs }}",
                 handler: function (response) {
