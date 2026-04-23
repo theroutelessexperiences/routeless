@@ -134,5 +134,10 @@ Manage your THEROUTELESS profile, personal details, and host information.
         .profile-hero { padding: 1rem; }
     }
 </style>
-<script>AOS.init();</script>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    if (typeof AOS !== 'undefined') { AOS.init(); }
+</script>
 {% endblock %}

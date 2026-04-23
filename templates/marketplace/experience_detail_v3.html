@@ -170,7 +170,7 @@
                             <div class="info-tile">
                                 <div class="info-icon"><i class="bi bi-people"></i></div>
                                 <div>
-                                    <div class="info-label">Max Guests</div>
+                                    <div class="info-label">Max Persons</div>
                                     <div class="info-value">{{ listing.max_guests }}</div>
                                 </div>
                             </div>
@@ -409,7 +409,7 @@
 
                 <div id="bookingAvailabilityAlert" class="alert alert-danger d-none py-2 px-3 small mt-3 mb-0"
                     role="alert"></div>
-                <form id="bookingForm" method="post" action="">
+                <form id="bookingForm" method="post" action="" enctype="multipart/form-data">
                     {% csrf_token %}
 
                     <div class="row g-3">
@@ -432,11 +432,11 @@
                         </div>
 
                         <div class="col-12">
-                            <label for="guests" class="form-label fw-semibold small">Guests</label>
+                            <label for="guests" class="form-label fw-semibold small">Persons</label>
 
                             <div class="guest-stepper" data-max-guests="{{ listing.max_guests }}">
                                 <button type="button" class="guest-stepper-btn" id="guestsMinus"
-                                    aria-label="Decrease guests">
+                                    aria-label="Decrease persons">
                                     <i class="bi bi-dash-lg"></i>
                                 </button>
 
@@ -444,20 +444,34 @@
                                     <input type="number" class="guest-stepper-input" id="guests" name="guests" min="1"
                                         max="{{ listing.max_guests }}" step="1" value="1" required inputmode="numeric"
                                         aria-describedby="guestsHelp">
-                                    <div class="guest-stepper-label" id="guestCountLabel">1 guest</div>
+                                    <div class="guest-stepper-label" id="guestCountLabel">1 person</div>
                                 </div>
 
                                 <button type="button" class="guest-stepper-btn" id="guestsPlus"
-                                    aria-label="Increase guests">
+                                    aria-label="Increase persons">
                                     <i class="bi bi-plus-lg"></i>
                                 </button>
                             </div>
 
                             <div id="guestsHelp" class="small text-muted mt-1">
-                                Maximum {{ listing.max_guests }} guest{{ listing.max_guests|pluralize }} allowed
+                                Maximum {{ listing.max_guests }} person{{ listing.max_guests|pluralize }} allowed
                             </div>
                         </div>
 
+                        <!-- Booking For Toggle -->
+                        <div class="col-12">
+                            <label class="form-label fw-semibold small">Booking for</label>
+                            <div class="btn-group w-100" role="group" aria-label="Booking for self or someone else">
+                                <input type="radio" class="btn-check" name="booking_for" id="bookingSelf" value="self" checked>
+                                <label class="btn btn-outline-primary rounded-start-pill" for="bookingSelf">
+                                    <i class="bi bi-person-fill me-1"></i>Myself
+                                </label>
+                                <input type="radio" class="btn-check" name="booking_for" id="bookingOther" value="other">
+                                <label class="btn btn-outline-primary rounded-end-pill" for="bookingOther">
+                                    <i class="bi bi-people-fill me-1"></i>Someone else
+                                </label>
+                            </div>
+                        </div>
 
                         <div class="col-12">
                             <label for="traveler_name" class="form-label fw-semibold small">Full Name</label>
@@ -479,6 +493,17 @@
                                 placeholder="Enter phone number" required>
                         </div>
 
+                        <!-- Government ID Upload -->
+                        <div class="col-12">
+                            <label for="govt_id" class="form-label fw-semibold small">
+                                Government ID <span class="text-danger">*</span>
+                            </label>
+                            <input type="file" class="form-control" id="govt_id" name="govt_id" accept="image/*" required>
+                            <div class="small text-muted mt-1">
+                                <i class="bi bi-shield-check me-1"></i>Upload a valid ID (Aadhaar, Passport, or Driving License)
+                            </div>
+                        </div>
+
                         <div class="col-12">
                             <label for="message" class="form-label fw-semibold small">Message (optional)</label>
                             <textarea class="form-control" id="message" name="message" rows="3"
@@ -493,7 +518,7 @@
                             <span id="estimateDays">0 day(s)</span>
                         </div>
                         <div class="d-flex justify-content-between small mb-2">
-                            <span class="text-muted">Guests</span>
+                            <span class="text-muted">Persons</span>
                             <span id="estimateGuests">1</span>
                         </div>
                         <div class="d-flex justify-content-between small mb-2">
@@ -733,7 +758,7 @@
             }
 
             if (guestCountLabel) {
-                guestCountLabel.textContent = `${value} guest${value > 1 ? "s" : ""}`;
+                guestCountLabel.textContent = `${value} person${value > 1 ? "s" : ""}`;
             }
 
             const bounds = getGuestBounds();
@@ -1086,6 +1111,34 @@
                 }
             });
         }
+
+        // ---------- Booking-for toggle ----------
+        (function () {
+            const selfRadio = document.getElementById("bookingSelf");
+            const otherRadio = document.getElementById("bookingOther");
+            const nameField = document.getElementById("traveler_name");
+            const emailField = document.getElementById("traveler_email");
+            const phoneField = document.getElementById("traveler_phone");
+
+            if (!selfRadio || !otherRadio) return;
+
+            const selfName = nameField ? nameField.value : "";
+            const selfEmail = emailField ? emailField.value : "";
+
+            function onToggle() {
+                if (selfRadio.checked) {
+                    if (nameField) nameField.value = selfName;
+                    if (emailField) emailField.value = selfEmail;
+                } else {
+                    if (nameField) nameField.value = "";
+                    if (emailField) emailField.value = "";
+                    if (phoneField) phoneField.value = "";
+                }
+            }
+
+            selfRadio.addEventListener("change", onToggle);
+            otherRadio.addEventListener("change", onToggle);
+        })();
 
         // ---------- Initial paint ----------
         updateEstimate();

@@ -113,6 +113,7 @@ class UserProfile(models.Model):
     is_flagged = models.BooleanField(default=False)
     is_hidden = models.BooleanField(default=False)
     moderation_reason = models.TextField(blank=True)
+    government_id = models.ImageField(upload_to="govt_ids/", blank=True, null=True, validators=[validate_image_file])
 
     def __str__(self):
         return f"{self.user.username}'s Profile"
@@ -624,7 +625,7 @@ class HeroSlide(models.Model):
     badge_text = models.CharField(
         max_length=120,
         blank=True,
-        help_text="e.g., Curated Mountain Experiences",
+        help_text="e.g., Featured Mountain Experiences",
     )
     badge_icon = models.CharField(
         max_length=60,

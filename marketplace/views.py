@@ -431,10 +431,18 @@ def listing_list(request):
     query_string = q_copy.urlencode()
     pagination_base_url = f"?{query_string}&page=" if query_string else "?page="
 
+    SUPPORTED_STATES = ["Himachal Pradesh", "Uttarakhand", "Ladakh"]
+
     location_rows = cache.get("safar_location_options")
     if not location_rows:
-        location_rows = list(Location.objects.all().order_by("name"))
+        location_rows = list(
+            Location.objects.filter(state__in=SUPPORTED_STATES).order_by("name")
+        )
         cache.set("safar_location_options", location_rows, 60 * 60 * 24)
+
+    # Hide experiences outside supported regions
+    supported_location_ids = [loc.id for loc in location_rows]
+    listings = listings.filter(location_fk_id__in=supported_location_ids)
 
     location_options = [
         {
@@ -590,6 +598,11 @@ def listing_detail(request, slug):
             messages.error(request, "Please fill in Full Name, Email, and Phone to continue with booking.")
             return redirect("listing_detail", slug=slug)
 
+        govt_id_file = request.FILES.get("govt_id")
+        if not govt_id_file:
+            messages.error(request, "Please upload a valid Government ID to continue with booking.")
+            return redirect("listing_detail", slug=slug)
+
         try:
             from .models import AvailabilitySlot
             from marketplace.pricing_engine import calculate_dynamic_price
@@ -688,6 +701,12 @@ def listing_detail(request, slug):
             )
 
             send_booking_created_email(booking)
+
+            # Save government ID to user profile
+            if govt_id_file:
+                user_profile, _ = UserProfile.objects.get_or_create(user=request.user)
+                user_profile.government_id = govt_id_file
+                user_profile.save()
 
             from payments.services import create_razorpay_order
             ok, payment_or_error = create_razorpay_order(booking)
@@ -1127,7 +1146,7 @@ def categories_view(request):
                 "icon": meta.get("icon", "bi bi-grid-3x3-gap-fill"),
                 "description": meta.get(
                     "description",
-                    "Explore curated experiences in this category.",
+                    "Explore experiences in this category.",
                 ),
                 "image": meta.get(
                     "image",
@@ -1445,19 +1464,21 @@ def become_host(request):
 
     if request.method == "POST":
         id_image = request.FILES.get("government_id")
-        selfie_image = request.FILES.get("selfie")
+        phone = request.POST.get("phone_number", "").strip()
 
-        if id_image and selfie_image:
+        if id_image and phone:
             verification.government_id = id_image
-            verification.selfie = selfie_image
             verification.save()
+            # Save phone to user profile
+            profile.phone_number = phone
+            profile.save()
             messages.success(
                 request,
-                "Your identity documents have been submitted for review. You will be notified once a THEROUTELESS admin approves your request.",
+                "Your identity documents have been submitted for review. You will be notified once a The Routeless admin approves your request.",
             )
             return redirect("home")
 
-        messages.error(request, "Please provide both a Government ID and a Selfie.")
+        messages.error(request, "Please provide both a Government ID and your phone number.")
 
     return render(
         request,
@@ -1493,6 +1514,7 @@ def profile_view(request):
         {
             "user_form": user_form,
             "profile_form": profile_form,
+            "has_usable_password": request.user.has_usable_password(),
         },
     )
 

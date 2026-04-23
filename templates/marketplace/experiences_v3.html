@@ -29,7 +29,7 @@ Filter by location, category, and price to find your perfect trip.
                 <div class="hero-kicker">
                     <i class="bi bi-compass-fill me-2"></i>Explore THEROUTELESS
                 </div>
-                <h1 class="fw-bold section-heading mb-2">Curated Experiences</h1>
+                <h1 class="fw-bold section-heading mb-2">All Experiences</h1>
                 <p class="text-muted mb-0">
                     Find the perfect adventure, stay, or local experience for your next trip.
                 </p>
@@ -122,11 +122,11 @@ Filter by location, category, and price to find your perfect trip.
 
             <!-- Guests -->
             <div class="col-6 col-md-4 col-xl-2">
-                <label for="guests" class="form-label filter-label">Guests</label>
+                <label for="guests" class="form-label filter-label">Persons</label>
                 <div class="filter-input-wrap">
                     <i class="bi bi-people filter-icon"></i>
                     <input type="number" class="form-control filter-control filter-control-with-icon" id="guests"
-                        name="guests" placeholder="1 guest" min="1" value="{{ request.GET.guests|default:'' }}">
+                        name="guests" placeholder="1 person" min="1" value="{{ request.GET.guests|default:'' }}">
                 </div>
             </div>
 
