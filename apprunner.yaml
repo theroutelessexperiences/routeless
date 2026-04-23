@@ -15,3 +15,6 @@ run:
   command: python3 -m daphne -b 0.0.0.0 -p 8080 safar_hq.asgi:application
   network:
     port: 8080
+  env:
+    - name: ALLOWED_HOSTS
+      value: "*"
