@@ -1,11 +1,10 @@
 {% extends "base.html" %}
 {% load socialaccount crispy_forms_tags %}
 
-{% block title %}Sign Up - THEROUTELESS{% endblock %}
+{% block title %}Sign Up - The Routeless{% endblock %}
 
 {% block content %}
-<div class="container" style="margin-top: 100px; min-height: 80vh;">
-<div class="container-fluid p-0">
+<div class="container-fluid p-0" style="margin-top: var(--navbar-height);">
     <div class="row g-0 min-vh-100">
         <!-- Form side -->
         <div class="col-md-6 d-flex align-items-center justify-content-center bg-white" style="padding-top: var(--navbar-height);">
@@ -51,11 +50,15 @@
     </div>
 </div>
 
+{% endblock %}
+
+{% block extra_css %}
 <style>
 .hover-lift { transition: transform 0.2s ease; }
 .hover-lift:hover { transform: translateY(-2px); }
 </style>
-<script>
-    AOS.init();
-</script>
+{% endblock %}
+
+{% block extra_js %}
+<script>if (typeof AOS !== 'undefined') AOS.init();</script>
 {% endblock %}

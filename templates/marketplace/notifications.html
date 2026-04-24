@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}Notifications - THEROUTELESS{% endblock %}
+{% block title %}Notifications - THE ROUTELESS{% endblock %}
 {% block content %}
 <div class="container mt-5 pt-5" style="min-height: 70vh; max-width: 800px;">
     <h2 class="fw-bold mb-4">Notifications</h2>
@@ -7,8 +7,10 @@
         {% for notification in notifications %}
         <a href="{{ notification.link }}" class="list-group-item list-group-item-action p-4 border-0 border-bottom">
             <div class="d-flex justify-content-between align-items-center mb-1">
-                <h6 class="mb-0 {% if not notification.is_read %}fw-bold text-dark{% else %}fw-normal text-muted{% endif %}">
-                    <i class="bi bi-bell-fill me-2 {% if not notification.is_read %}text-primary{% else %}text-light{% endif %}"></i>
+                <h6
+                    class="mb-0 {% if not notification.is_read %}fw-bold text-dark{% else %}fw-normal text-muted{% endif %}">
+                    <i
+                        class="bi bi-bell-fill me-2 {% if not notification.is_read %}text-primary{% else %}text-light{% endif %}"></i>
                     {{ notification.title }}: {{ notification.message }}
                 </h6>
                 <small class="text-muted">{{ notification.created_at|timesince }} ago</small>

@@ -1,16 +1,16 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}{{ listing.title }} - THEROUTELESS{% endblock %}
+{% block title %}{{ listing.title }} - The Routeless{% endblock %}
 
 {% block meta_description %}
 {{ listing.description|truncatechars:155 }}
 {% endblock %}
 
 {% block og_tags %}
-<meta property="og:site_name" content="THEROUTELESS" />
+<meta property="og:site_name" content="The Routeless" />
 <meta property="og:type" content="website" />
-<meta property="og:title" content="{{ listing.title }} - THEROUTELESS" />
+<meta property="og:title" content="{{ listing.title }} - The Routeless" />
 <meta property="og:description" content="{{ listing.description|truncatechars:155 }}" />
 <meta property="og:url" content="{{ request.build_absolute_uri }}" />
 {% if listing.main_image %}
@@ -536,7 +536,7 @@
                     </div>
 
                     {% if request.user.is_authenticated %}
-                    <button type="submit" class="btn btn-primary w-100 mt-3 rounded-pill fw-semibold py-3 fs-6 shadow-sm animated-btn">
+                    <button type="submit" id="bookingSubmitBtn" class="btn btn-primary w-100 mt-3 rounded-pill fw-semibold py-3 fs-6 shadow-sm animated-btn">
                         <i class="bi bi-calendar-check me-1"></i>Request Booking
                     </button>
                     {% else %}
@@ -1109,6 +1109,13 @@
                     e.stopPropagation();
                     return false;
                 }
+
+                // Show loading state on submit button
+                const submitBtn = document.getElementById("bookingSubmitBtn");
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Processing...';
+                }
             });
         }
 
@@ -1532,7 +1539,7 @@
         box-shadow: 0 6px 14px rgba(220, 53, 69, 0.06);
     }
 
-    /* Flatpickr theming to match THEROUTELESS style */
+    /* Flatpickr theming to match The Routeless style */
     .flatpickr-calendar {
         border-radius: 0.9rem !important;
         border: 1px solid rgba(43, 103, 119, 0.10) !important;

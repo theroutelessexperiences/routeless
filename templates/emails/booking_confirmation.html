@@ -4,7 +4,7 @@
     <style>
         body { font-family: 'Helvetica Neue', Arial, sans-serif; color: #333; line-height: 1.6; }
         .container { max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eaeaea; border-radius: 8px; }
-        h1 { color: #2c3e50; border-bottom: 2px solid #eaeaea; padding-bottom: 10px; }
+        h1 { color: #0f172a; border-bottom: 2px solid #eaeaea; padding-bottom: 10px; }
         .highlight { font-weight: bold; color: #e67e22; }
         .info-block { background: #f9f9f9; padding: 15px; border-radius: 5px; margin: 20px 0; }
         .footer { margin-top: 30px; font-size: 0.9em; color: #7f8c8d; text-align: center; }
@@ -18,11 +18,11 @@
         
         <div class="info-block">
             <p><strong>Booking ID:</strong> #{{ booking.id }}</p>
-            <p><strong>Check-in:</strong> {{ booking.start_date|date:"F j, Y" }}</p>
-            <p><strong>Check-out:</strong> {{ booking.end_date|date:"F j, Y" }}</p>
-            <p><strong>Guests:</strong> {{ booking.guests }}</p>
+            <p><strong>Check-in:</strong> {{ booking.check_in_date|date:"F j, Y" }}</p>
+            <p><strong>Check-out:</strong> {{ booking.check_out_date|date:"F j, Y" }}</p>
+            <p><strong>Persons:</strong> {{ booking.guests_count }}</p>
             <p><strong>Total Price:</strong> &#8377;{{ booking.total_price }}</p>
-            <p><strong>Status:</strong> {{ booking.booking_status }}</p>
+            <p><strong>Status:</strong> {{ booking.status }}</p>
         </div>
 
         <p>Please note that this is a <strong>request</strong>. If you haven't completed the Razorpay checkout popup, your booking is still pending payment. Visit your The Routeless dashboard to complete the payment and confirm your trip.</p>

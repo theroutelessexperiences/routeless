@@ -7,14 +7,14 @@
 securely with verified hosts on The Routeless.{% endblock %}
 
 {% block og_tags %}
-<meta property="og:site_name" content="THEROUTELESS" />
+<meta property="og:site_name" content="The Routeless" />
 <meta property="og:type" content="website" />
 <meta property="og:title" content="The Routeless — Discover Travel Experiences" />
 <meta property="og:description"
     content="Find the best homestays, thrilling adventures, and authentic local travel experiences. Book securely with verified hosts on The Routeless." />
 <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}{% url 'home' %}" />
 <meta property="og:image"
-    content="{{ request.scheme }}://{{ request.get_host }}{% static 'img/safar-og-default.jpg' %}" />
+    content="{{ request.scheme }}://{{ request.get_host }}{% static 'img/routeless-og-default.jpg' %}" />
 {% endblock %}
 
 {% block content %}
@@ -22,7 +22,7 @@ securely with verified hosts on The Routeless.{% endblock %}
 <!-- Hero Carousel -->
 {% if hero_slides %}
 <div id="heroCarousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000"
-    data-bs-touch="true" aria-label="THEROUTELESS hero carousel">
+    data-bs-touch="true" aria-label="The Routeless hero carousel">
 
     <!-- Indicators -->
     <div class="carousel-indicators mb-4">
@@ -455,7 +455,7 @@ securely with verified hosts on The Routeless.{% endblock %}
 
                         <h5 class="card-title mb-2 line-clamp-2">{{ listing.title }}</h5>
                         <p class="text-muted small mb-3 line-clamp-1">
-                            Hosted by {{ listing.host.username|default:"THEROUTELESS Host" }}
+                            Hosted by {{ listing.host.username|default:"The Routeless Host" }}
                         </p>
 
                         <div class="mt-auto d-flex justify-content-between align-items-center pt-3 border-top">
@@ -536,7 +536,7 @@ securely with verified hosts on The Routeless.{% endblock %}
 
                         <h5 class="card-title mb-2 line-clamp-2">{{ listing.title }}</h5>
                         <p class="text-muted small mb-3 line-clamp-1">
-                            Hosted by {{ listing.host.username|default:"THEROUTELESS Host" }}
+                            Hosted by {{ listing.host.username|default:"The Routeless Host" }}
                         </p>
 
                         <div class="mt-auto d-flex justify-content-between align-items-center pt-3 border-top">
@@ -632,7 +632,7 @@ securely with verified hosts on The Routeless.{% endblock %}
 
                         <h5 class="card-title mb-2 line-clamp-2">{{ listing.title }}</h5>
                         <p class="text-muted small mb-3 line-clamp-1">
-                            Hosted by {{ listing.host.username|default:"THEROUTELESS Host" }}
+                            Hosted by {{ listing.host.username|default:"The Routeless Host" }}
                         </p>
 
                         <div class="mt-auto d-flex justify-content-between align-items-center pt-3 border-top">
@@ -660,7 +660,7 @@ securely with verified hosts on The Routeless.{% endblock %}
     <div class="container">
         <div class="text-center mb-5">
             <div class="section-kicker">Simple Process</div>
-            <h2 class="fw-bold" style="color: var(--primary-color);">How THEROUTELESS Works</h2>
+            <h2 class="fw-bold" style="color: var(--primary-color);">How The Routeless Works</h2>
             <p class="text-muted mb-0">A simple, trusted way to discover and book local experiences.</p>
         </div>
 
@@ -756,16 +756,16 @@ securely with verified hosts on The Routeless.{% endblock %}
 {% endif %}
 {% endcomment %}
 
-<!-- Why Choose THEROUTELESS & Testimonials -->
+<!-- Why Choose The Routeless & Testimonials -->
 <section class="bg-dark text-white" style="padding-top: 6rem; padding-bottom: 6rem;">
     <div class="container">
         <div class="row g-5 align-items-start">
 
-            <!-- Why Choose THEROUTELESS -->
+            <!-- Why Choose The Routeless -->
             <div class="col-lg-5">
 
-                <div class="section-kicker text-warning">Why THEROUTELESS</div>
-                <h2 class="fw-bold mb-4 text-warning">Why Choose THEROUTELESS?</h2>
+                <div class="section-kicker text-warning">Why The Routeless</div>
+                <h2 class="fw-bold mb-4 text-warning">Why Choose The Routeless?</h2>
 
                 <p class="lead mb-5" style="color: rgba(255,255,255,0.75);">
                     We're building a trusted travel marketplace for meaningful, off-the-beaten-path journeys.
@@ -843,7 +843,7 @@ securely with verified hosts on The Routeless.{% endblock %}
 
                     <div style="position: relative; z-index: 2; padding-top: 10px;">
                         <p class="fs-5 fst-italic mb-4 text-white" style="line-height: 1.6;">
-                            “THEROUTELESS made finding a homestay in Kasol incredibly easy.
+                            “The Routeless made finding a homestay in Kasol incredibly easy.
                             The host was warm, the place was beautiful,
                             and the whole experience felt authentic.”
                         </p>
@@ -882,7 +882,7 @@ securely with verified hosts on The Routeless.{% endblock %}
                     <div style="position: relative; z-index: 2; padding-top: 10px;">
                         <p class="fs-5 fst-italic mb-4 text-white" style="line-height: 1.6;">
                             “I usually struggle to find good trekking guides,
-                            but THEROUTELESS helped me book a perfect guided experience.
+                            but The Routeless helped me book a perfect guided experience.
                             Smooth process and great communication.”
                         </p>
 
@@ -919,7 +919,7 @@ securely with verified hosts on The Routeless.{% endblock %}
                 <div class="col-lg-7 mb-4 mb-lg-0">
                     <div class="section-kicker text-warning">For Creators & Hosts</div>
                     <h2 class="fw-bold mb-3 text-white">
-                        Become a Host on <span class="text-warning">THEROUTELESS</span>
+                        Become a Host on <span class="text-warning">The Routeless</span>
                     </h2>
 
                     <p class="text-light opacity-75 fs-5 mb-0">
@@ -976,11 +976,11 @@ securely with verified hosts on The Routeless.{% endblock %}
 {% block extra_css %}
 <style>
     :root {
-        --safar-radius-lg: 1.25rem;
-        --safar-radius-md: 1rem;
-        --safar-shadow-sm: 0 8px 20px rgba(15, 23, 42, 0.06);
-        --safar-shadow-md: 0 14px 30px rgba(15, 23, 42, 0.10);
-        --safar-shadow-lg: 0 24px 50px rgba(15, 23, 42, 0.16);
+        --rl-radius-lg: 1.25rem;
+        --rl-radius-md: 1rem;
+        --rl-shadow-sm: 0 8px 20px rgba(15, 23, 42, 0.06);
+        --rl-shadow-md: 0 14px 30px rgba(15, 23, 42, 0.10);
+        --rl-shadow-lg: 0 24px 50px rgba(15, 23, 42, 0.16);
     }
 
     .line-clamp-1 {
@@ -1102,8 +1102,8 @@ securely with verified hosts on The Routeless.{% endblock %}
         backdrop-filter: blur(20px);
         -webkit-backdrop-filter: blur(20px);
         border: 1px solid rgba(255, 255, 255, 0.45) !important;
-        box-shadow: var(--safar-shadow-lg) !important;
-        border-radius: var(--safar-radius-lg) !important;
+        box-shadow: var(--rl-shadow-lg) !important;
+        border-radius: var(--rl-radius-lg) !important;
         transform: translateY(0);
         transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
@@ -1193,7 +1193,7 @@ securely with verified hosts on The Routeless.{% endblock %}
     }
 
     .experience-card {
-        border-radius: var(--safar-radius-lg) !important;
+        border-radius: var(--rl-radius-lg) !important;
         transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
         will-change: transform;
     }
@@ -1210,7 +1210,7 @@ securely with verified hosts on The Routeless.{% endblock %}
     .category-card {
         border-radius: 1rem;
         background: linear-gradient(to bottom right, #fff, #fcfdff);
-        box-shadow: var(--safar-shadow-sm) !important;
+        box-shadow: var(--rl-shadow-sm) !important;
         border: 1px solid rgba(43, 103, 119, 0.05) !important;
     }
 
@@ -1255,7 +1255,7 @@ securely with verified hosts on The Routeless.{% endblock %}
     }
 
     .destination-card {
-        box-shadow: var(--safar-shadow-sm) !important;
+        box-shadow: var(--rl-shadow-sm) !important;
         border: 1px solid rgba(43, 103, 119, 0.05) !important;
     }
 
@@ -1280,12 +1280,12 @@ securely with verified hosts on The Routeless.{% endblock %}
     }
 
     .featured-card {
-        box-shadow: var(--safar-shadow-sm) !important;
+        box-shadow: var(--rl-shadow-sm) !important;
         border: 1px solid rgba(43, 103, 119, 0.05) !important;
     }
 
     .featured-card:hover {
-        box-shadow: var(--safar-shadow-md) !important;
+        box-shadow: var(--rl-shadow-md) !important;
     }
 
     .featured-card .card-body {
@@ -1302,7 +1302,7 @@ securely with verified hosts on The Routeless.{% endblock %}
 
     .how-card {
         border: 1px solid rgba(0, 0, 0, 0.04) !important;
-        box-shadow: var(--safar-shadow-sm) !important;
+        box-shadow: var(--rl-shadow-sm) !important;
         transition: transform 0.25s ease, box-shadow 0.25s ease;
     }
 

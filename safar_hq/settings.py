@@ -226,6 +226,9 @@ else:
 # -------------------------------------------------------------------
 AUTH_PASSWORD_VALIDATORS = [
     {
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+    },
+    {
         "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
         "OPTIONS": {"min_length": 8},
     },
@@ -312,7 +315,7 @@ if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
 else:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "noreply@routeless.com")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "noreply@therouteless.com")
 
 
 # -------------------------------------------------------------------
@@ -361,9 +364,10 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = "DENY"
 
 # Keep relaxed until App Runner becomes healthy
-SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", False)
-SECURE_HSTS_SECONDS = int(os.getenv("SECURE_HSTS_SECONDS", "0"))
-SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool("SECURE_HSTS_INCLUDE_SUBDOMAINS", False)
+SECURE_SSL_REDIRECT = env_bool("SECURE_SSL_REDIRECT", not DEBUG)
+SECURE_REDIRECT_EXEMPT = [r"^health/?$"]
+SECURE_HSTS_SECONDS = int(os.getenv("SECURE_HSTS_SECONDS", "31536000"))
+SECURE_HSTS_INCLUDE_SUBDOMAINS = env_bool("SECURE_HSTS_INCLUDE_SUBDOMAINS", True)
 SECURE_HSTS_PRELOAD = env_bool("SECURE_HSTS_PRELOAD", False)
 
 
@@ -395,8 +399,8 @@ LOGGING = {
 # Unfold Admin Configuration
 # -------------------------------------------------------------------
 UNFOLD = {
-    "SITE_TITLE": "THEROUTELESS Platform",
-    "SITE_HEADER": "THEROUTELESS Admin Dashboard",
+    "SITE_TITLE": "The Routeless Platform",
+    "SITE_HEADER": "The Routeless Admin Dashboard",
     "SITE_URL": "/",
     "SITE_SYMBOL": "explore",
     "SHOW_HISTORY": True,

@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Host Dashboard - THEROUTELESS{% endblock %}
+{% block title %}Host Dashboard - The Routeless{% endblock %}
 
 {% block meta_description %}
-Manage your hosted experiences, track bookings, update booking status, and monitor earnings on THEROUTELESS.
+Manage your hosted experiences, track bookings, update booking status, and monitor earnings on The Routeless.
 {% endblock %}
 
 {% block content %}
@@ -485,7 +485,7 @@ Manage your hosted experiences, track bookings, update booking status, and monit
                                 </div>
                                 <div class="meta-chip">
                                     <i class="bi bi-people me-1"></i>{{ booking.guests_count }}
-                                    guest{{ booking.guests_count|pluralize }}
+                                    person{{ booking.guests_count|pluralize }}
                                 </div>
                                 <div class="meta-chip">
                                     <i class="bi bi-currency-rupee me-1"></i>{{ booking.total_price|floatformat:2 }}
@@ -495,7 +495,7 @@ Manage your hosted experiences, track bookings, update booking status, and monit
                             {% if booking.message %}
                             <div class="booking-message mt-2">
                                 <span class="small fw-semibold" style="color: var(--primary-color);">
-                                    <i class="bi bi-chat-left-text me-1"></i>Guest Message:
+                                    <i class="bi bi-chat-left-text me-1"></i>Traveler Note:
                                 </span>
                                 <span class="small text-muted">{{ booking.message|truncatechars:150 }}</span>
                             </div>
@@ -560,7 +560,7 @@ Manage your hosted experiences, track bookings, update booking status, and monit
             <div class="empty-state-panel text-center py-4">
                 <i class="bi bi-calendar-x fs-3 mb-2 d-block"></i>
                 <h6 class="fw-bold mb-1">No bookings yet</h6>
-                <p class="text-muted small mb-0">When guests book your experiences, they will appear here.</p>
+                <p class="text-muted small mb-0">When travelers book your experiences, they will appear here.</p>
             </div>
             {% endif %}
         </div>

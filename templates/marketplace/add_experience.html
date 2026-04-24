@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Add Experience - THEROUTELESS{% endblock %}
+{% block title %}Add Experience - The Routeless{% endblock %}
 
 {% block meta_description %}
-Create a new travel experience on THEROUTELESS with detailed category-specific information, pricing, availability, and
+Create a new travel experience on The Routeless with detailed category-specific information, pricing, availability, and
 amenities.
 {% endblock %}
 
@@ -40,7 +40,7 @@ amenities.
             <div class="col-12 col-xl-8">
 
                 <!-- 1) Basic Information -->
-                <div class="safar-form-card mb-4">
+                <div class="rl-form-card mb-4">
                     <div class="card-header-lite">
                         <div>
                             <h4 class="mb-1">Basic Information</h4>
@@ -180,7 +180,7 @@ amenities.
                 </div>
 
                 <!-- 2) Category Details Header -->
-                <div class="safar-form-card mb-4">
+                <div class="rl-form-card mb-4">
                     <div class="card-header-lite">
                         <div>
                             <h4 class="mb-1">Category-Specific Details</h4>
@@ -201,7 +201,7 @@ amenities.
                 </div>
 
                 <!-- Trek Section -->
-                <div class="safar-form-card mb-4 category-section" data-category="Trek">
+                <div class="rl-form-card mb-4 category-section" data-category="Trek">
                     <div class="category-section-head">
                         <h5 class="mb-1"><i class="bi bi-signpost-split me-2"></i>Trek Details</h5>
                         <p class="text-muted small mb-0">Distance, difficulty, altitude, guide, permits, logistics and
@@ -224,7 +224,7 @@ amenities.
                 </div>
 
                 <!-- Homestay Section -->
-                <div class="safar-form-card mb-4 category-section" data-category="Homestay">
+                <div class="rl-form-card mb-4 category-section" data-category="Homestay">
                     <div class="category-section-head">
                         <h5 class="mb-1"><i class="bi bi-house-heart me-2"></i>Homestay Details</h5>
                         <p class="text-muted small mb-0">Room setup, amenities, check-in/out, meal plan, host rules and
@@ -247,7 +247,7 @@ amenities.
                 </div>
 
                 <!-- Adventure Section -->
-                <div class="safar-form-card mb-4 category-section" data-category="Adventure">
+                <div class="rl-form-card mb-4 category-section" data-category="Adventure">
                     <div class="category-section-head">
                         <h5 class="mb-1"><i class="bi bi-compass me-2"></i>Adventure Details</h5>
                         <p class="text-muted small mb-0">Activity type, safety, difficulty, restrictions, reporting and
@@ -270,7 +270,7 @@ amenities.
                 </div>
 
                 <!-- Spiritual Section -->
-                <div class="safar-form-card mb-4 category-section" data-category="Spiritual">
+                <div class="rl-form-card mb-4 category-section" data-category="Spiritual">
                     <div class="category-section-head">
                         <h5 class="mb-1"><i class="bi bi-flower1 me-2"></i>Spiritual Details</h5>
                         <p class="text-muted small mb-0">Darshan/retreat information, dress code, spiritual sessions,
@@ -293,7 +293,7 @@ amenities.
                 </div>
 
                 <!-- Wildlife Section -->
-                <div class="safar-form-card mb-4 category-section" data-category="Wildlife">
+                <div class="rl-form-card mb-4 category-section" data-category="Wildlife">
                     <div class="category-section-head">
                         <h5 class="mb-1"><i class="bi bi-tree me-2"></i>Wildlife Details</h5>
                         <p class="text-muted small mb-0">Safari type, park/zone, permits, guide/naturalist, reporting
@@ -316,7 +316,7 @@ amenities.
                 </div>
 
                 <!-- Cultural Section -->
-                <div class="safar-form-card mb-4 category-section" data-category="Cultural">
+                <div class="rl-form-card mb-4 category-section" data-category="Cultural">
                     <div class="category-section-head">
                         <h5 class="mb-1"><i class="bi bi-camera me-2"></i>Cultural Details</h5>
                         <p class="text-muted small mb-0">Theme, format, materials, community-led aspects, accessibility
@@ -342,7 +342,7 @@ amenities.
 
             <!-- Sidebar -->
             <div class="col-12 col-xl-4">
-                <div class="safar-form-card sticky-form-sidebar">
+                <div class="rl-form-card sticky-form-sidebar">
                     <div class="card-header-lite mb-3">
                         <div>
                             <h5 class="mb-1">Publishing Tips</h5>
@@ -381,7 +381,7 @@ amenities.
 {% block extra_css %}
 <style>
     /* Card shell */
-    .safar-form-card {
+    .rl-form-card {
         background: #fff;
         border: 1px solid rgba(15, 23, 42, 0.06);
         border-radius: 1rem;
@@ -419,21 +419,21 @@ amenities.
     }
 
     /* Form field styles */
-    .safar-form-card .form-control,
-    .safar-form-card .form-select,
-    .safar-form-card textarea {
+    .rl-form-card .form-control,
+    .rl-form-card .form-select,
+    .rl-form-card textarea {
         border-radius: 0.8rem;
         border: 1px solid rgba(43, 103, 119, 0.12);
         min-height: 46px;
     }
 
-    .safar-form-card textarea {
+    .rl-form-card textarea {
         min-height: 110px;
     }
 
-    .safar-form-card .form-control:focus,
-    .safar-form-card .form-select:focus,
-    .safar-form-card textarea:focus {
+    .rl-form-card .form-control:focus,
+    .rl-form-card .form-select:focus,
+    .rl-form-card textarea:focus {
         border-color: rgba(43, 103, 119, 0.35);
         box-shadow: 0 0 0 0.2rem rgba(43, 103, 119, 0.12);
     }
@@ -593,7 +593,7 @@ amenities.
     }
 
     @media (max-width: 767.98px) {
-        .safar-form-card {
+        .rl-form-card {
             padding: 0.9rem;
             border-radius: 0.9rem;
         }

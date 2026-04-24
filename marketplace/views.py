@@ -110,9 +110,14 @@ CATEGORY_META = {
 }
 
 from django.http import HttpResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_GET
 
+@csrf_exempt
+@require_GET
 def health_check(request):
     return HttpResponse("ok", status=200)
+
 # -------------------------------------------------------------------
 # Homepage
 # -------------------------------------------------------------------
@@ -603,6 +608,11 @@ def listing_detail(request, slug):
             messages.error(request, "Please upload a valid Government ID to continue with booking.")
             return redirect("listing_detail", slug=slug)
 
+        MAX_ID_SIZE_MB = 5
+        if govt_id_file.size > MAX_ID_SIZE_MB * 1024 * 1024:
+            messages.error(request, f"Government ID file is too large. Maximum size is {MAX_ID_SIZE_MB}MB.")
+            return redirect("listing_detail", slug=slug)
+
         try:
             from .models import AvailabilitySlot
             from marketplace.pricing_engine import calculate_dynamic_price
@@ -801,7 +811,7 @@ def signup_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            messages.success(request, "Registration successful. Welcome to THEROUTELESS!")
+            messages.success(request, "Registration successful. Welcome to The Routeless!")
 
             next_url = request.GET.get("next") or request.POST.get("next")
             url_is_safe = url_has_allowed_host_and_scheme(
@@ -1077,7 +1087,7 @@ def host_dashboard(request):
                         f"Hi {booking.traveler_name or booking.user.username},\n\n"
                         f"We hope you enjoyed your trip to {booking.experience.title}!\n"
                         f"Please take a moment to leave a review for your host:\n{review_url}\n\n"
-                        "Thanks,\nThe THEROUTELESS Team"
+                        "Thanks,\nThe Routeless Team"
                     ),
                     from_email=settings.DEFAULT_FROM_EMAIL,
                     recipient_list=[booking.traveler_email or booking.user.email],
@@ -1130,7 +1140,8 @@ def host_dashboard(request):
 # Locations / categories
 # -------------------------------------------------------------------
 def location_list(request):
-    locations = Location.objects.all().order_by("name")
+    SUPPORTED_STATES = ["Himachal Pradesh", "Uttarakhand", "Ladakh"]
+    locations = Location.objects.filter(state__in=SUPPORTED_STATES).order_by("name")
     return render(request, "marketplace/locations.html", {"locations": locations})
 
 

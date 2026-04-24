@@ -1,0 +1,46 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Django
+db.sqlite3
+db.sqlite3-journal
+staticfiles/
+media/
+
+# Environment / secrets
+.env
+*.env.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Debug / one-off scripts
+*.log
+crash_log*.html
+out.txt
+my_out*.txt
+test_out*.txt
+test_output*.txt
+missing*.log
+null
+
+# Distribution / packaging
+*.egg-info/
+dist/
+build/
