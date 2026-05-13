@@ -537,10 +537,61 @@ class ExperienceForm(forms.ModelForm):
     cul_reporting_time = forms.TimeField(required=False, widget=forms.TimeInput(format="%H:%M", attrs={"type": "time"}))
     cul_special_notes = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows": 3}))
 
+    # -------------------------
+    # Guided description helpers
+    # -------------------------
+    INCLUDED_OPTIONS = [
+        "Food", "Guide", "Stay", "Equipment", "Entry tickets",
+        "Local transport", "Pickup/drop", "Insurance", "Other",
+    ]
+    NOT_INCLUDED_OPTIONS = [
+        "Personal expenses", "Meals", "Transport", "Entry tickets",
+        "Accommodation", "Insurance", "Other",
+    ]
+
+    what_is_included = forms.MultipleChoiceField(
+        choices=[(x, x) for x in INCLUDED_OPTIONS],
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        label="What is included",
+        help_text="Select all that apply.",
+    )
+    what_is_not_included = forms.MultipleChoiceField(
+        choices=[(x, x) for x in NOT_INCLUDED_OPTIONS],
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        label="What is NOT included",
+        help_text="Select all that apply.",
+    )
+    experience_highlights = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={"rows": 3, "placeholder": "e.g.\n• Stunning sunrise views\n• Expert local guides\n• Authentic home-cooked meals"}),
+        label="Experience Highlights",
+        help_text="List key selling points, one per line.",
+    )
+
+    # -------------------------
+    # Declaration checkboxes
+    # -------------------------
+    cancellation_policy_accepted = forms.BooleanField(
+        required=False,
+        label=(
+            "I understand that cancellations, refunds, rescheduling, disputes, "
+            "and no-show cases will be handled according to the Routeless "
+            "platform cancellation policy."
+        ),
+    )
+    listing_declaration_accepted = forms.BooleanField(
+        required=False,
+        label=(
+            "I confirm that this experience information is correct and I am "
+            "responsible for complying with all local rules, safety requirements, "
+            "and guest protection standards."
+        ),
+    )
+
     class Meta:
         model = Experience
-        # ✅ Keep these aligned with your Experience model
-        # Add/remove fields as per your actual model.
         fields = [
             "title",
             "slug",
@@ -548,26 +599,36 @@ class ExperienceForm(forms.ModelForm):
             "location",
             "price_per_person",
             "max_guests",
+            "duration",
+            "short_description",
             "description",
-            "amenities",
-            "is_active",
-            "is_featured",
+            "what_is_included",
+            "what_is_not_included",
+            "experience_highlights",
+            "cancellation_policy_accepted",
+            "listing_declaration_accepted",
         ]
         widgets = {
             "description": forms.Textarea(attrs={"rows": 5}),
+            "short_description": forms.TextInput(attrs={"placeholder": "A one-line summary for search results"}),
+            "duration": forms.TextInput(attrs={"placeholder": "e.g. 2 days / 4 hours"}),
         }
 
     # ---------------------------------------------------------
     # Init / styling / preload category_details
     # ---------------------------------------------------------
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, submit_for_review=False, **kwargs):
         super().__init__(*args, **kwargs)
+        self._submit_for_review = submit_for_review
 
         # Nice defaults / CSS classes
         for name, field in self.fields.items():
             existing = field.widget.attrs.get("class", "")
-            if isinstance(field.widget, forms.CheckboxInput):
+            if isinstance(field.widget, (forms.CheckboxInput,)):
                 field.widget.attrs["class"] = (existing + " form-check-input").strip()
+            elif isinstance(field.widget, (forms.CheckboxSelectMultiple, forms.RadioSelect)):
+                # Don't add form-control to multi-checkbox / radio groups
+                pass
             elif isinstance(field.widget, (forms.Select,)):
                 field.widget.attrs["class"] = (existing + " form-select").strip()
             else:
@@ -629,10 +690,33 @@ class ExperienceForm(forms.ModelForm):
         if title and not slug_val and "slug" in self.fields:
             cleaned["slug"] = slugify(title)
 
-        # Category-specific required fields
-        self._validate_required_for_category(cleaned, category)
+        # Price must be >= 0
+        price = cleaned.get("price_per_person")
+        if price is not None and price < 0:
+            self.add_error("price_per_person", "Price must be zero or positive.")
 
-        # Cross-field validations
+        # max_guests > 0
+        max_g = cleaned.get("max_guests")
+        if max_g is not None and max_g <= 0:
+            self.add_error("max_guests", "Max guests must be greater than zero.")
+
+        # Category-specific required fields (only if submitting for review)
+        if self._submit_for_review:
+            self._validate_required_for_category(cleaned, category)
+
+            # Declarations required for submit
+            if not cleaned.get("cancellation_policy_accepted"):
+                self.add_error(
+                    "cancellation_policy_accepted",
+                    "You must accept the cancellation policy to submit for review.",
+                )
+            if not cleaned.get("listing_declaration_accepted"):
+                self.add_error(
+                    "listing_declaration_accepted",
+                    "You must accept the listing declaration to submit for review.",
+                )
+
+        # Cross-field validations (always run)
         self._validate_min_max(cleaned, "trek_group_size_min", "trek_group_size_max", "Trek group size")
         self._validate_min_max(cleaned, "adv_group_size_min", "adv_group_size_max", "Adventure group size")
         self._validate_min_max(cleaned, "wild_group_size_min", "wild_group_size_max", "Wildlife group size")
@@ -700,6 +784,17 @@ class ExperienceForm(forms.ModelForm):
 
         obj.category_details = details
 
+        # Set listing_status based on submit action
+        if self._submit_for_review:
+            obj.listing_status = Experience.ListingStatus.PENDING_REVIEW
+            if not obj.submitted_at:
+                from django.utils import timezone
+                obj.submitted_at = timezone.now()
+        else:
+            # Save as Draft (keep draft if new, or keep current status)
+            if not obj.pk:
+                obj.listing_status = Experience.ListingStatus.DRAFT
+
         if commit:
             obj.save()
             self.save_m2m()
@@ -756,3 +851,201 @@ class UserProfileForm(forms.ModelForm):
         widgets = {
             'bio': forms.Textarea(attrs={'rows': 4}),
         }
+
+
+# ---------------------------------------------------------
+# Host Application Multi-Step Forms
+# ---------------------------------------------------------
+from datetime import date as _date
+from .models import HostApplication, INDIAN_STATES
+
+
+class HostDetailsForm(forms.ModelForm):
+    """Step 1: Host Details — basic identity and contact."""
+
+    class Meta:
+        model = HostApplication
+        fields = [
+            "host_type",
+            "full_name_or_company_name",
+            "mobile_number",
+            "email",
+            "city",
+            "state",
+            "host_bio",
+            "profile_photo_or_logo",
+        ]
+        widgets = {
+            "host_type": forms.RadioSelect(
+                attrs={"class": "form-check-input"},
+            ),
+            "host_bio": forms.Textarea(attrs={"rows": 3}),
+            "state": forms.Select(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Mark required fields
+        for fname in [
+            "host_type",
+            "full_name_or_company_name",
+            "mobile_number",
+            "email",
+            "city",
+            "state",
+        ]:
+            self.fields[fname].required = True
+        # Optional fields
+        self.fields["host_bio"].required = False
+        self.fields["profile_photo_or_logo"].required = False
+
+        # Apply Bootstrap classes
+        for name, field in self.fields.items():
+            if isinstance(field.widget, forms.RadioSelect):
+                continue  # styled separately in template
+            existing = field.widget.attrs.get("class", "")
+            if isinstance(field.widget, forms.Select):
+                field.widget.attrs["class"] = (existing + " form-select").strip()
+            elif isinstance(field.widget, forms.FileInput):
+                field.widget.attrs["class"] = (existing + " form-control").strip()
+            else:
+                field.widget.attrs["class"] = (existing + " form-control").strip()
+
+        # Placeholders
+        self.fields["full_name_or_company_name"].widget.attrs["placeholder"] = (
+            "e.g. Ravi Kumar or Himalaya Adventures Pvt Ltd"
+        )
+        self.fields["mobile_number"].widget.attrs["placeholder"] = "e.g. +91 98765 43210"
+        self.fields["email"].widget.attrs["placeholder"] = "e.g. host@example.com"
+        self.fields["city"].widget.attrs["placeholder"] = "e.g. Manali"
+
+
+class HostVerificationForm(forms.ModelForm):
+    """Step 2: Verification — documents and banking details."""
+
+    class Meta:
+        model = HostApplication
+        fields = [
+            "pan_number",
+            "government_id_proof",
+            "police_verification_certificate",
+            "police_verification_issue_date",
+            "bank_account_holder_name",
+            "bank_name",
+            "account_number",
+            "ifsc_code",
+        ]
+        widgets = {
+            "police_verification_issue_date": forms.DateInput(
+                attrs={"type": "date"},
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # All fields required
+        for name in self.fields:
+            self.fields[name].required = True
+
+        # Bootstrap classes
+        for name, field in self.fields.items():
+            existing = field.widget.attrs.get("class", "")
+            if isinstance(field.widget, (forms.FileInput, forms.ClearableFileInput)):
+                field.widget.attrs["class"] = (existing + " form-control").strip()
+            else:
+                field.widget.attrs["class"] = (existing + " form-control").strip()
+
+        # Placeholders
+        self.fields["pan_number"].widget.attrs["placeholder"] = "e.g. ABCDE1234F"
+        self.fields["bank_account_holder_name"].widget.attrs["placeholder"] = "Account holder name"
+        self.fields["bank_name"].widget.attrs["placeholder"] = "e.g. State Bank of India"
+        self.fields["account_number"].widget.attrs["placeholder"] = "Account number"
+        self.fields["ifsc_code"].widget.attrs["placeholder"] = "e.g. SBIN0001234"
+
+    def clean_pan_number(self):
+        import re
+        pan = self.cleaned_data.get("pan_number", "").strip().upper()
+        if pan and not re.match(r"^[A-Z]{5}[0-9]{4}[A-Z]$", pan):
+            raise forms.ValidationError("Enter a valid PAN number (e.g. ABCDE1234F).")
+        return pan
+
+    def clean_ifsc_code(self):
+        import re
+        ifsc = self.cleaned_data.get("ifsc_code", "").strip().upper()
+        if ifsc and not re.match(r"^[A-Z]{4}0[A-Z0-9]{6}$", ifsc):
+            raise forms.ValidationError("Enter a valid IFSC code (e.g. SBIN0001234).")
+        return ifsc
+
+    def clean_police_verification_issue_date(self):
+        issue_date = self.cleaned_data.get("police_verification_issue_date")
+        if issue_date:
+            delta = _date.today() - issue_date
+            if delta.days > 90:
+                raise forms.ValidationError(
+                    "Police verification certificate must not be older than "
+                    "3 months from the date of submission."
+                )
+            if issue_date > _date.today():
+                raise forms.ValidationError(
+                    "Issue date cannot be in the future."
+                )
+        return issue_date
+
+
+class HostBusinessForm(forms.ModelForm):
+    """Step 3: Business Details — shown only for Company hosts."""
+
+    class Meta:
+        model = HostApplication
+        fields = [
+            "gst_number",
+            "msme_udyam_number",
+            "authorized_person_name",
+            "business_address",
+        ]
+        widgets = {
+            "business_address": forms.Textarea(attrs={"rows": 3}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Required for Company hosts
+        self.fields["authorized_person_name"].required = True
+        self.fields["business_address"].required = True
+        # Optional
+        self.fields["gst_number"].required = False
+        self.fields["msme_udyam_number"].required = False
+
+        # Bootstrap classes
+        for name, field in self.fields.items():
+            existing = field.widget.attrs.get("class", "")
+            field.widget.attrs["class"] = (existing + " form-control").strip()
+
+        # Placeholders
+        self.fields["gst_number"].widget.attrs["placeholder"] = "e.g. 22AAAAA0000A1Z5 (optional)"
+        self.fields["msme_udyam_number"].widget.attrs["placeholder"] = "e.g. UDYAM-XX-00-0000000 (optional)"
+        self.fields["authorized_person_name"].widget.attrs["placeholder"] = "Name of authorized signatory"
+        self.fields["business_address"].widget.attrs["placeholder"] = "Registered business address"
+
+    def clean_gst_number(self):
+        import re
+        gst = self.cleaned_data.get("gst_number", "").strip().upper()
+        if gst and not re.match(r"^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$", gst):
+            raise forms.ValidationError("Enter a valid GST number.")
+        return gst
+
+
+class HostDeclarationForm(forms.Form):
+    """Step 4: Declaration checkbox before final submission."""
+
+    declaration_accepted = forms.BooleanField(
+        required=True,
+        label=(
+            "I confirm that the information provided is correct and I agree "
+            "to follow Routeless host, safety, tax, and legal compliance rules."
+        ),
+        widget=forms.CheckboxInput(attrs={"class": "form-check-input"}),
+        error_messages={
+            "required": "You must accept the declaration to submit your application.",
+        },
+    )

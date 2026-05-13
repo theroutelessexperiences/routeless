@@ -10,6 +10,8 @@ from .models import (
     ReviewReport,
     HostRequest,
     HostVerification,
+    HostApplication,
+    ListingDocument,
     HeroSlide,
     Message,
 )
@@ -67,30 +69,138 @@ class ExperienceImageInline(TabularInline):
 class ExperienceAdmin(ModelAdmin):
     list_display = (
         "title",
-        "location",
-        "category",
         "host",
+        "category",
+        "location",
         "price_per_person",
+        "max_guests",
+        "listing_status",
         "status",
         "is_active",
         "is_featured",
-        "is_flagged",
-        "is_hidden",
+        "created_at",
+        "submitted_at",
     )
     list_filter = (
+        "listing_status",
         "status",
+        "category",
         "is_active",
         "is_featured",
         "is_flagged",
         "is_hidden",
         "location",
+    )
+    search_fields = (
+        "title",
+        "location",
+        "host__username",
+        "host__email",
+        "host__first_name",
+        "host__last_name",
         "category",
     )
-    search_fields = ("title", "location", "host__username")
     prepopulated_fields = {"slug": ("title",)}
     inlines = [ExperienceImageInline]
     list_select_related = ("host",)
-    actions = [approve_experiences, reject_experiences] + moderation_actions
+    readonly_fields = ("created_at", "updated_at", "submitted_at")
+    ordering = ("-created_at",)
+
+    fieldsets = (
+        ("Basic Info", {
+            "fields": (
+                "title", "slug", "category", "location", "location_fk",
+                "host", "short_description", "description",
+                "experience_highlights",
+            ),
+        }),
+        ("Pricing & Capacity", {
+            "fields": (
+                "price_per_person", "max_guests", "duration",
+            ),
+        }),
+        ("Included / Excluded", {
+            "fields": ("what_is_included", "what_is_not_included", "amenities"),
+            "classes": ("collapse",),
+        }),
+        ("Category Details (JSON)", {
+            "fields": ("category_details",),
+            "classes": ("collapse",),
+        }),
+        ("Listing Workflow", {
+            "fields": (
+                "listing_status", "status",
+                "is_active", "is_featured",
+                "cancellation_policy_accepted", "listing_declaration_accepted",
+                "admin_notes",
+                "submitted_at", "created_at", "updated_at",
+            ),
+        }),
+        ("Moderation", {
+            "fields": ("is_flagged", "is_hidden", "moderation_reason"),
+            "classes": ("collapse",),
+        }),
+    )
+
+    actions = [
+        approve_experiences, reject_experiences,
+        "mark_listing_approved",
+        "mark_listing_rejected",
+        "mark_listing_more_info",
+        "mark_listing_paused",
+        "mark_listing_doc_expired",
+        "feature_listings",
+        "unfeature_listings",
+    ] + moderation_actions
+
+    @admin.action(description="✅ Approve listing (set active)")
+    def mark_listing_approved(self, request, queryset):
+        count = queryset.update(
+            listing_status=Experience.ListingStatus.APPROVED,
+            is_active=True,
+        )
+        self.message_user(request, f"{count} listing(s) approved and activated.")
+
+    @admin.action(description="❌ Reject listing")
+    def mark_listing_rejected(self, request, queryset):
+        count = queryset.update(
+            listing_status=Experience.ListingStatus.REJECTED,
+            is_active=False,
+        )
+        self.message_user(request, f"{count} listing(s) rejected.")
+
+    @admin.action(description="ℹ️ Request more info")
+    def mark_listing_more_info(self, request, queryset):
+        count = queryset.update(
+            listing_status=Experience.ListingStatus.MORE_INFO,
+        )
+        self.message_user(request, f"{count} listing(s) marked as needing more info.")
+
+    @admin.action(description="⏸️ Pause listing")
+    def mark_listing_paused(self, request, queryset):
+        count = queryset.update(
+            listing_status=Experience.ListingStatus.PAUSED,
+            is_active=False,
+        )
+        self.message_user(request, f"{count} listing(s) paused.")
+
+    @admin.action(description="📄 Mark documents expired")
+    def mark_listing_doc_expired(self, request, queryset):
+        count = queryset.update(
+            listing_status=Experience.ListingStatus.DOC_EXPIRED,
+            is_active=False,
+        )
+        self.message_user(request, f"{count} listing(s) marked with expired documents.")
+
+    @admin.action(description="⭐ Feature listings")
+    def feature_listings(self, request, queryset):
+        count = queryset.update(is_featured=True)
+        self.message_user(request, f"{count} listing(s) featured.")
+
+    @admin.action(description="Remove from featured")
+    def unfeature_listings(self, request, queryset):
+        count = queryset.update(is_featured=False)
+        self.message_user(request, f"{count} listing(s) unfeatured.")
 
 
 @admin.register(Booking)
@@ -178,7 +288,7 @@ class HostVerificationAdmin(ModelAdmin):
     search_fields = ("user__username", "user__email")
     actions = ["approve_verifications"]
     list_select_related = ("user",)
-    
+
     def approve_verifications(self, request, queryset):
         approved_count = 0
         for verification in queryset:
@@ -186,18 +296,160 @@ class HostVerificationAdmin(ModelAdmin):
                 verification.verified = True
                 verification.save(update_fields=["verified"])
                 approved_count += 1
-                
+
                 profile = getattr(verification.user, "userprofile", None)
                 if profile:
                     profile.is_host = True
                     profile.save(update_fields=["is_host"])
-                    
+
         self.message_user(
             request,
             f"{approved_count} host verification(s) approved and users updated to hosts."
         )
-        
+
     approve_verifications.short_description = "Approve selected host verifications"
+
+
+# -------------------------------------------------------------------
+# Host Application Admin (new multi-step flow)
+# -------------------------------------------------------------------
+@admin.register(HostApplication)
+class HostApplicationAdmin(ModelAdmin):
+    list_display = (
+        "full_name_or_company_name",
+        "host_type",
+        "mobile_number",
+        "city",
+        "state",
+        "verification_status",
+        "submitted_at",
+        "police_verification_issue_date",
+    )
+    list_filter = ("host_type", "verification_status", "state")
+    search_fields = (
+        "full_name_or_company_name",
+        "mobile_number",
+        "email",
+        "pan_number",
+        "gst_number",
+    )
+    readonly_fields = ("created_at", "updated_at", "submitted_at")
+    list_select_related = ("user",)
+    ordering = ("-submitted_at", "-created_at")
+
+    fieldsets = (
+        ("Host Details (Step 1)", {
+            "fields": (
+                "user",
+                "host_type",
+                "full_name_or_company_name",
+                "mobile_number",
+                "email",
+                "city",
+                "state",
+                "host_bio",
+                "profile_photo_or_logo",
+            ),
+        }),
+        ("Verification (Step 2)", {
+            "fields": (
+                "pan_number",
+                "government_id_proof",
+                "police_verification_certificate",
+                "police_verification_issue_date",
+                "bank_account_holder_name",
+                "bank_name",
+                "account_number",
+                "ifsc_code",
+            ),
+        }),
+        ("Business Details (Step 3 — Company Only)", {
+            "fields": (
+                "gst_number",
+                "msme_udyam_number",
+                "authorized_person_name",
+                "business_address",
+            ),
+            "classes": ("collapse",),
+        }),
+        ("Declaration (Step 4)", {
+            "fields": ("declaration_accepted",),
+        }),
+        ("Status & Admin", {
+            "fields": (
+                "verification_status",
+                "admin_notes",
+                "submitted_at",
+                "created_at",
+                "updated_at",
+            ),
+        }),
+    )
+
+    actions = [
+        "mark_verified",
+        "mark_rejected",
+        "mark_suspended",
+        "mark_more_info",
+        "mark_doc_expired",
+    ]
+
+    @admin.action(description="Mark as Verified (activate host)")
+    def mark_verified(self, request, queryset):
+        count = 0
+        for app in queryset:
+            app.verification_status = HostApplication.VerificationStatus.VERIFIED
+            app.save(update_fields=["verification_status"])
+            count += 1
+            # Activate host in UserProfile
+            profile = getattr(app.user, "userprofile", None)
+            if profile:
+                profile.is_host = True
+                profile.save(update_fields=["is_host"])
+        self.message_user(request, f"{count} application(s) verified and host accounts activated.")
+
+    @admin.action(description="Mark as Rejected")
+    def mark_rejected(self, request, queryset):
+        count = queryset.update(
+            verification_status=HostApplication.VerificationStatus.REJECTED
+        )
+        self.message_user(request, f"{count} application(s) rejected.")
+
+    @admin.action(description="Mark as Suspended")
+    def mark_suspended(self, request, queryset):
+        count = 0
+        for app in queryset:
+            app.verification_status = HostApplication.VerificationStatus.SUSPENDED
+            app.save(update_fields=["verification_status"])
+            count += 1
+            # Deactivate host in UserProfile
+            profile = getattr(app.user, "userprofile", None)
+            if profile and profile.is_host:
+                profile.is_host = False
+                profile.save(update_fields=["is_host"])
+        self.message_user(request, f"{count} application(s) suspended.")
+
+    @admin.action(description="Mark as More Info Required")
+    def mark_more_info(self, request, queryset):
+        count = queryset.update(
+            verification_status=HostApplication.VerificationStatus.MORE_INFO
+        )
+        self.message_user(request, f"{count} application(s) marked as needing more info.")
+
+    @admin.action(description="Mark as Document Expired")
+    def mark_doc_expired(self, request, queryset):
+        count = queryset.update(
+            verification_status=HostApplication.VerificationStatus.DOC_EXPIRED
+        )
+        self.message_user(request, f"{count} application(s) marked with expired documents.")
+
+
+@admin.register(ListingDocument)
+class ListingDocumentAdmin(ModelAdmin):
+    list_display = ("experience", "document_type", "uploaded_at")
+    list_filter = ("document_type",)
+    search_fields = ("experience__title",)
+    list_select_related = ("experience",)
 
 
 @admin.register(HeroSlide)

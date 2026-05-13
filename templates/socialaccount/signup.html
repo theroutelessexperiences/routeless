@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Sign Up - The Routeless{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <div class="row g-0 min-vh-100">
+        <!-- Split image -->
+        <div class="col-md-6 d-none d-md-block position-relative" style="background: url('https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2070&auto=format&fit=crop') center/cover;">
+            <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, rgba(15,23,42,0.55) 0%, rgba(15,23,42,0.15) 100%);"></div>
+            <div class="position-absolute bottom-0 start-0 p-5 text-white z-1">
+                <h2 class="display-4 fw-bold">New Journey Begins</h2>
+                <p class="lead">Complete your signup to start exploring authentic local experiences.</p>
+            </div>
+        </div>
+
+        <!-- Form side -->
+        <div class="col-md-6 d-flex align-items-center justify-content-center bg-white" style="padding-top: var(--navbar-height);">
+            <div class="w-100 px-4 px-md-5" style="max-width: 500px;">
+                <div class="text-center mb-5">
+                    <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3" style="width: 90px; height: 90px; background: rgba(242, 169, 0, 0.1);">
+                        <i class="bi bi-person-plus" style="font-size: 2.8rem; color: var(--primary-color);"></i>
+                    </div>
+                    <h2 class="fw-bold mb-2">Complete Your Signup</h2>
+                    <p class="text-muted">Just a few more details to create your account</p>
+                </div>
+
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary w-100 py-3 mt-3 fw-bold fs-5 hover-lift">Create Account</button>
+                </form>
+
+                <div class="mt-4 text-center">
+                    <a href="{% url 'account_login' %}" class="text-decoration-none text-muted">
+                        <i class="bi bi-arrow-left me-1"></i>Back to Login
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.hover-lift { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.hover-lift:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+</style>
+{% endblock %}

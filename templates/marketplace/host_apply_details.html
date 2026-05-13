@@ -1,0 +1,138 @@
+{% extends "marketplace/host_apply_base.html" %}
+
+{% block apply_header %}
+<div class="apply-card-header">
+    <div class="d-flex align-items-center gap-3 mb-2">
+        <span class="d-inline-flex align-items-center justify-content-center rounded-circle"
+              style="width: 48px; height: 48px; background: linear-gradient(135deg, #0f172a, #1e293b);">
+            <i class="bi bi-person-badge fs-5 text-white"></i>
+        </span>
+        <div>
+            <h2 class="mb-0">Host Details</h2>
+            <p class="mb-0">Tell us about yourself or your business</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block apply_content %}
+<form method="post" enctype="multipart/form-data" novalidate id="hostDetailsForm">
+    {% csrf_token %}
+
+    <!-- Host Type -->
+    <div class="form-group">
+        <label>I am registering as <span class="text-danger">*</span></label>
+        <div class="host-type-radio">
+            {% for radio in form.host_type %}
+            <div class="form-check">
+                {{ radio.tag }}
+                <label class="form-check-label" for="{{ radio.id_for_label }}">
+                    {% if forloop.first %}
+                        <i class="bi bi-person me-1"></i> Individual
+                    {% else %}
+                        <i class="bi bi-building me-1"></i> Company
+                    {% endif %}
+                </label>
+            </div>
+            {% endfor %}
+        </div>
+        {% if form.host_type.errors %}
+        <div class="invalid-feedback d-block">{{ form.host_type.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+    <!-- Full Name / Company Name -->
+    <div class="form-group">
+        <label for="{{ form.full_name_or_company_name.id_for_label }}">
+            Full Name / Company Name <span class="text-danger">*</span>
+        </label>
+        {{ form.full_name_or_company_name }}
+        {% if form.full_name_or_company_name.errors %}
+        <div class="invalid-feedback d-block">{{ form.full_name_or_company_name.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+    <!-- Two-column: Mobile + Email -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="{{ form.mobile_number.id_for_label }}">
+                    Mobile Number <span class="text-danger">*</span>
+                </label>
+                {{ form.mobile_number }}
+                {% if form.mobile_number.errors %}
+                <div class="invalid-feedback d-block">{{ form.mobile_number.errors.0 }}</div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}">
+                    Email <span class="text-danger">*</span>
+                </label>
+                {{ form.email }}
+                {% if form.email.errors %}
+                <div class="invalid-feedback d-block">{{ form.email.errors.0 }}</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Two-column: City + State -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="{{ form.city.id_for_label }}">
+                    City <span class="text-danger">*</span>
+                </label>
+                {{ form.city }}
+                {% if form.city.errors %}
+                <div class="invalid-feedback d-block">{{ form.city.errors.0 }}</div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group">
+                <label for="{{ form.state.id_for_label }}">
+                    State <span class="text-danger">*</span>
+                </label>
+                {{ form.state }}
+                {% if form.state.errors %}
+                <div class="invalid-feedback d-block">{{ form.state.errors.0 }}</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Bio -->
+    <div class="form-group">
+        <label for="{{ form.host_bio.id_for_label }}">
+            Short Bio <span class="text-muted fw-normal">(optional)</span>
+        </label>
+        {{ form.host_bio }}
+        <div class="form-text">Describe your hosting experience or what makes you unique.</div>
+    </div>
+
+    <!-- Photo -->
+    <div class="form-group">
+        <label for="{{ form.profile_photo_or_logo.id_for_label }}">
+            Profile Photo / Logo <span class="text-muted fw-normal">(optional)</span>
+        </label>
+        {{ form.profile_photo_or_logo }}
+        <div class="form-text">Upload a clear photo or your company logo. Max 5 MB.</div>
+        {% if form.profile_photo_or_logo.errors %}
+        <div class="invalid-feedback d-block">{{ form.profile_photo_or_logo.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+    <!-- Actions -->
+    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+        <a href="{% url 'home' %}" class="btn btn-host-back">
+            <i class="bi bi-arrow-left me-1"></i> Cancel
+        </a>
+        <button type="submit" class="btn btn-host-next">
+            Save & Continue <i class="bi bi-arrow-right ms-1"></i>
+        </button>
+    </div>
+</form>
+{% endblock %}

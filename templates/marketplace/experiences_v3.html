@@ -246,7 +246,7 @@ Filter by location, category, and price to find your perfect trip.
                     </h5>
 
                     <p class="text-muted small mb-3 d-flex align-items-center">
-                        <i class="bi bi-person-circle me-1"></i>Hosted by {{ listing.host.username }}
+                        <i class="bi bi-person-circle me-1"></i>Hosted by <a href="{% url 'host_profile' listing.host.username %}" class="text-decoration-none ms-1 fw-semibold host-link">{{ listing.host.username }}</a>
                     </p>
 
                     <!-- Description -->

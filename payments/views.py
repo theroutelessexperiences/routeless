@@ -2,6 +2,7 @@ from django.shortcuts import redirect, get_object_or_404, render
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.utils import timezone
 from marketplace.models import Booking
 from .models import Payment, PaymentLog
 from .services import verify_payment_signature, calculate_ledger_entries
@@ -30,38 +31,50 @@ def checkout_verify(request):
                 user=request.user
             )
 
+            # Use DB-stored order_id for verification, not the frontend-submitted one
             payment = get_object_or_404(
                 Payment.objects.select_for_update(),
                 booking=booking,
-                razorpay_order_id=razorpay_order_id
             )
+
+            # Security: verify the order_id matches what we stored
+            if payment.razorpay_order_id != razorpay_order_id:
+                logger.warning(
+                    "Order ID mismatch for booking %s: expected=%s, got=%s",
+                    booking_id, payment.razorpay_order_id, razorpay_order_id,
+                )
+                messages.error(request, "Payment verification failed: order mismatch.")
+                return redirect("payments:payment_failed", pk=booking.id)
 
             if payment.payment_status == "success":
                 messages.info(request, "This payment has already been verified successfully.")
                 return redirect(f"/booking-success/?booking_id={booking.id}")
 
+            # Verify signature using DB-stored order_id (not frontend-submitted)
             success, error = verify_payment_signature(
                 razorpay_payment_id,
-                razorpay_order_id,
+                payment.razorpay_order_id,
                 razorpay_signature
             )
 
             PaymentLog.objects.create(
                 payment=payment,
                 event_type="verification_attempt",
-                payload=f"razorpay_payment_id: {razorpay_payment_id}, razorpay_order_id: {razorpay_order_id}",
+                payload=f"razorpay_payment_id: {razorpay_payment_id}, razorpay_order_id: {payment.razorpay_order_id}",
                 status="success" if success else "error"
             )
 
             if not success:
-                payment.payment_status = "failed"
-                payment.save(update_fields=["payment_status"])
+                payment.payment_status = "verification_failed"
+                payment.save(update_fields=["payment_status", "updated_at"])
                 messages.error(request, f"Payment verification failed: {error}")
                 return redirect("payments:payment_failed", pk=booking.id)
 
+            # --- Payment verified successfully ---
             payment.payment_status = "success"
             payment.razorpay_payment_id = razorpay_payment_id
             payment.razorpay_signature = razorpay_signature
+            payment.paid_at = timezone.now()
             payment.save()
 
             from marketplace.models import AvailabilitySlot
@@ -77,7 +90,7 @@ def checkout_verify(request):
                     available_capacity = slot.capacity - slot.booked_count
                     if booking.guests_count > available_capacity:
                         payment.payment_status = "failed"
-                        payment.save(update_fields=["payment_status"])
+                        payment.save(update_fields=["payment_status", "updated_at"])
                         messages.error(request, "This slot is no longer available in the requested capacity.")
                         return redirect("payments:payment_failed", pk=booking.id)
 
@@ -96,6 +109,7 @@ def checkout_verify(request):
 
             calculate_ledger_entries(booking, reference_id=razorpay_payment_id)
 
+        # --- Post-commit notifications (outside atomic block) ---
         try:
             send_payment_success_email(booking)
             send_host_new_booking_email(booking)
@@ -148,7 +162,10 @@ def retry_payment(request, booking_id):
     booking = get_object_or_404(Booking, id=booking_id, user=request.user)
 
     with transaction.atomic():
-        Payment.objects.filter(booking=booking, payment_status="failed").delete()
+        Payment.objects.filter(
+            booking=booking,
+            payment_status__in=["failed", "verification_failed"],
+        ).delete()
 
         if booking.booking_status in ["cancelled", "pending", "payment_processing", "refunded"]:
             booking.booking_status = "payment_processing"

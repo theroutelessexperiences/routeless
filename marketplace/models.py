@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.apps import apps
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
@@ -180,6 +182,15 @@ class Experience(models.Model):
         APPROVED = "approved", "Approved"
         REJECTED = "rejected", "Rejected"
 
+    class ListingStatus(models.TextChoices):
+        DRAFT = "draft", "Draft"
+        PENDING_REVIEW = "pending_review", "Pending Review"
+        MORE_INFO = "more_info", "More Info Required"
+        APPROVED = "approved", "Approved"
+        REJECTED = "rejected", "Rejected"
+        PAUSED = "paused", "Paused"
+        DOC_EXPIRED = "doc_expired", "Expired Documents"
+
     title = models.CharField(max_length=200)
     slug = models.SlugField(unique=True, blank=True, db_index=True)
     category = models.CharField(max_length=50, choices=CATEGORY_CHOICES)
@@ -201,22 +212,60 @@ class Experience(models.Model):
     short_description = models.CharField(max_length=255, blank=True)
     description = models.TextField()
 
+    # Guided description fields
+    what_is_included = models.JSONField(
+        default=list, blank=True,
+        help_text="List of items included (e.g. Food, Guide, Stay, Equipment)",
+    )
+    what_is_not_included = models.JSONField(
+        default=list, blank=True,
+        help_text="List of items not included (e.g. Personal expenses, Meals)",
+    )
+    experience_highlights = models.TextField(
+        blank=True,
+        help_text="Key highlights of the experience, one per line.",
+    )
+
     price_per_person = models.DecimalField(max_digits=10, decimal_places=2)
     max_guests = models.IntegerField()
     duration = models.CharField(max_length=100)
 
     amenities = models.JSONField(default=list, blank=True)
 
+    # Category-specific details stored as JSON
+    category_details = models.JSONField(
+        default=dict, blank=True,
+        help_text="Structured category-specific field data.",
+    )
+
     is_flagged = models.BooleanField(default=False)
     is_hidden = models.BooleanField(default=False)
     moderation_reason = models.TextField(blank=True)
 
+    # Legacy status (kept for backward compatibility)
     status = models.CharField(
         max_length=10,
         choices=Status.choices,
         default=Status.PENDING,
         db_index=True,
     )
+
+    # New expanded listing status workflow
+    listing_status = models.CharField(
+        max_length=20,
+        choices=ListingStatus.choices,
+        default=ListingStatus.DRAFT,
+        db_index=True,
+    )
+    submitted_at = models.DateTimeField(null=True, blank=True)
+    admin_notes = models.TextField(
+        blank=True,
+        help_text="Admin feedback for rejection/more-info/paused reasons.",
+    )
+
+    # Declarations (required only for Submit for Review)
+    cancellation_policy_accepted = models.BooleanField(default=False)
+    listing_declaration_accepted = models.BooleanField(default=False)
 
     is_featured = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
@@ -606,6 +655,316 @@ class HostVerification(models.Model):
 
     def __str__(self):
         return f"{self.user.username} Identity Verification - {'Verified' if self.verified else 'Pending'}"
+
+
+# -------------------------------------------------------------------
+# Host Application (multi-step onboarding)
+# -------------------------------------------------------------------
+def validate_image_file(value):
+    """Allow common image formats, max 5 MB."""
+    ext = os.path.splitext(value.name)[1].lower()
+    valid_extensions = [".jpg", ".jpeg", ".png", ".webp"]
+    if ext not in valid_extensions:
+        raise ValidationError(
+            "Unsupported image format. Allowed: .jpg, .jpeg, .png, .webp."
+        )
+    limit = 5 * 1024 * 1024  # 5 MB
+    if value.size > limit:
+        raise ValidationError("Image file size cannot exceed 5 MB.")
+
+
+def validate_document_file(value):
+    """Allow images and PDFs for document uploads, max 10 MB."""
+    ext = os.path.splitext(value.name)[1].lower()
+    valid_extensions = [".jpg", ".jpeg", ".png", ".pdf"]
+    if ext not in valid_extensions:
+        raise ValidationError(
+            "Unsupported file extension. Allowed: .jpg, .jpeg, .png, .pdf."
+        )
+    limit = 10 * 1024 * 1024  # 10 MB
+    if value.size > limit:
+        raise ValidationError("File size cannot exceed 10 MB.")
+
+
+INDIAN_STATES = [
+    ("Andhra Pradesh", "Andhra Pradesh"),
+    ("Arunachal Pradesh", "Arunachal Pradesh"),
+    ("Assam", "Assam"),
+    ("Bihar", "Bihar"),
+    ("Chhattisgarh", "Chhattisgarh"),
+    ("Goa", "Goa"),
+    ("Gujarat", "Gujarat"),
+    ("Haryana", "Haryana"),
+    ("Himachal Pradesh", "Himachal Pradesh"),
+    ("Jharkhand", "Jharkhand"),
+    ("Karnataka", "Karnataka"),
+    ("Kerala", "Kerala"),
+    ("Madhya Pradesh", "Madhya Pradesh"),
+    ("Maharashtra", "Maharashtra"),
+    ("Manipur", "Manipur"),
+    ("Meghalaya", "Meghalaya"),
+    ("Mizoram", "Mizoram"),
+    ("Nagaland", "Nagaland"),
+    ("Odisha", "Odisha"),
+    ("Punjab", "Punjab"),
+    ("Rajasthan", "Rajasthan"),
+    ("Sikkim", "Sikkim"),
+    ("Tamil Nadu", "Tamil Nadu"),
+    ("Telangana", "Telangana"),
+    ("Tripura", "Tripura"),
+    ("Uttar Pradesh", "Uttar Pradesh"),
+    ("Uttarakhand", "Uttarakhand"),
+    ("West Bengal", "West Bengal"),
+    ("Chandigarh", "Chandigarh"),
+    ("Delhi", "Delhi"),
+    ("Jammu and Kashmir", "Jammu and Kashmir"),
+    ("Ladakh", "Ladakh"),
+    ("Puducherry", "Puducherry"),
+    ("Andaman and Nicobar Islands", "Andaman and Nicobar Islands"),
+    ("Dadra and Nagar Haveli and Daman and Diu", "Dadra and Nagar Haveli and Daman and Diu"),
+    ("Lakshadweep", "Lakshadweep"),
+]
+
+
+class HostApplication(models.Model):
+    """Unified host application model for the multi-step onboarding flow."""
+
+    class HostType(models.TextChoices):
+        INDIVIDUAL = "individual", "Individual"
+        COMPANY = "company", "Company"
+
+    class VerificationStatus(models.TextChoices):
+        DRAFT = "draft", "Draft"
+        SUBMITTED = "submitted", "Submitted"
+        MORE_INFO = "more_info", "More Info Required"
+        VERIFIED = "verified", "Verified"
+        DOC_EXPIRED = "doc_expired", "Document Expired"
+        SUSPENDED = "suspended", "Suspended"
+        REJECTED = "rejected", "Rejected"
+
+    user = models.OneToOneField(
+        User, on_delete=models.CASCADE, related_name="host_application"
+    )
+
+    # ------ Step 1: Host Details ------
+    host_type = models.CharField(
+        max_length=20, choices=HostType.choices, default=HostType.INDIVIDUAL
+    )
+    full_name_or_company_name = models.CharField(max_length=255)
+    mobile_number = models.CharField(max_length=20)
+    email = models.EmailField()
+    city = models.CharField(max_length=100)
+    state = models.CharField(max_length=100, choices=INDIAN_STATES)
+    host_bio = models.TextField(blank=True)
+    profile_photo_or_logo = models.ImageField(
+        upload_to="host_applications/photos/",
+        blank=True,
+        null=True,
+        validators=[validate_image_file],
+    )
+
+    # ------ Step 2: Verification ------
+    pan_number = models.CharField(max_length=10, blank=True)
+    government_id_proof = models.FileField(
+        upload_to="host_applications/govt_ids/",
+        blank=True,
+        validators=[validate_document_file],
+    )
+    police_verification_certificate = models.FileField(
+        upload_to="host_applications/police_certs/",
+        blank=True,
+        validators=[validate_document_file],
+    )
+    police_verification_issue_date = models.DateField(null=True, blank=True)
+    bank_account_holder_name = models.CharField(max_length=255, blank=True)
+    bank_name = models.CharField(max_length=255, blank=True)
+    account_number = models.CharField(max_length=30, blank=True)
+    ifsc_code = models.CharField(max_length=11, blank=True)
+
+    # ------ Step 3: Business Details (Company only) ------
+    gst_number = models.CharField(max_length=15, blank=True)
+    msme_udyam_number = models.CharField(max_length=30, blank=True)
+    authorized_person_name = models.CharField(max_length=255, blank=True)
+    business_address = models.TextField(blank=True)
+
+    # ------ Step 4: Declaration ------
+    declaration_accepted = models.BooleanField(default=False)
+
+    # ------ Status & Timestamps ------
+    verification_status = models.CharField(
+        max_length=20,
+        choices=VerificationStatus.choices,
+        default=VerificationStatus.DRAFT,
+        db_index=True,
+    )
+    submitted_at = models.DateTimeField(null=True, blank=True)
+    admin_notes = models.TextField(
+        blank=True, help_text="Admin notes for rejection/more-info reasons."
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Host Application"
+        verbose_name_plural = "Host Applications"
+        ordering = ["-submitted_at", "-created_at"]
+
+    def __str__(self):
+        return f"{self.full_name_or_company_name} ({self.get_verification_status_display()})"
+
+    @property
+    def is_company(self):
+        return self.host_type == self.HostType.COMPANY
+
+    @property
+    def step1_complete(self):
+        """Check if Step 1 (Host Details) has all required fields."""
+        return all([
+            self.host_type,
+            self.full_name_or_company_name,
+            self.mobile_number,
+            self.email,
+            self.city,
+            self.state,
+        ])
+
+    @property
+    def step2_complete(self):
+        """Check if Step 2 (Verification) has all required fields."""
+        return all([
+            self.pan_number,
+            self.government_id_proof,
+            self.police_verification_certificate,
+            self.police_verification_issue_date,
+            self.bank_account_holder_name,
+            self.bank_name,
+            self.account_number,
+            self.ifsc_code,
+        ])
+
+    @property
+    def step3_complete(self):
+        """Check if Step 3 (Business) is complete. Always true for Individual."""
+        if self.host_type != self.HostType.COMPANY:
+            return True
+        return all([
+            self.authorized_person_name,
+            self.business_address,
+        ])
+
+    def clean(self):
+        super().clean()
+        errors = {}
+
+        # Police verification certificate must not be older than 3 months
+        if self.police_verification_issue_date:
+            today = date.today()
+            delta = today - self.police_verification_issue_date
+            if delta.days > 90:
+                errors["police_verification_issue_date"] = (
+                    "Police verification certificate must not be older than "
+                    "3 months from the date of submission."
+                )
+
+        # Company-specific required fields
+        if self.host_type == self.HostType.COMPANY:
+            if (
+                self.verification_status != self.VerificationStatus.DRAFT
+                and not self.authorized_person_name
+            ):
+                errors["authorized_person_name"] = (
+                    "Authorized person name is required for Company hosts."
+                )
+            if (
+                self.verification_status != self.VerificationStatus.DRAFT
+                and not self.business_address
+            ):
+                errors["business_address"] = (
+                    "Business address is required for Company hosts."
+                )
+
+        # Declaration must be accepted before submission
+        if (
+            self.verification_status == self.VerificationStatus.SUBMITTED
+            and not self.declaration_accepted
+        ):
+            errors["declaration_accepted"] = (
+                "You must accept the declaration before submitting."
+            )
+
+        if errors:
+            raise ValidationError(errors)
+
+
+class ListingDocument(models.Model):
+    """
+    Listing-category-specific documents collected when a host creates
+    a listing, NOT during host signup.
+
+    TODO: When the listing creation flow is built, extend this model
+    with the following document types per listing category:
+
+    Stay / Homestay:
+        - property_proof: Property ownership/lease proof
+        - tourism_registration: Tourism department registration (if applicable)
+
+    Food Experience:
+        - fssai_registration: FSSAI licence/registration (if food is sold)
+
+    Transport:
+        - driving_licence: Valid driving licence
+        - vehicle_rc: Vehicle registration certificate
+        - vehicle_insurance: Valid vehicle insurance
+
+    Adventure Activity:
+        - safety_declaration: Safety compliance declaration
+        - safety_certificate: Activity-specific safety certificate (if applicable)
+    """
+
+    DOC_TYPE_CHOICES = [
+        # Homestay
+        ("property_proof", "Property Proof"),
+        ("tourism_registration", "Tourism Registration"),
+        # Food
+        ("fssai_registration", "FSSAI Registration"),
+        # Transport
+        ("driving_licence", "Driving Licence"),
+        ("vehicle_rc", "Vehicle RC"),
+        ("vehicle_insurance", "Vehicle Insurance"),
+        # Adventure / Trek
+        ("safety_declaration", "Safety Declaration"),
+        ("safety_certificate", "Safety Certificate"),
+        ("trekking_permit", "Trekking Permit"),
+        ("guide_certificate", "Guide Certificate"),
+        ("emergency_plan", "Emergency Plan"),
+        # Spiritual
+        ("permission_authorization", "Permission / Authorization"),
+        # Wildlife
+        ("safari_permit", "Safari Permit"),
+        # Cultural
+        ("community_authorization", "Community Authorization"),
+    ]
+
+    experience = models.ForeignKey(
+        "Experience",
+        on_delete=models.CASCADE,
+        related_name="listing_documents",
+    )
+    document_type = models.CharField(max_length=30, choices=DOC_TYPE_CHOICES)
+    document_file = models.FileField(
+        upload_to="listing_documents/",
+        validators=[validate_document_file],
+    )
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    notes = models.TextField(blank=True)
+
+    class Meta:
+        verbose_name = "Listing Document"
+        verbose_name_plural = "Listing Documents"
+        unique_together = ("experience", "document_type")
+
+    def __str__(self):
+        return f"{self.get_document_type_display()} for {self.experience.title}"
 
 
 # -------------------------------------------------------------------

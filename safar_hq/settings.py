@@ -48,6 +48,7 @@ PAYMENTS_DEMO_MODE = env_bool("PAYMENTS_DEMO_MODE", True)
 
 RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID", "").strip()
 RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET", "").strip()
+RAZORPAY_WEBHOOK_SECRET = os.getenv("RAZORPAY_WEBHOOK_SECRET", "").strip()
 
 if not PAYMENTS_DEMO_MODE:
     if not RAZORPAY_KEY_ID:
@@ -315,7 +316,28 @@ if EMAIL_HOST_USER and EMAIL_HOST_PASSWORD:
 else:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
-DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "noreply@therouteless.com")
+DEFAULT_FROM_EMAIL = os.getenv("DEFAULT_FROM_EMAIL", "hello@therouteless.com")
+SERVER_EMAIL = os.getenv("SERVER_EMAIL", "admin@therouteless.com")
+
+# Purpose-based sender routing for The Routeless emails.
+# Each key maps to a specific sender address used by the
+# send_routeless_email() helper in marketplace/services/emails.py.
+#
+# NOTE: If using Gmail / Google Workspace SMTP, each sender address
+# below must be configured as an allowed alias or valid mailbox in the
+# Google Workspace Admin Console.  The SMTP user (EMAIL_HOST_USER) must
+# have "Send As" permission for each alias, otherwise Gmail will
+# silently rewrite the From header to the authenticated user's address.
+ROUTELESS_EMAILS = {
+    "marketing": os.getenv("MARKETING_FROM_EMAIL", "explore@therouteless.com"),
+    "booking":   os.getenv("BOOKING_FROM_EMAIL",   "tribe@therouteless.com"),
+    "admin":     os.getenv("ADMIN_FROM_EMAIL",     "admin@therouteless.com"),
+    "general":   os.getenv("GENERAL_FROM_EMAIL",   "hello@therouteless.com"),
+    "partners":  os.getenv("PARTNERS_FROM_EMAIL",  "partners@therouteless.com"),
+    "support":   os.getenv("SUPPORT_FROM_EMAIL",   "support@therouteless.com"),
+    "ankit":     os.getenv("ANKIT_WORK_EMAIL",     "ankitsharma@therouteless.com"),
+    "harshit":   os.getenv("HARSHIT_WORK_EMAIL",   "harshitsachan@therouteless.com"),
+}
 
 
 # -------------------------------------------------------------------
@@ -345,6 +367,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_AUTHENTICATION_METHOD = "username_email"
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+ACCOUNT_ADAPTER = "marketplace.adapters.RoutelessAccountAdapter"
 
 SOCIALACCOUNT_PROVIDERS = {
     "google": {

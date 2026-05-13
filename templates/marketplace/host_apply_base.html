@@ -1,0 +1,341 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Host Application - The Routeless{% endblock %}
+
+{% block extra_css %}
+<style>
+    .host-apply-wrapper {
+        min-height: 80vh;
+        padding: 2rem 0 4rem;
+    }
+
+    /* ---- Stepper ---- */
+    .stepper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0;
+        margin-bottom: 2.5rem;
+    }
+
+    .stepper-step {
+        display: flex;
+        align-items: center;
+        gap: 0;
+    }
+
+    .stepper-circle {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 0.95rem;
+        border: 2px solid #e2e8f0;
+        background: #fff;
+        color: #94a3b8;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+    }
+
+    .stepper-circle.active {
+        background: linear-gradient(135deg, #0f172a, #1e293b);
+        border-color: #0f172a;
+        color: #fff;
+        box-shadow: 0 4px 16px rgba(15, 23, 42, 0.3);
+    }
+
+    .stepper-circle.completed {
+        background: #10b981;
+        border-color: #10b981;
+        color: #fff;
+    }
+
+    .stepper-label {
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #94a3b8;
+        margin-top: 6px;
+        text-align: center;
+        max-width: 80px;
+    }
+
+    .stepper-label.active {
+        color: #0f172a;
+    }
+
+    .stepper-label.completed {
+        color: #10b981;
+    }
+
+    .stepper-line {
+        width: 40px;
+        height: 2px;
+        background: #e2e8f0;
+        margin: 0 4px;
+        transition: background 0.3s ease;
+    }
+
+    .stepper-line.completed {
+        background: #10b981;
+    }
+
+    .stepper-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    /* ---- Form Card ---- */
+    .apply-card {
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgba(0, 0, 0, 0.04);
+        overflow: hidden;
+    }
+
+    .apply-card-header {
+        padding: 2rem 2rem 1.2rem;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .apply-card-header h2 {
+        font-family: 'Outfit', sans-serif;
+        font-weight: 700;
+        font-size: 1.5rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .apply-card-header p {
+        color: #64748b;
+        margin-bottom: 0;
+        font-size: 0.92rem;
+    }
+
+    .apply-card-body {
+        padding: 1.5rem 2rem 2rem;
+    }
+
+    /* ---- Form styling ---- */
+    .form-group {
+        margin-bottom: 1.4rem;
+    }
+
+    .form-group label {
+        font-weight: 600;
+        font-size: 0.9rem;
+        color: #1e293b;
+        margin-bottom: 0.4rem;
+        display: block;
+    }
+
+    .form-group .form-text {
+        font-size: 0.82rem;
+        color: #94a3b8;
+    }
+
+    .form-control:focus, .form-select:focus {
+        border-color: #f59e0b;
+        box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+    }
+
+    .form-control, .form-select {
+        border-radius: 12px;
+        padding: 0.65rem 1rem;
+        border: 1.5px solid #e2e8f0;
+        transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .host-type-radio {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .host-type-radio .form-check {
+        background: #f8fafc;
+        border: 2px solid #e2e8f0;
+        border-radius: 14px;
+        padding: 1rem 1.5rem;
+        flex: 1;
+        min-width: 140px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+
+    .host-type-radio .form-check:hover {
+        border-color: #f59e0b;
+        background: #fffbeb;
+    }
+
+    .host-type-radio .form-check-input:checked + .form-check-label {
+        font-weight: 700;
+    }
+
+    .host-type-radio .form-check:has(.form-check-input:checked) {
+        border-color: #f59e0b;
+        background: #fffbeb;
+        box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);
+    }
+
+    .host-type-radio .form-check-label {
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.95rem;
+    }
+
+    /* ---- Buttons ---- */
+    .btn-host-next {
+        background: linear-gradient(135deg, #0f172a, #1e293b);
+        color: #fff;
+        border: none;
+        border-radius: 99px;
+        padding: 0.75rem 2.5rem;
+        font-weight: 700;
+        font-size: 1rem;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-host-next:hover {
+        background: linear-gradient(135deg, #1e293b, #334155);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(15, 23, 42, 0.25);
+        color: #fff;
+    }
+
+    .btn-host-back {
+        color: #64748b;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 99px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        background: #fff;
+        transition: all 0.2s ease;
+    }
+
+    .btn-host-back:hover {
+        border-color: #94a3b8;
+        color: #0f172a;
+    }
+
+    .btn-host-submit {
+        background: linear-gradient(135deg, #f59e0b, #d97706);
+        color: #fff;
+        border: none;
+        border-radius: 99px;
+        padding: 0.85rem 3rem;
+        font-weight: 700;
+        font-size: 1.05rem;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-host-submit:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(245, 158, 11, 0.35);
+        color: #fff;
+    }
+
+    /* Error states */
+    .form-control.is-invalid, .form-select.is-invalid {
+        border-color: #ef4444;
+    }
+
+    .invalid-feedback {
+        font-size: 0.82rem;
+    }
+
+    /* Mobile tweaks */
+    @media (max-width: 767.98px) {
+        .apply-card-header, .apply-card-body {
+            padding-left: 1.2rem;
+            padding-right: 1.2rem;
+        }
+
+        .stepper-label {
+            font-size: 0.68rem;
+            max-width: 55px;
+        }
+
+        .stepper-circle {
+            width: 36px;
+            height: 36px;
+            font-size: 0.85rem;
+        }
+
+        .stepper-line {
+            width: 20px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="host-apply-wrapper">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-7 col-xl-6">
+
+                <!-- Stepper -->
+                <div class="stepper" aria-label="Application progress">
+                    {% with steps="Host Details,Verification,Business,Declaration" %}
+                    {% for step_label in steps|make_list %}{% endfor %}
+                    {% endwith %}
+
+                    <!-- Step 1 -->
+                    <div class="stepper-item">
+                        <div class="stepper-circle {% if current_step == 1 %}active{% elif current_step > 1 %}completed{% endif %}">
+                            {% if current_step > 1 %}<i class="bi bi-check-lg"></i>{% else %}1{% endif %}
+                        </div>
+                        <div class="stepper-label {% if current_step == 1 %}active{% elif current_step > 1 %}completed{% endif %}">Details</div>
+                    </div>
+
+                    <div class="stepper-line {% if current_step > 1 %}completed{% endif %}"></div>
+
+                    <!-- Step 2 -->
+                    <div class="stepper-item">
+                        <div class="stepper-circle {% if current_step == 2 %}active{% elif current_step > 2 %}completed{% endif %}">
+                            {% if current_step > 2 %}<i class="bi bi-check-lg"></i>{% else %}2{% endif %}
+                        </div>
+                        <div class="stepper-label {% if current_step == 2 %}active{% elif current_step > 2 %}completed{% endif %}">Verify</div>
+                    </div>
+
+                    <div class="stepper-line {% if current_step > 2 %}completed{% endif %}"></div>
+
+                    <!-- Step 3 -->
+                    <div class="stepper-item">
+                        <div class="stepper-circle {% if current_step == 3 %}active{% elif current_step > 3 %}completed{% endif %}">
+                            {% if current_step > 3 %}<i class="bi bi-check-lg"></i>{% else %}3{% endif %}
+                        </div>
+                        <div class="stepper-label {% if current_step == 3 %}active{% elif current_step > 3 %}completed{% endif %}">Business</div>
+                    </div>
+
+                    <div class="stepper-line {% if current_step > 3 %}completed{% endif %}"></div>
+
+                    <!-- Step 4 -->
+                    <div class="stepper-item">
+                        <div class="stepper-circle {% if current_step == 4 %}active{% endif %}">4</div>
+                        <div class="stepper-label {% if current_step == 4 %}active{% endif %}">Submit</div>
+                    </div>
+                </div>
+
+                <!-- Form Card -->
+                <div class="apply-card slide-up">
+                    {% block apply_header %}{% endblock %}
+
+                    <div class="apply-card-body">
+                        {% block apply_content %}{% endblock %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

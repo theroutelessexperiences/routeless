@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load socialaccount %}
+
+{% block title %}Sign In via {{ provider.name }} - The Routeless{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <div class="row g-0 min-vh-100">
+        <!-- Split image -->
+        <div class="col-md-6 d-none d-md-block position-relative" style="background: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2070&auto=format&fit=crop') center/cover;">
+            <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, rgba(15,23,42,0.6) 0%, rgba(15,23,42,0.15) 100%);"></div>
+            <div class="position-absolute bottom-0 start-0 p-5 text-white z-1">
+                <h2 class="display-4 fw-bold">One Click Away</h2>
+                <p class="lead">Connect your account and start exploring authentic local experiences.</p>
+            </div>
+        </div>
+
+        <!-- Form side -->
+        <div class="col-md-6 d-flex align-items-center justify-content-center bg-white" style="padding-top: var(--navbar-height);">
+            <div class="w-100 px-4 px-md-5 text-center" style="max-width: 480px;">
+
+                <!-- Icon -->
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-4" style="width: 90px; height: 90px; background: rgba(242, 169, 0, 0.1);">
+                    {% if provider.id == "google" %}
+                    <i class="bi bi-google" style="font-size: 2.5rem; color: #EA4335;"></i>
+                    {% elif provider.id == "facebook" %}
+                    <i class="bi bi-facebook" style="font-size: 2.5rem; color: #1877F2;"></i>
+                    {% elif provider.id == "apple" %}
+                    <i class="bi bi-apple" style="font-size: 2.5rem; color: #000;"></i>
+                    {% else %}
+                    <i class="bi bi-box-arrow-in-right" style="font-size: 2.5rem; color: var(--primary-color);"></i>
+                    {% endif %}
+                </div>
+
+                <h2 class="fw-bold mb-2">Continue with {{ provider.name }}</h2>
+                <p class="text-muted mb-4 fs-6">
+                    You are about to sign in using your <strong>{{ provider.name }}</strong> account.
+                    This will link your {{ provider.name }} profile to The Routeless.
+                </p>
+
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary w-100 py-3 mb-3 fw-bold fs-5 d-flex align-items-center justify-content-center gap-2 hover-lift">
+                        {% if provider.id == "google" %}
+                        <i class="bi bi-google"></i>
+                        {% elif provider.id == "facebook" %}
+                        <i class="bi bi-facebook"></i>
+                        {% endif %}
+                        Continue with {{ provider.name }}
+                    </button>
+                </form>
+
+                <a href="{% url 'account_login' %}" class="btn btn-outline-secondary w-100 py-2 fw-semibold hover-lift">
+                    <i class="bi bi-arrow-left me-2"></i>Back to Login
+                </a>
+
+                <div class="mt-5">
+                    <p class="text-muted small">
+                        By continuing, you agree to our
+                        <a href="{% url 'terms_of_service' %}" class="text-decoration-none fw-semibold" style="color: var(--primary-color);">Terms of Service</a> and
+                        <a href="{% url 'privacy_policy' %}" class="text-decoration-none fw-semibold" style="color: var(--primary-color);">Privacy Policy</a>.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.hover-lift { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.hover-lift:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+</style>
+{% endblock %}

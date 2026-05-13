@@ -1,0 +1,160 @@
+{% extends "marketplace/host_apply_base.html" %}
+
+{% block apply_header %}
+<div class="apply-card-header">
+    <div class="d-flex align-items-center gap-3 mb-2">
+        <span class="d-inline-flex align-items-center justify-content-center rounded-circle"
+              style="width: 48px; height: 48px; background: linear-gradient(135deg, #0f172a, #1e293b);">
+            <i class="bi bi-shield-check fs-5 text-white"></i>
+        </span>
+        <div>
+            <h2 class="mb-0">Verification</h2>
+            <p class="mb-0">Upload your identity documents and bank details</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block apply_content %}
+<div class="alert alert-light border rounded-4 mb-4">
+    <div class="d-flex align-items-start gap-2">
+        <i class="bi bi-info-circle text-primary mt-1"></i>
+        <div class="small text-muted">
+            Please upload clear, readable documents. Accepted formats: JPG, PNG, PDF. Max 10 MB each.
+            Police verification certificate must not be older than 3 months.
+        </div>
+    </div>
+</div>
+
+<form method="post" enctype="multipart/form-data" novalidate id="hostVerificationForm">
+    {% csrf_token %}
+
+    <h6 class="fw-bold text-uppercase text-muted small mb-3 mt-2">
+        <i class="bi bi-file-earmark-text me-1"></i> Identity & Documents
+    </h6>
+
+    <!-- PAN Number -->
+    <div class="form-group">
+        <label for="{{ form.pan_number.id_for_label }}">
+            PAN Number <span class="text-danger">*</span>
+        </label>
+        {{ form.pan_number }}
+        {% if form.pan_number.errors %}
+        <div class="invalid-feedback d-block">{{ form.pan_number.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+    <!-- Government ID Proof -->
+    <div class="form-group">
+        <label for="{{ form.government_id_proof.id_for_label }}">
+            Government ID Proof <span class="text-danger">*</span>
+        </label>
+        <div class="form-text mb-2">Aadhaar, Driving Licence, Passport, or Voter ID</div>
+        {{ form.government_id_proof }}
+        {% if app.government_id_proof %}
+        <div class="small text-success mt-1">
+            <i class="bi bi-check-circle"></i> Document already uploaded. Upload again to replace.
+        </div>
+        {% endif %}
+        {% if form.government_id_proof.errors %}
+        <div class="invalid-feedback d-block">{{ form.government_id_proof.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+    <!-- Police Verification Certificate -->
+    <div class="row">
+        <div class="col-md-7">
+            <div class="form-group">
+                <label for="{{ form.police_verification_certificate.id_for_label }}">
+                    Police Verification Certificate <span class="text-danger">*</span>
+                </label>
+                {{ form.police_verification_certificate }}
+                {% if app.police_verification_certificate %}
+                <div class="small text-success mt-1">
+                    <i class="bi bi-check-circle"></i> Document already uploaded.
+                </div>
+                {% endif %}
+                {% if form.police_verification_certificate.errors %}
+                <div class="invalid-feedback d-block">{{ form.police_verification_certificate.errors.0 }}</div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="form-group">
+                <label for="{{ form.police_verification_issue_date.id_for_label }}">
+                    Issue Date <span class="text-danger">*</span>
+                </label>
+                {{ form.police_verification_issue_date }}
+                <div class="form-text">Must be within last 3 months</div>
+                {% if form.police_verification_issue_date.errors %}
+                <div class="invalid-feedback d-block">{{ form.police_verification_issue_date.errors.0 }}</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <hr class="my-4">
+
+    <h6 class="fw-bold text-uppercase text-muted small mb-3">
+        <i class="bi bi-bank me-1"></i> Bank Details
+    </h6>
+
+    <!-- Bank Account Holder Name -->
+    <div class="form-group">
+        <label for="{{ form.bank_account_holder_name.id_for_label }}">
+            Account Holder Name <span class="text-danger">*</span>
+        </label>
+        {{ form.bank_account_holder_name }}
+        {% if form.bank_account_holder_name.errors %}
+        <div class="invalid-feedback d-block">{{ form.bank_account_holder_name.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+    <!-- Bank Name -->
+    <div class="form-group">
+        <label for="{{ form.bank_name.id_for_label }}">
+            Bank Name <span class="text-danger">*</span>
+        </label>
+        {{ form.bank_name }}
+        {% if form.bank_name.errors %}
+        <div class="invalid-feedback d-block">{{ form.bank_name.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+    <!-- Account Number + IFSC -->
+    <div class="row">
+        <div class="col-md-7">
+            <div class="form-group">
+                <label for="{{ form.account_number.id_for_label }}">
+                    Account Number <span class="text-danger">*</span>
+                </label>
+                {{ form.account_number }}
+                {% if form.account_number.errors %}
+                <div class="invalid-feedback d-block">{{ form.account_number.errors.0 }}</div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="form-group">
+                <label for="{{ form.ifsc_code.id_for_label }}">
+                    IFSC Code <span class="text-danger">*</span>
+                </label>
+                {{ form.ifsc_code }}
+                {% if form.ifsc_code.errors %}
+                <div class="invalid-feedback d-block">{{ form.ifsc_code.errors.0 }}</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+        <a href="{% url 'host_apply_details' %}" class="btn btn-host-back">
+            <i class="bi bi-arrow-left me-1"></i> Back
+        </a>
+        <button type="submit" class="btn btn-host-next">
+            Save & Continue <i class="bi bi-arrow-right ms-1"></i>
+        </button>
+    </div>
+</form>
+{% endblock %}

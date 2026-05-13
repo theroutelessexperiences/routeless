@@ -1,0 +1,120 @@
+{% extends "marketplace/host_apply_base.html" %}
+
+{% block apply_header %}
+<div class="apply-card-header">
+    <div class="d-flex align-items-center gap-3 mb-2">
+        <span class="d-inline-flex align-items-center justify-content-center rounded-circle"
+              style="width: 48px; height: 48px; background: linear-gradient(135deg, #f59e0b, #d97706);">
+            <i class="bi bi-check2-square fs-5 text-white"></i>
+        </span>
+        <div>
+            <h2 class="mb-0">Declaration & Submit</h2>
+            <p class="mb-0">Review and submit your host application</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block apply_content %}
+<!-- Application Summary -->
+<div class="mb-4">
+    <h6 class="fw-bold text-uppercase text-muted small mb-3">
+        <i class="bi bi-card-checklist me-1"></i> Application Summary
+    </h6>
+
+    <div class="bg-light rounded-4 p-3 mb-3">
+        <div class="row g-2 small">
+            <div class="col-6">
+                <span class="text-muted">Host Type:</span><br>
+                <strong>{{ app.get_host_type_display }}</strong>
+            </div>
+            <div class="col-6">
+                <span class="text-muted">Name:</span><br>
+                <strong>{{ app.full_name_or_company_name }}</strong>
+            </div>
+            <div class="col-6">
+                <span class="text-muted">Mobile:</span><br>
+                <strong>{{ app.mobile_number }}</strong>
+            </div>
+            <div class="col-6">
+                <span class="text-muted">Email:</span><br>
+                <strong>{{ app.email }}</strong>
+            </div>
+            <div class="col-6">
+                <span class="text-muted">Location:</span><br>
+                <strong>{{ app.city }}, {{ app.state }}</strong>
+            </div>
+            <div class="col-6">
+                <span class="text-muted">PAN:</span><br>
+                <strong>{{ app.pan_number }}</strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex gap-2 flex-wrap mb-3">
+        {% if app.government_id_proof %}
+        <span class="badge bg-success-subtle text-success rounded-pill px-3 py-2">
+            <i class="bi bi-check-circle me-1"></i> Government ID
+        </span>
+        {% endif %}
+        {% if app.police_verification_certificate %}
+        <span class="badge bg-success-subtle text-success rounded-pill px-3 py-2">
+            <i class="bi bi-check-circle me-1"></i> Police Verification
+        </span>
+        {% endif %}
+        {% if app.bank_name %}
+        <span class="badge bg-success-subtle text-success rounded-pill px-3 py-2">
+            <i class="bi bi-check-circle me-1"></i> Bank Details
+        </span>
+        {% endif %}
+        {% if app.is_company and app.authorized_person_name %}
+        <span class="badge bg-success-subtle text-success rounded-pill px-3 py-2">
+            <i class="bi bi-check-circle me-1"></i> Business Details
+        </span>
+        {% endif %}
+    </div>
+</div>
+
+<hr>
+
+<!-- Declaration Form -->
+<form method="post" novalidate id="hostDeclarationForm">
+    {% csrf_token %}
+
+    <div class="form-check mb-4 p-3 bg-light rounded-4 border">
+        {{ form.declaration_accepted }}
+        <label class="form-check-label ms-2" for="{{ form.declaration_accepted.id_for_label }}" style="cursor: pointer;">
+            {{ form.declaration_accepted.label }}
+        </label>
+        {% if form.declaration_accepted.errors %}
+        <div class="invalid-feedback d-block mt-2">{{ form.declaration_accepted.errors.0 }}</div>
+        {% endif %}
+    </div>
+
+    <div class="alert alert-warning border-0 rounded-4 mb-4">
+        <div class="d-flex align-items-start gap-2">
+            <i class="bi bi-exclamation-triangle mt-1"></i>
+            <div class="small">
+                <strong>Important:</strong> Once submitted, you cannot edit your application until the admin reviews it.
+                Make sure all details are correct before submitting.
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+        {% if app.is_company %}
+        <a href="{% url 'host_apply_business' %}" class="btn btn-host-back">
+            <i class="bi bi-arrow-left me-1"></i> Back
+        </a>
+        {% else %}
+        <a href="{% url 'host_apply_verification' %}" class="btn btn-host-back">
+            <i class="bi bi-arrow-left me-1"></i> Back
+        </a>
+        {% endif %}
+        <button type="submit" class="btn btn-host-submit">
+            <i class="bi bi-send me-1"></i> Submit Application
+        </button>
+    </div>
+</form>
+{% endblock %}

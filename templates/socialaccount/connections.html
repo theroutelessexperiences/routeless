@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load socialaccount %}
+
+{% block title %}Connect {{ provider.name }} - The Routeless{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <div class="row g-0 min-vh-100">
+        <!-- Split image -->
+        <div class="col-md-6 d-none d-md-block position-relative" style="background: url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?q=80&w=2070&auto=format&fit=crop') center/cover;">
+            <div class="position-absolute top-0 start-0 w-100 h-100" style="background: linear-gradient(135deg, rgba(15,23,42,0.55) 0%, rgba(15,23,42,0.15) 100%);"></div>
+            <div class="position-absolute bottom-0 start-0 p-5 text-white z-1">
+                <h2 class="display-4 fw-bold">Connect & Explore</h2>
+                <p class="lead">Link your social account for seamless access to The Routeless.</p>
+            </div>
+        </div>
+
+        <!-- Content side -->
+        <div class="col-md-6 d-flex align-items-center justify-content-center bg-white" style="padding-top: var(--navbar-height);">
+            <div class="w-100 px-4 px-md-5 text-center" style="max-width: 480px;">
+
+                <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-4" style="width: 90px; height: 90px; background: rgba(242, 169, 0, 0.1);">
+                    <i class="bi bi-link-45deg" style="font-size: 2.8rem; color: var(--primary-color);"></i>
+                </div>
+
+                <h2 class="fw-bold mb-3">Connect {{ provider.name }}</h2>
+
+                {% if provider.name %}
+                <p class="text-muted fs-6 mb-4">
+                    A {{ provider.name }} account is already connected to a different The Routeless profile.
+                    Please sign in with that account first, or connect a different {{ provider.name }} account.
+                </p>
+                {% endif %}
+
+                <div class="d-grid gap-3 mt-4">
+                    <a href="{% provider_login_url provider.id process='connect' %}" class="btn btn-primary w-100 py-3 fw-bold fs-5 hover-lift">
+                        Connect {{ provider.name }}
+                    </a>
+                    <a href="{% url 'account_login' %}" class="btn btn-outline-secondary w-100 py-2 fw-semibold hover-lift">
+                        <i class="bi bi-arrow-left me-2"></i>Back to Login
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.hover-lift { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+.hover-lift:hover { transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+</style>
+{% endblock %}

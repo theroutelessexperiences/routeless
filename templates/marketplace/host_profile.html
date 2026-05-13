@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ host_user.username }} - Host Profile | The Routeless{% endblock %}
+{% block meta_description %}View the public profile of host {{ host_user.username }} on The Routeless. Explore their experiences, ratings, and reviews.{% endblock %}
+
+{% block content %}
+<div class="bg-light min-vh-100" style="padding-top: calc(var(--navbar-height) + 40px); padding-bottom: 80px;">
+<div class="container">
+
+    <!-- Host Profile Header -->
+    <div class="host-profile-header glass-panel mb-4" data-aos="fade-down">
+        <div class="d-flex flex-column flex-md-row align-items-center gap-4">
+            <!-- Avatar -->
+            {% if host_app and host_app.profile_photo_or_logo %}
+            <img src="{{ host_app.profile_photo_or_logo.url }}" alt="{{ host_user.username }}" class="hp-avatar">
+            {% else %}
+            <div class="hp-avatar-placeholder">
+                <i class="bi bi-person-fill"></i>
+            </div>
+            {% endif %}
+
+            <!-- Info -->
+            <div class="flex-grow-1 text-center text-md-start">
+                <h1 class="fw-bold mb-1 fs-3">
+                    {% if host_app %}{{ host_app.full_name_or_company_name }}{% else %}{{ host_user.username }}{% endif %}
+                </h1>
+                <div class="d-flex flex-wrap justify-content-center justify-content-md-start gap-2 mb-2">
+                    {% if host_app %}
+                    <span class="badge bg-light text-dark border">{{ host_app.get_host_type_display }}</span>
+                    {% if host_app.verification_status == 'verified' %}
+                    <span class="badge bg-success"><i class="bi bi-patch-check-fill me-1"></i>Verified Host</span>
+                    {% endif %}
+                    {% endif %}
+                    <span class="badge bg-light text-dark border">
+                        <i class="bi bi-collection me-1"></i>{{ experiences|length }} Experience{{ experiences|length|pluralize }}
+                    </span>
+                </div>
+                {% if host_app and host_app.city %}
+                <p class="text-muted small mb-2">
+                    <i class="bi bi-geo-alt-fill me-1"></i>{{ host_app.city }}, {{ host_app.get_state_display }}
+                </p>
+                {% endif %}
+                {% if host_app and host_app.host_bio %}
+                <p class="text-muted mb-0">{{ host_app.host_bio }}</p>
+                {% endif %}
+            </div>
+
+            <!-- Member since -->
+            <div class="text-center text-md-end text-muted small flex-shrink-0">
+                <div class="mb-1"><i class="bi bi-calendar3 me-1"></i>Member since</div>
+                <div class="fw-semibold">{{ host_user.date_joined|date:"F Y" }}</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Experiences Grid -->
+    <div class="mb-4">
+        <h2 class="fw-bold mb-3" style="color: var(--primary-color);">
+            <i class="bi bi-compass me-2"></i>Experiences by {{ host_user.username }}
+        </h2>
+    </div>
+
+    {% if experiences %}
+    <div class="row g-4">
+        {% for listing in experiences %}
+        <div class="col-12 col-md-6 col-xl-4" data-aos="zoom-in-up">
+            <div class="card experience-card glass-panel h-100 position-relative border-0 shadow-sm">
+                <!-- Category badge -->
+                <span class="badge category-badge">{{ listing.category }}</span>
+
+                {% if listing.is_featured %}
+                <span class="badge featured-badge">
+                    <i class="bi bi-star-fill me-1"></i>Featured
+                </span>
+                {% endif %}
+
+                <!-- Image -->
+                <a href="{% url 'listing_detail' listing.slug %}" class="image-link rounded-top-4 overflow-hidden d-block">
+                    {% if listing.main_image %}
+                    <img src="{{ listing.main_image.image.url }}" alt="{{ listing.title }}" loading="lazy"
+                        style="height: 220px; width: 100%; object-fit: cover;"
+                        onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=800&q=80';">
+                    {% else %}
+                    <img src="https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?auto=format&fit=crop&w=800&q=80"
+                        alt="No image" loading="lazy" style="height: 220px; width: 100%; object-fit: cover;">
+                    {% endif %}
+                </a>
+
+                <div class="card-body p-4 d-flex flex-column">
+                    <div class="d-flex flex-wrap align-items-center gap-2 mb-2 small text-muted">
+                        <span class="d-inline-flex align-items-center text-truncate" style="max-width: 65%;">
+                            <i class="bi bi-geo-alt-fill me-1 text-danger"></i>{{ listing.location }}
+                        </span>
+                        {% if listing.review_count and listing.review_count > 0 %}
+                        <span class="ms-auto d-inline-flex align-items-center rating-pill">
+                            <i class="bi bi-star-fill text-warning me-1"></i>
+                            {{ listing.avg_rating|floatformat:1 }}
+                            <span class="text-muted ms-1">({{ listing.review_count }})</span>
+                        </span>
+                        {% endif %}
+                    </div>
+
+                    <h5 class="fw-bold mb-1" style="line-height: 1.3;">
+                        <a href="{% url 'listing_detail' listing.slug %}" class="text-decoration-none text-dark">
+                            {{ listing.title }}
+                        </a>
+                    </h5>
+
+                    <p class="text-muted small flex-grow-1 mb-3" style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;">
+                        {% if listing.short_description %}{{ listing.short_description|truncatechars:110 }}{% else %}{{ listing.description|truncatechars:110 }}{% endif %}
+                    </p>
+
+                    <div class="d-flex justify-content-between align-items-center pt-3 mt-auto border-top">
+                        <div>
+                            <div class="fw-bold fs-5" style="color: var(--accent-color);">
+                                &#8377;{{ listing.price_per_person|floatformat:2 }}
+                                <span class="fs-6 fw-normal text-muted">/person</span>
+                            </div>
+                        </div>
+                        <a href="{% url 'listing_detail' listing.slug %}" class="btn btn-primary rounded-pill px-4 btn-sm fw-semibold">
+                            View
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5 px-4 bg-white rounded-4 shadow-sm">
+        <i class="bi bi-compass fs-1 text-muted d-block mb-3"></i>
+        <h4 class="fw-bold mb-2">No experiences listed yet</h4>
+        <p class="text-muted">This host hasn't published any experiences yet. Check back later!</p>
+    </div>
+    {% endif %}
+
+</div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .host-profile-header {
+        background: #fff;
+        border: 1px solid rgba(15, 23, 42, 0.06);
+        border-radius: 1rem;
+        box-shadow: 0 10px 28px rgba(43, 103, 119, 0.06);
+        padding: 2rem;
+    }
+    .hp-avatar {
+        width: 96px; height: 96px; border-radius: 50%;
+        object-fit: cover; border: 3px solid rgba(43, 103, 119, 0.15);
+        box-shadow: 0 6px 18px rgba(43, 103, 119, 0.12);
+    }
+    .hp-avatar-placeholder {
+        width: 96px; height: 96px; border-radius: 50%;
+        background: linear-gradient(135deg, rgba(43, 103, 119, 0.12), rgba(43, 103, 119, 0.06));
+        display: flex; align-items: center; justify-content: center;
+        color: var(--primary-color); font-size: 2.5rem;
+        box-shadow: 0 6px 18px rgba(43, 103, 119, 0.1);
+    }
+    .rating-pill {
+        color: #d89b00; font-weight: 700;
+        background: rgba(242, 169, 0, 0.12);
+        border-radius: 999px; padding: 0.2rem 0.55rem;
+        white-space: nowrap;
+    }
+    .category-badge {
+        position: absolute; top: 0.85rem; right: 0.85rem; z-index: 3;
+        background: rgba(255, 255, 255, 0.94); color: var(--text-dark);
+        border-radius: 999px; padding: 0.42rem 0.72rem; font-weight: 600;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(15, 23, 42, 0.06);
+    }
+    .featured-badge {
+        position: absolute; top: 0.85rem; left: 0.85rem; z-index: 3;
+        background: rgba(242, 169, 0, 0.95); color: #212529;
+        border-radius: 999px; padding: 0.42rem 0.72rem; font-weight: 700;
+        box-shadow: 0 6px 16px rgba(242, 169, 0, 0.28);
+    }
+    .experience-card { border-radius: 1rem; overflow: hidden; transition: transform 0.22s ease, box-shadow 0.22s ease; }
+    .experience-card:hover { transform: translateY(-5px); box-shadow: 0 16px 30px rgba(43, 103, 119, 0.12); }
+    .experience-card img { transition: transform 0.35s ease; }
+    .experience-card:hover img { transform: scale(1.03); }
+    .image-link { display: block; overflow: hidden; }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    if (typeof AOS !== 'undefined') {
+        AOS.init({ once: true, offset: 50, duration: 500 });
+    }
+</script>
+{% endblock %}

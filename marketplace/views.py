@@ -782,6 +782,7 @@ def checkout(request, pk):
         "booking": booking,
         "payment": payment_or_error,
         "razorpay_key_id": getattr(settings, "RAZORPAY_KEY_ID", ""),
+        "amount": int(payment_or_error.amount * 100),  # Razorpay expects paise
         "is_demo_mode": getattr(settings, "PAYMENTS_DEMO_MODE", False),
     }
     return render(request, "marketplace/checkout.html", context)
@@ -1078,20 +1079,19 @@ def host_dashboard(request):
             send_booking_status_update_email(booking)
 
             if new_status == "completed" and not was_completed:
-                from django.core.mail import send_mail
+                from marketplace.services.emails import send_routeless_email
 
                 review_url = request.build_absolute_uri(reverse("leave_review", args=[booking.id]))
-                send_mail(
+                send_routeless_email(
+                    purpose="booking",
                     subject=f"How was your experience with {booking.experience.host.username}?",
-                    message=(
+                    to=[booking.traveler_email or booking.user.email],
+                    plain_body=(
                         f"Hi {booking.traveler_name or booking.user.username},\n\n"
                         f"We hope you enjoyed your trip to {booking.experience.title}!\n"
                         f"Please take a moment to leave a review for your host:\n{review_url}\n\n"
                         "Thanks,\nThe Routeless Team"
                     ),
-                    from_email=settings.DEFAULT_FROM_EMAIL,
-                    recipient_list=[booking.traveler_email or booking.user.email],
-                    fail_silently=True,
                 )
 
             messages.success(request, f"Booking status updated to '{new_status}'.")
@@ -1265,6 +1265,48 @@ def leave_review(request, pk):
             return redirect("my_bookings")
 
     return render(request, "marketplace/leave_review.html", {"booking": booking})
+# -------------------------------------------------------------------
+# Public host profile
+# -------------------------------------------------------------------
+def host_profile_view(request, username):
+    host_user = get_object_or_404(User, username=username)
+    host_app = getattr(host_user, "host_application", None)
+    profile = getattr(host_user, "userprofile", None)
+
+    # Only show profiles for actual hosts
+    if not profile or not profile.is_host:
+        messages.error(request, "This user does not have a public host profile.")
+        return redirect("home")
+
+    # Get host's approved/active experiences
+    experiences = (
+        Experience.objects.filter(host=host_user, is_active=True)
+        .select_related("host")
+        .prefetch_related("images")
+        .annotate(
+            avg_rating=Avg("reviews__rating"),
+            review_count=Count("reviews"),
+        )
+        .order_by("-is_featured", "-created_at")
+    )
+
+    # Attach main_image for each experience
+    for exp in experiences:
+        exp.main_image = exp.images.filter(is_primary=True).first()
+        if not exp.main_image:
+            exp.main_image = exp.images.first()
+
+    return render(
+        request,
+        "marketplace/host_profile.html",
+        {
+            "host_user": host_user,
+            "host_app": host_app,
+            "profile": profile,
+            "experiences": experiences,
+            "title": f"Host Profile - {host_user.username}",
+        },
+    )
 
 
 # -------------------------------------------------------------------
@@ -1272,20 +1314,28 @@ def leave_review(request, pk):
 # -------------------------------------------------------------------
 @login_required
 def add_experience_view(request):
-    if not hasattr(request.user, "userprofile") or not request.user.userprofile.is_host:
-        messages.error(request, "Only hosts can create experiences.")
+    profile = getattr(request.user, "userprofile", None)
+    if not profile or not profile.is_host:
+        messages.error(request, "Only verified hosts can create experiences.")
         return redirect("home")
 
+    # Fetch host application for profile display (may not exist for legacy hosts)
+    host_app = getattr(request.user, "host_application", None)
+
+    submit_for_review = False
+
     if request.method == "POST":
-        form = ExperienceForm(request.POST, request.FILES)
+        submit_for_review = "submit_for_review" in request.POST
+        form = ExperienceForm(
+            request.POST, request.FILES,
+            submit_for_review=submit_for_review,
+        )
         if form.is_valid():
             experience = form.save(commit=False)
             experience.host = request.user
             experience.save()
 
-            experience.amenities = form.cleaned_data["amenities"]
-            experience.save()
-
+            # Handle image uploads
             images = request.FILES.getlist("images")
             for index, image in enumerate(images):
                 ExperienceImage.objects.create(
@@ -1294,7 +1344,16 @@ def add_experience_view(request):
                     is_primary=(index == 0),
                 )
 
-            messages.success(request, f"Experience '{experience.title}' created successfully!")
+            if submit_for_review:
+                messages.success(
+                    request,
+                    f"'{experience.title}' submitted for review! You will be notified once it’s approved.",
+                )
+            else:
+                messages.success(
+                    request,
+                    f"'{experience.title}' saved as draft. You can edit and submit later.",
+                )
             return redirect("host_dashboard")
 
         messages.error(request, "Please correct the errors below.")
@@ -1307,6 +1366,7 @@ def add_experience_view(request):
         {
             "form": form,
             "title": "Add New Experience",
+            "host_app": host_app,
         },
     )
 
@@ -1453,11 +1513,12 @@ def api_unread_notifications_count(request):
 
 
 # -------------------------------------------------------------------
-# Host verification / profile
+# Host Application — multi-step flow
 # -------------------------------------------------------------------
 @login_required
 def become_host(request):
-    from .models import HostVerification
+    """Entry point: redirect to the appropriate step based on progress."""
+    from .models import HostApplication
 
     profile, _ = UserProfile.objects.get_or_create(user=request.user)
 
@@ -1465,39 +1526,260 @@ def become_host(request):
         messages.info(request, "You already have a verified host account.")
         return redirect("host_dashboard")
 
-    verification, created = HostVerification.objects.get_or_create(user=request.user)
+    try:
+        app = request.user.host_application
+    except HostApplication.DoesNotExist:
+        return redirect("host_apply_details")
 
-    if verification.verified:
+    # Route based on application state
+    if app.verification_status == HostApplication.VerificationStatus.SUBMITTED:
+        messages.info(request, "Your application is under review.")
+        return redirect("host_apply_status")
+    if app.verification_status == HostApplication.VerificationStatus.VERIFIED:
         profile.is_host = True
         profile.save()
         messages.success(request, "Your host account is activated!")
         return redirect("host_dashboard")
 
-    if request.method == "POST":
-        id_image = request.FILES.get("government_id")
-        phone = request.POST.get("phone_number", "").strip()
+    # Resume from last incomplete step
+    if not app.step1_complete:
+        return redirect("host_apply_details")
+    if not app.step2_complete:
+        return redirect("host_apply_verification")
+    if app.is_company and not app.step3_complete:
+        return redirect("host_apply_business")
+    return redirect("host_apply_declaration")
 
-        if id_image and phone:
-            verification.government_id = id_image
-            verification.save()
-            # Save phone to user profile
-            profile.phone_number = phone
+
+@login_required
+def host_apply_details(request):
+    """Step 1: Host Details."""
+    from .models import HostApplication
+    from .forms import HostDetailsForm
+
+    profile, _ = UserProfile.objects.get_or_create(user=request.user)
+    if profile.is_host:
+        return redirect("host_dashboard")
+
+    try:
+        app = request.user.host_application
+    except HostApplication.DoesNotExist:
+        app = None
+
+    # Block editing if already submitted/verified
+    if app and app.verification_status not in (
+        HostApplication.VerificationStatus.DRAFT,
+        HostApplication.VerificationStatus.MORE_INFO,
+    ):
+        return redirect("host_apply_status")
+
+    if request.method == "POST":
+        form = HostDetailsForm(request.POST, request.FILES, instance=app)
+        if form.is_valid():
+            application = form.save(commit=False)
+            application.user = request.user
+            application.save()
+
+            # Sync to UserProfile
+            profile.phone_number = application.mobile_number
+            if application.host_bio:
+                profile.bio = application.host_bio
+            if application.profile_photo_or_logo:
+                profile.profile_picture = application.profile_photo_or_logo
             profile.save()
+
+            messages.success(request, "Host details saved. Continue to verification.")
+            return redirect("host_apply_verification")
+        messages.error(request, "Please correct the errors below.")
+    else:
+        initial = {}
+        if not app:
+            # Pre-fill from user data
+            initial = {
+                "email": request.user.email,
+                "full_name_or_company_name": (
+                    f"{request.user.first_name} {request.user.last_name}".strip()
+                    or request.user.username
+                ),
+                "mobile_number": profile.phone_number or "",
+            }
+        form = HostDetailsForm(instance=app, initial=initial if not app else None)
+
+    return render(request, "marketplace/host_apply_details.html", {
+        "form": form,
+        "current_step": 1,
+        "app": app,
+    })
+
+
+@login_required
+def host_apply_verification(request):
+    """Step 2: Verification documents and bank details."""
+    from .models import HostApplication
+    from .forms import HostVerificationForm
+
+    profile, _ = UserProfile.objects.get_or_create(user=request.user)
+    if profile.is_host:
+        return redirect("host_dashboard")
+
+    try:
+        app = request.user.host_application
+    except HostApplication.DoesNotExist:
+        messages.warning(request, "Please complete Step 1 first.")
+        return redirect("host_apply_details")
+
+    if not app.step1_complete:
+        messages.warning(request, "Please complete Step 1 first.")
+        return redirect("host_apply_details")
+
+    if app.verification_status not in (
+        HostApplication.VerificationStatus.DRAFT,
+        HostApplication.VerificationStatus.MORE_INFO,
+    ):
+        return redirect("host_apply_status")
+
+    if request.method == "POST":
+        form = HostVerificationForm(request.POST, request.FILES, instance=app)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Verification details saved.")
+            if app.is_company:
+                return redirect("host_apply_business")
+            return redirect("host_apply_declaration")
+        messages.error(request, "Please correct the errors below.")
+    else:
+        form = HostVerificationForm(instance=app)
+
+    return render(request, "marketplace/host_apply_verification.html", {
+        "form": form,
+        "current_step": 2,
+        "app": app,
+    })
+
+
+@login_required
+def host_apply_business(request):
+    """Step 3: Business Details — only for Company hosts."""
+    from .models import HostApplication
+    from .forms import HostBusinessForm
+
+    profile, _ = UserProfile.objects.get_or_create(user=request.user)
+    if profile.is_host:
+        return redirect("host_dashboard")
+
+    try:
+        app = request.user.host_application
+    except HostApplication.DoesNotExist:
+        return redirect("host_apply_details")
+
+    if not app.step1_complete:
+        return redirect("host_apply_details")
+    if not app.step2_complete:
+        return redirect("host_apply_verification")
+
+    # Individual hosts skip this step
+    if not app.is_company:
+        return redirect("host_apply_declaration")
+
+    if app.verification_status not in (
+        HostApplication.VerificationStatus.DRAFT,
+        HostApplication.VerificationStatus.MORE_INFO,
+    ):
+        return redirect("host_apply_status")
+
+    if request.method == "POST":
+        form = HostBusinessForm(request.POST, instance=app)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Business details saved.")
+            return redirect("host_apply_declaration")
+        messages.error(request, "Please correct the errors below.")
+    else:
+        form = HostBusinessForm(instance=app)
+
+    return render(request, "marketplace/host_apply_business.html", {
+        "form": form,
+        "current_step": 3,
+        "app": app,
+    })
+
+
+@login_required
+def host_apply_declaration(request):
+    """Step 4: Declaration and final submission."""
+    from .models import HostApplication
+    from .forms import HostDeclarationForm
+
+    profile, _ = UserProfile.objects.get_or_create(user=request.user)
+    if profile.is_host:
+        return redirect("host_dashboard")
+
+    try:
+        app = request.user.host_application
+    except HostApplication.DoesNotExist:
+        return redirect("host_apply_details")
+
+    if not app.step1_complete:
+        return redirect("host_apply_details")
+    if not app.step2_complete:
+        return redirect("host_apply_verification")
+    if app.is_company and not app.step3_complete:
+        return redirect("host_apply_business")
+
+    if app.verification_status not in (
+        HostApplication.VerificationStatus.DRAFT,
+        HostApplication.VerificationStatus.MORE_INFO,
+    ):
+        return redirect("host_apply_status")
+
+    if request.method == "POST":
+        form = HostDeclarationForm(request.POST)
+        if form.is_valid():
+            app.declaration_accepted = True
+            app.verification_status = HostApplication.VerificationStatus.SUBMITTED
+            app.submitted_at = timezone.now()
+            app.save()
             messages.success(
                 request,
-                "Your identity documents have been submitted for review. You will be notified once a The Routeless admin approves your request.",
+                "Your host application has been submitted successfully! "
+                "You will be notified once an admin reviews your application."
             )
-            return redirect("home")
+            return redirect("host_apply_status")
+        messages.error(request, "Please accept the declaration to proceed.")
+    else:
+        form = HostDeclarationForm()
 
-        messages.error(request, "Please provide both a Government ID and your phone number.")
+    return render(request, "marketplace/host_apply_declaration.html", {
+        "form": form,
+        "current_step": 4,
+        "app": app,
+    })
 
-    return render(
-        request,
-        "marketplace/become_host.html",
-        {
-            "pending_verification": bool(not created and verification.government_id)
-        },
-    )
+
+@login_required
+def host_apply_status(request):
+    """Show the current status of the host application."""
+    from .models import HostApplication
+
+    profile, _ = UserProfile.objects.get_or_create(user=request.user)
+    if profile.is_host:
+        return redirect("host_dashboard")
+
+    try:
+        app = request.user.host_application
+    except HostApplication.DoesNotExist:
+        return redirect("host_apply_details")
+
+    # Auto-activate if admin has verified
+    if app.verification_status == HostApplication.VerificationStatus.VERIFIED:
+        profile.is_host = True
+        profile.save()
+        messages.success(request, "Congratulations! Your host account is now active.")
+        return redirect("host_dashboard")
+
+    return render(request, "marketplace/host_apply_status.html", {
+        "app": app,
+    })
 
 
 @login_required

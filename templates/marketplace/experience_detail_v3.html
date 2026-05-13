@@ -63,7 +63,7 @@
                     <span><i class="bi bi-chat-square-text me-1"></i>No reviews yet</span>
                     {% endif %}
 
-                    <span><i class="bi bi-person-circle me-1"></i>Hosted by {{ listing.host.username }}</span>
+                    <span><i class="bi bi-person-circle me-1"></i>Hosted by <a href="{% url 'host_profile' listing.host.username %}" class="text-decoration-none fw-semibold host-link">{{ listing.host.username }}</a></span>
                 </div>
             </div>
 
@@ -192,7 +192,7 @@
                                 <div>
                                     <div class="info-label">Host</div>
                                     <div class="info-value">
-                                        {{ listing.host.username }}
+                                        <a href="{% url 'host_profile' listing.host.username %}" class="text-decoration-none fw-semibold host-link">{{ listing.host.username }}</a>
                                         {% if request.user.is_authenticated and request.user != listing.host %}
                                         <a href="{% url 'start_conversation' experience_id=listing.id %}" class="btn btn-sm btn-outline-primary ms-2 rounded-pill py-0 px-2">
                                             <i class="bi bi-chat-dots me-1"></i>Contact

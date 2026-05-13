@@ -455,7 +455,7 @@ securely with verified hosts on The Routeless.{% endblock %}
 
                         <h5 class="card-title mb-2 line-clamp-2">{{ listing.title }}</h5>
                         <p class="text-muted small mb-3 line-clamp-1">
-                            Hosted by {{ listing.host.username|default:"The Routeless Host" }}
+                            Hosted by <a href="{% url 'host_profile' listing.host.username %}" class="text-decoration-none fw-semibold host-link">{{ listing.host.username|default:"The Routeless Host" }}</a>
                         </p>
 
                         <div class="mt-auto d-flex justify-content-between align-items-center pt-3 border-top">
@@ -536,7 +536,7 @@ securely with verified hosts on The Routeless.{% endblock %}
 
                         <h5 class="card-title mb-2 line-clamp-2">{{ listing.title }}</h5>
                         <p class="text-muted small mb-3 line-clamp-1">
-                            Hosted by {{ listing.host.username|default:"The Routeless Host" }}
+                            Hosted by <a href="{% url 'host_profile' listing.host.username %}" class="text-decoration-none fw-semibold host-link">{{ listing.host.username|default:"The Routeless Host" }}</a>
                         </p>
 
                         <div class="mt-auto d-flex justify-content-between align-items-center pt-3 border-top">
@@ -632,7 +632,7 @@ securely with verified hosts on The Routeless.{% endblock %}
 
                         <h5 class="card-title mb-2 line-clamp-2">{{ listing.title }}</h5>
                         <p class="text-muted small mb-3 line-clamp-1">
-                            Hosted by {{ listing.host.username|default:"The Routeless Host" }}
+                            Hosted by <a href="{% url 'host_profile' listing.host.username %}" class="text-decoration-none fw-semibold host-link">{{ listing.host.username|default:"The Routeless Host" }}</a>
                         </p>
 
                         <div class="mt-auto d-flex justify-content-between align-items-center pt-3 border-top">
