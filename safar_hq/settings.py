@@ -44,7 +44,7 @@ if not SECRET_KEY:
 
 DEBUG = env_bool("DEBUG", False)
 
-PAYMENTS_DEMO_MODE = env_bool("PAYMENTS_DEMO_MODE", True)
+PAYMENTS_DEMO_MODE = env_bool("PAYMENTS_DEMO_MODE", False)
 
 RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID", "").strip()
 RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET", "").strip()

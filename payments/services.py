@@ -1,11 +1,9 @@
-import os
 import uuid
 import logging
 from decimal import Decimal
 
 import razorpay
 from django.conf import settings
-from dotenv import load_dotenv
 
 from .models import Payment, Commission, PaymentLog, LedgerEntry
 
@@ -17,12 +15,15 @@ logger = logging.getLogger(__name__)
 # -------------------------------------------------------------------
 def get_razorpay_client():
     """Return an authenticated Razorpay client, or None if keys are missing."""
-    load_dotenv()
-
-    key_id = os.getenv("RAZORPAY_KEY_ID", getattr(settings, "RAZORPAY_KEY_ID", ""))
-    key_secret = os.getenv("RAZORPAY_KEY_SECRET", getattr(settings, "RAZORPAY_KEY_SECRET", ""))
+    key_id = getattr(settings, "RAZORPAY_KEY_ID", "")
+    key_secret = getattr(settings, "RAZORPAY_KEY_SECRET", "")
 
     if not key_id or not key_secret:
+        logger.warning(
+            "Razorpay client not configured: RAZORPAY_KEY_ID=%s, RAZORPAY_KEY_SECRET=%s",
+            "SET" if key_id else "MISSING",
+            "SET" if key_secret else "MISSING",
+        )
         return None
     return razorpay.Client(auth=(key_id, key_secret))
 
@@ -36,6 +37,15 @@ def create_razorpay_order(booking):
     Saves the new Payment record with razorpay_order_id.
     Returns (success: bool, payment_or_error).
     """
+    logger.info(
+        "create_razorpay_order: booking=%s, PAYMENTS_DEMO_MODE=%s, "
+        "RAZORPAY_KEY_ID=%s, RAZORPAY_KEY_SECRET=%s",
+        booking.id,
+        getattr(settings, "PAYMENTS_DEMO_MODE", "UNSET"),
+        "SET" if getattr(settings, "RAZORPAY_KEY_ID", "") else "MISSING",
+        "SET" if getattr(settings, "RAZORPAY_KEY_SECRET", "") else "MISSING",
+    )
+
     payment, created = Payment.objects.get_or_create(
         booking=booking,
         defaults={
