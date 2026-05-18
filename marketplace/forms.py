@@ -364,6 +364,201 @@ ALL_DETAIL_FIELDS = sorted(
 
 
 # ---------------------------------------------------------
+# Human-readable labels for every category field
+# ---------------------------------------------------------
+FIELD_LABELS = {
+    # Trek
+    "trek_type": "Trek type",
+    "trek_difficulty": "Difficulty level",
+    "trek_duration_days": "Duration (days)",
+    "trek_duration_hours": "Duration (hours)",
+    "trek_distance_km": "Distance (km)",
+    "trek_max_altitude_m": "Maximum altitude (meters)",
+    "trek_altitude_gain_m": "Altitude gain (meters)",
+    "trek_fitness_level": "Fitness level",
+    "trek_trail_type": "Trail type",
+    "trek_terrain_notes": "Terrain notes",
+    "trek_group_size_min": "Minimum group size",
+    "trek_group_size_max": "Maximum group size",
+    "trek_guide_included": "Guide included",
+    "trek_porter_available": "Porter available",
+    "trek_meals_included": "Meals included",
+    "trek_stay_type": "Stay type",
+    "trek_permit_required": "Permit required",
+    "trek_permit_included": "Permit included",
+    "trek_pickup_available": "Pickup available",
+    "trek_reporting_point": "Reporting point",
+    "trek_reporting_time": "Reporting time",
+    "trek_start_point": "Start point",
+    "trek_end_point": "End point",
+    "trek_best_season": "Best season",
+    "trek_what_to_carry": "What to carry",
+    "trek_medical_restrictions": "Medical restrictions",
+    # Homestay
+    "home_room_type": "Room type",
+    "home_bed_type": "Bed type",
+    "home_rooms_available": "Rooms available",
+    "home_private_bathroom": "Private bathroom",
+    "home_attached_bathroom": "Attached bathroom",
+    "home_checkin_time": "Check-in time",
+    "home_checkout_time": "Check-out time",
+    "home_meal_plan": "Meal plan",
+    "home_wifi": "WiFi available",
+    "home_parking": "Parking available",
+    "home_hot_water": "Hot water",
+    "home_heating": "Heating",
+    "home_air_conditioning": "Air conditioning",
+    "home_power_backup": "Power backup",
+    "home_kitchen_access": "Kitchen access",
+    "home_pets_allowed": "Pets allowed",
+    "home_family_friendly": "Family friendly",
+    "home_smoking_allowed": "Smoking allowed",
+    "home_mountain_view": "Mountain view",
+    "home_work_friendly": "Work friendly",
+    "home_languages_supported": "Languages supported",
+    "home_house_rules": "House rules",
+    "home_nearby_attractions": "Nearby attractions",
+    "home_host_contact_window": "Host contact window",
+    # Adventure
+    "adv_activity_type": "Activity type",
+    "adv_activity_custom_name": "Custom activity name",
+    "adv_difficulty": "Difficulty level",
+    "adv_duration_hours": "Duration (hours)",
+    "adv_risk_level": "Risk level",
+    "adv_min_age": "Minimum age",
+    "adv_max_age": "Maximum age",
+    "adv_min_weight_kg": "Minimum weight (kg)",
+    "adv_max_weight_kg": "Maximum weight (kg)",
+    "adv_min_height_cm": "Minimum height (cm)",
+    "adv_max_height_cm": "Maximum height (cm)",
+    "adv_group_size_min": "Minimum group size",
+    "adv_group_size_max": "Maximum group size",
+    "adv_safety_gear_included": "Safety gear included",
+    "adv_instructor_certified": "Instructor certified",
+    "adv_safety_briefing_minutes": "Safety briefing duration (minutes)",
+    "adv_medical_declaration_required": "Medical declaration required",
+    "adv_permit_required": "Permit required",
+    "adv_permit_included": "Permit included",
+    "adv_insurance_included": "Insurance included",
+    "adv_weather_dependent": "Weather dependent",
+    "adv_pickup_available": "Pickup available",
+    "adv_reporting_point": "Reporting point",
+    "adv_reporting_time": "Reporting time",
+    "adv_batch_slots": "Batch slots",
+    "adv_restrictions_notes": "Restrictions and notes",
+    # Spiritual
+    "spi_place_type": "Place type",
+    "spi_place_name": "Place name",
+    "spi_experience_type": "Experience type",
+    "spi_duration_hours": "Duration (hours)",
+    "spi_best_time_to_visit": "Best time to visit",
+    "spi_dress_code_required": "Dress code required",
+    "spi_dress_code_notes": "Dress code notes",
+    "spi_pooja_included": "Pooja included",
+    "spi_meditation_session": "Meditation session",
+    "spi_yoga_session": "Yoga session",
+    "spi_satsang_included": "Satsang included",
+    "spi_prasadam_included": "Prasadam included",
+    "spi_donation_included": "Donation included",
+    "spi_queue_assistance": "Queue assistance",
+    "spi_wheelchair_access": "Wheelchair accessible",
+    "spi_senior_citizen_friendly": "Senior citizen friendly",
+    "spi_family_friendly": "Family friendly",
+    "spi_photography_allowed": "Photography allowed",
+    "spi_language_support": "Language support",
+    "spi_reporting_time": "Reporting time",
+    "spi_meeting_point": "Meeting point",
+    "spi_special_instructions": "Special instructions",
+    # Wildlife
+    "wild_safari_type": "Safari type",
+    "wild_park_name": "Park / sanctuary name",
+    "wild_zone_name": "Zone name",
+    "wild_duration_hours": "Duration (hours)",
+    "wild_best_time_to_visit": "Best time to visit",
+    "wild_permit_required": "Permit required",
+    "wild_permit_included": "Permit included",
+    "wild_entry_fee_included": "Entry fee included",
+    "wild_vehicle_type": "Vehicle type",
+    "wild_naturalist_included": "Naturalist included",
+    "wild_guide_included": "Guide included",
+    "wild_binoculars_included": "Binoculars included",
+    "wild_camera_fee_extra": "Camera fee extra",
+    "wild_min_age": "Minimum age",
+    "wild_group_size_min": "Minimum group size",
+    "wild_group_size_max": "Maximum group size",
+    "wild_pickup_available": "Pickup available",
+    "wild_reporting_point": "Reporting point",
+    "wild_reporting_time": "Reporting time",
+    "wild_sighting_focus": "Sighting focus",
+    "wild_do_donts": "Do's and Don'ts",
+    # Cultural
+    "cul_format": "Format",
+    "cul_theme": "Theme",
+    "cul_duration_hours": "Duration (hours)",
+    "cul_language_support": "Language support",
+    "cul_group_size_min": "Minimum group size",
+    "cul_group_size_max": "Maximum group size",
+    "cul_materials_included": "Materials included",
+    "cul_meal_or_snacks_included": "Meal or snacks included",
+    "cul_local_community_led": "Local community led",
+    "cul_indoor_outdoor": "Indoor / Outdoor",
+    "cul_family_friendly": "Family friendly",
+    "cul_kid_friendly": "Kid friendly",
+    "cul_photography_allowed": "Photography allowed",
+    "cul_wheelchair_access": "Wheelchair accessible",
+    "cul_takeaway_items_included": "Takeaway items included",
+    "cul_dress_code": "Dress code",
+    "cul_meeting_point": "Meeting point",
+    "cul_reporting_time": "Reporting time",
+    "cul_special_notes": "Special notes",
+    # Common fields
+    "experience_start_date": "Start date",
+    "experience_start_time": "Start time",
+    "experience_end_time": "End time",
+    "experience_available_days": "Available days",
+    "experience_booking_cutoff_hours": "Booking cutoff (hours before)",
+    "pickup_included": "Pickup included",
+    "pickup_point": "Pickup point",
+    "drop_point": "Drop point",
+    "pickup_drop_extra_charge": "Pickup/drop extra charge (₹)",
+    "porter_available": "Porter available",
+    "porter_included_in_price": "Porter included in price",
+    "porter_extra_charge": "Porter extra charge (₹)",
+    "baggage_loading_included": "Baggage loading/unloading included",
+    "baggage_loading_charge": "Baggage loading/unloading charge (₹)",
+    "max_baggage_kg": "Maximum baggage allowed (kg)",
+}
+
+DAY_CHOICES = [
+    ("Monday", "Monday"),
+    ("Tuesday", "Tuesday"),
+    ("Wednesday", "Wednesday"),
+    ("Thursday", "Thursday"),
+    ("Friday", "Friday"),
+    ("Saturday", "Saturday"),
+    ("Sunday", "Sunday"),
+]
+
+COMMON_DETAIL_FIELDS = [
+    "experience_start_date",
+    "experience_start_time",
+    "experience_end_time",
+    "experience_available_days",
+    "experience_booking_cutoff_hours",
+    "pickup_included",
+    "pickup_point",
+    "drop_point",
+    "pickup_drop_extra_charge",
+    "porter_available",
+    "porter_included_in_price",
+    "porter_extra_charge",
+    "baggage_loading_included",
+    "baggage_loading_charge",
+    "max_baggage_kg",
+]
+
+
+# ---------------------------------------------------------
 # Form
 # ---------------------------------------------------------
 class ExperienceForm(forms.ModelForm):
@@ -538,6 +733,62 @@ class ExperienceForm(forms.ModelForm):
     cul_special_notes = forms.CharField(required=False, widget=forms.Textarea(attrs={"rows": 3}))
 
     # -------------------------
+    # Common: Schedule & Availability
+    # -------------------------
+    experience_start_date = forms.DateField(
+        required=False,
+        widget=forms.DateInput(attrs={"type": "date"}),
+    )
+    experience_start_time = forms.TimeField(
+        required=False,
+        widget=forms.TimeInput(format="%H:%M", attrs={"type": "time"}),
+    )
+    experience_end_time = forms.TimeField(
+        required=False,
+        widget=forms.TimeInput(format="%H:%M", attrs={"type": "time"}),
+    )
+    experience_available_days = forms.MultipleChoiceField(
+        choices=DAY_CHOICES,
+        required=False,
+        widget=forms.CheckboxSelectMultiple,
+        help_text="Select the days this experience is available.",
+    )
+    experience_booking_cutoff_hours = forms.IntegerField(
+        required=False, min_value=0,
+        help_text="How many hours before the start time should bookings close?",
+    )
+
+    # -------------------------
+    # Common: Pickup & Drop
+    # -------------------------
+    pickup_included = forms.ChoiceField(choices=YES_NO_OPTIONAL_CHOICES, required=False)
+    pickup_point = forms.CharField(required=False, help_text="Where will guests be picked up?")
+    drop_point = forms.CharField(required=False, help_text="Where will guests be dropped off?")
+    pickup_drop_extra_charge = forms.IntegerField(
+        required=False, min_value=0,
+        help_text="Additional charge for pickup/drop, if any (in ₹).",
+    )
+
+    # -------------------------
+    # Common: Porter & Baggage
+    # -------------------------
+    porter_available = forms.ChoiceField(choices=YES_NO_OPTIONAL_CHOICES, required=False)
+    porter_included_in_price = forms.ChoiceField(choices=YES_NO_OPTIONAL_CHOICES, required=False)
+    porter_extra_charge = forms.IntegerField(
+        required=False, min_value=0,
+        help_text="Extra charge for porter service (in ₹).",
+    )
+    baggage_loading_included = forms.ChoiceField(choices=YES_NO_OPTIONAL_CHOICES, required=False)
+    baggage_loading_charge = forms.IntegerField(
+        required=False, min_value=0,
+        help_text="Extra charge for baggage loading/unloading (in ₹).",
+    )
+    max_baggage_kg = forms.IntegerField(
+        required=False, min_value=0,
+        help_text="Maximum baggage allowed per person (in kg).",
+    )
+
+    # -------------------------
     # Guided description helpers
     # -------------------------
     INCLUDED_OPTIONS = [
@@ -594,7 +845,6 @@ class ExperienceForm(forms.ModelForm):
         model = Experience
         fields = [
             "title",
-            "slug",
             "category",
             "location",
             "price_per_person",
@@ -612,6 +862,10 @@ class ExperienceForm(forms.ModelForm):
             "description": forms.Textarea(attrs={"rows": 5}),
             "short_description": forms.TextInput(attrs={"placeholder": "A one-line summary for search results"}),
             "duration": forms.TextInput(attrs={"placeholder": "e.g. 2 days / 4 hours"}),
+            "price_per_person": forms.NumberInput(attrs={
+                "min": "0", "step": "1",
+                "placeholder": "e.g. 2499",
+            }),
         }
 
     # ---------------------------------------------------------
@@ -620,6 +874,11 @@ class ExperienceForm(forms.ModelForm):
     def __init__(self, *args, submit_for_review=False, **kwargs):
         super().__init__(*args, **kwargs)
         self._submit_for_review = submit_for_review
+
+        # Apply human-readable labels
+        for fname, label in FIELD_LABELS.items():
+            if fname in self.fields:
+                self.fields[fname].label = label
 
         # Nice defaults / CSS classes
         for name, field in self.fields.items():
@@ -638,16 +897,23 @@ class ExperienceForm(forms.ModelForm):
         if "title" in self.fields:
             self.fields["title"].widget.attrs.setdefault("placeholder", "e.g. Sunrise Trek to Nag Tibba")
         if "location" in self.fields:
-            self.fields["location"].widget.attrs.setdefault("placeholder", "e.g. Rishikesh, Uttarakhand")
-        if "price_per_person" in self.fields:
-            self.fields["price_per_person"].widget.attrs.setdefault("placeholder", "e.g. 2499")
+            self.fields["location"].widget.attrs.setdefault("placeholder", "Start typing a location...")
+            self.fields["location"].widget.attrs["autocomplete"] = "off"
+            self.fields["location"].widget.attrs["id"] = "id_location"
         if "max_guests" in self.fields:
             self.fields["max_guests"].widget.attrs.setdefault("placeholder", "e.g. 10")
+            self.fields["max_guests"].label = "Maximum number of guests"
+
+        # Price field: enforce whole numbers
+        if "price_per_person" in self.fields:
+            self.fields["price_per_person"].label = "Price per person (₹)"
+            self.fields["price_per_person"].decimal_places = 0
 
         # If editing existing object, preload category_details JSON into form fields
         if self.instance and self.instance.pk and getattr(self.instance, "category_details", None):
             details = self.instance.category_details or {}
-            for fname in ALL_DETAIL_FIELDS:
+            all_loadable = list(ALL_DETAIL_FIELDS) + COMMON_DETAIL_FIELDS
+            for fname in all_loadable:
                 if fname not in self.fields:
                     continue
                 if fname not in details:
@@ -684,16 +950,13 @@ class ExperienceForm(forms.ModelForm):
         if not category:
             return cleaned
 
-        # Auto-generate slug if blank (optional)
-        title = cleaned.get("title")
-        slug_val = cleaned.get("slug")
-        if title and not slug_val and "slug" in self.fields:
-            cleaned["slug"] = slugify(title)
-
-        # Price must be >= 0
+        # Price must be >= 0 and whole number
         price = cleaned.get("price_per_person")
-        if price is not None and price < 0:
-            self.add_error("price_per_person", "Price must be zero or positive.")
+        if price is not None:
+            if price < 0:
+                self.add_error("price_per_person", "Price must be zero or positive.")
+            elif price != int(price):
+                self.add_error("price_per_person", "Price must be a whole number (no decimals).")
 
         # max_guests > 0
         max_g = cleaned.get("max_guests")
@@ -771,6 +1034,7 @@ class ExperienceForm(forms.ModelForm):
         category = self.cleaned_data.get("category")
         details = {}
 
+        # Category-specific fields
         if category in CATEGORY_FIELD_SETS:
             for fname in CATEGORY_FIELD_SETS[category]["fields"]:
                 value = self.cleaned_data.get(fname)
@@ -778,7 +1042,14 @@ class ExperienceForm(forms.ModelForm):
                     continue
                 details[fname] = self._json_safe(value)
 
-        # Optional: store category marker inside JSON too
+        # Common detail fields (schedule, pickup, porter)
+        for fname in COMMON_DETAIL_FIELDS:
+            value = self.cleaned_data.get(fname)
+            if value in [None, "", [], {}]:
+                continue
+            details[fname] = self._json_safe(value)
+
+        # Store category marker inside JSON
         if details:
             details["_category"] = category
 

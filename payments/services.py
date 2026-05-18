@@ -31,10 +31,15 @@ def get_razorpay_client():
 # -------------------------------------------------------------------
 # Create Razorpay order
 # -------------------------------------------------------------------
-def create_razorpay_order(booking):
+def create_razorpay_order(booking, tax_breakup=None):
     """
     Creates a Razorpay order from the total_price of a Booking.
     Saves the new Payment record with razorpay_order_id.
+
+    If *tax_breakup* (a ``TaxBreakup`` dataclass) is provided, the
+    Payment model is populated with a tax snapshot and the Razorpay
+    order amount uses the GST-inclusive ``total_payable_amount``.
+
     Returns (success: bool, payment_or_error).
     """
     logger.info(
@@ -46,14 +51,36 @@ def create_razorpay_order(booking):
         "SET" if getattr(settings, "RAZORPAY_KEY_SECRET", "") else "MISSING",
     )
 
+    # Determine the payable amount
+    if tax_breakup is not None:
+        payable_amount = tax_breakup.total_payable_amount
+    else:
+        payable_amount = booking.total_price
+
     payment, created = Payment.objects.get_or_create(
         booking=booking,
         defaults={
-            "amount": booking.total_price,
+            "amount": payable_amount,
             "currency": "INR",
             "user": booking.user,
         },
     )
+
+    # Populate tax snapshot if provided (on first creation or update)
+    if tax_breakup is not None and (created or not payment.gst_rate):
+        payment.base_amount = tax_breakup.base_amount
+        payment.subtotal_amount = tax_breakup.subtotal_amount
+        payment.discount_amount = tax_breakup.discount_amount
+        payment.taxable_amount = tax_breakup.taxable_amount
+        payment.gst_rate = tax_breakup.gst_rate
+        payment.cgst_amount = tax_breakup.cgst_amount
+        payment.sgst_amount = tax_breakup.sgst_amount
+        payment.igst_amount = tax_breakup.igst_amount
+        payment.total_tax_amount = tax_breakup.total_tax_amount
+        payment.total_payable_amount = tax_breakup.total_payable_amount
+        payment.tax_label = tax_breakup.tax_label
+        payment.amount = payable_amount
+        payment.save()
 
     # If order exists and payment is still pending, reuse it
     if payment.razorpay_order_id and payment.payment_status in ("pending", "created"):
@@ -66,7 +93,7 @@ def create_razorpay_order(booking):
     # --- DEMO MODE ---
     if getattr(settings, "PAYMENTS_DEMO_MODE", False):
         payment.razorpay_order_id = f"demo_order_{uuid.uuid4().hex[:8]}"
-        payment.amount = booking.total_price
+        payment.amount = payable_amount
         payment.payment_status = "pending"
         payment.save()
 
@@ -83,7 +110,10 @@ def create_razorpay_order(booking):
     if not client:
         return False, "Razorpay client not configured."
 
-    amount_in_paise = int(booking.total_price * 100)
+    if tax_breakup is not None:
+        amount_in_paise = tax_breakup.amount_in_paise
+    else:
+        amount_in_paise = int(booking.total_price * 100)
 
     try:
         order = client.order.create({
@@ -100,7 +130,7 @@ def create_razorpay_order(booking):
         })
 
         payment.razorpay_order_id = order.get("id")
-        payment.amount = booking.total_price
+        payment.amount = payable_amount
         payment.payment_status = "pending"
         payment.raw_response = order
         payment.save()

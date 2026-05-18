@@ -461,3 +461,29 @@ UNFOLD = {
         ],
     },
 }
+
+# -------------------------------------------------------------------
+# Routeless Tax / Invoice Configuration
+# -------------------------------------------------------------------
+from decimal import Decimal as _D
+
+ROUTELESS_TAX_CONFIG = {
+    "GST_ENABLED": env_bool("GST_ENABLED", True),
+    "DEFAULT_GST_RATE": _D(os.getenv("DEFAULT_GST_RATE", "5.00")),
+    "SUPPLIER_NAME": os.getenv("ROUTELESS_LEGAL_NAME", "Routeless Travel Pvt. Ltd."),
+    "SUPPLIER_GSTIN": os.getenv("ROUTELESS_GSTIN", ""),
+    "SUPPLIER_ADDRESS": os.getenv("ROUTELESS_ADDRESS", ""),
+    "SUPPLIER_STATE": os.getenv("ROUTELESS_STATE", ""),
+    "SUPPLIER_STATE_CODE": os.getenv("ROUTELESS_STATE_CODE", ""),
+    "DEFAULT_SAC_CODE": os.getenv("DEFAULT_SAC_CODE", "998555"),
+    "INVOICE_PREFIX": os.getenv("INVOICE_PREFIX", "RTL"),
+    "DEFAULT_CURRENCY": "INR",
+    "PLATFORM_COMMISSION_RATE": _D(os.getenv("PLATFORM_COMMISSION_RATE", "0.15")),
+}
+
+
+# -------------------------------------------------------------------
+# Upload size limits (for video uploads up to 100 MB)
+# -------------------------------------------------------------------
+DATA_UPLOAD_MAX_MEMORY_SIZE = 110 * 1024 * 1024   # 110 MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 110 * 1024 * 1024    # 110 MB

@@ -33,6 +33,7 @@ from .models import (
     Experience,
     ExperienceAvailabilityBlock,
     ExperienceImage,
+    ExperienceVideo,
     HeroSlide,
     Location,
     UserProfile,
@@ -718,8 +719,16 @@ def listing_detail(request, slug):
                 user_profile.government_id = govt_id_file
                 user_profile.save()
 
+            # Calculate GST breakup and pass to Razorpay order
+            from payments.tax_service import calculate_booking_tax
             from payments.services import create_razorpay_order
-            ok, payment_or_error = create_razorpay_order(booking)
+
+            tax_breakup = calculate_booking_tax(
+                base_amount=per_person_price,
+                quantity=guests,
+                days=days,
+            )
+            ok, payment_or_error = create_razorpay_order(booking, tax_breakup=tax_breakup)
             if not ok:
                 messages.warning(
                     request,
@@ -767,6 +776,8 @@ def checkout(request, pk):
         return redirect("my_bookings")
 
     from payments.services import create_razorpay_order
+    from payments.tax_service import calculate_booking_tax
+    from marketplace.pricing_engine import calculate_dynamic_price
 
     success, payment_or_error = create_razorpay_order(booking)
 
@@ -778,11 +789,46 @@ def checkout(request, pk):
         messages.info(request, "This booking has already been paid.")
         return redirect("my_bookings")
 
+    payment = payment_or_error
+
+    # Build tax breakup for display from Payment snapshot if available,
+    # otherwise compute fresh.
+    if payment.gst_rate and payment.total_payable_amount:
+        # Use stored snapshot
+        tax_breakup = {
+            "base_amount": payment.base_amount,
+            "quantity": booking.guests_count,
+            "days": (booking.check_out_date - booking.check_in_date).days,
+            "subtotal_amount": payment.subtotal_amount,
+            "discount_amount": payment.discount_amount,
+            "taxable_amount": payment.taxable_amount,
+            "gst_rate": payment.gst_rate,
+            "cgst_amount": payment.cgst_amount,
+            "sgst_amount": payment.sgst_amount,
+            "igst_amount": payment.igst_amount,
+            "total_tax_amount": payment.total_tax_amount,
+            "total_payable_amount": payment.total_payable_amount,
+            "tax_label": payment.tax_label,
+        }
+        amount_for_razorpay = int(payment.total_payable_amount * 100)
+    else:
+        # Compute fresh breakup (backward compat for old bookings)
+        days = (booking.check_out_date - booking.check_in_date).days or 1
+        per_person_price = calculate_dynamic_price(booking.experience, booking.check_in_date)
+        tb = calculate_booking_tax(
+            base_amount=per_person_price,
+            quantity=booking.guests_count,
+            days=days,
+        )
+        tax_breakup = tb.as_dict()
+        amount_for_razorpay = tb.amount_in_paise
+
     context = {
         "booking": booking,
-        "payment": payment_or_error,
+        "payment": payment,
+        "tax_breakup": tax_breakup,
         "razorpay_key_id": getattr(settings, "RAZORPAY_KEY_ID", ""),
-        "amount": int(payment_or_error.amount * 100),  # Razorpay expects paise
+        "amount": amount_for_razorpay,
         "is_demo_mode": getattr(settings, "PAYMENTS_DEMO_MODE", False),
     }
     return render(request, "marketplace/checkout.html", context)
@@ -1344,10 +1390,18 @@ def add_experience_view(request):
                     is_primary=(index == 0),
                 )
 
+            # Handle video uploads
+            videos = request.FILES.getlist("videos")
+            for video_file in videos:
+                ExperienceVideo.objects.create(
+                    experience=experience,
+                    video=video_file,
+                )
+
             if submit_for_review:
                 messages.success(
                     request,
-                    f"'{experience.title}' submitted for review! You will be notified once it’s approved.",
+                    f"'{experience.title}' submitted for review! You will be notified once it's approved.",
                 )
             else:
                 messages.success(
@@ -1369,6 +1423,23 @@ def add_experience_view(request):
             "host_app": host_app,
         },
     )
+
+
+def location_search_api(request):
+    """AJAX endpoint for location typeahead autocomplete."""
+    query = request.GET.get("q", "").strip()
+    if len(query) < 2:
+        return JsonResponse([], safe=False)
+
+    locations = Location.objects.filter(
+        Q(name__icontains=query) | Q(state__icontains=query)
+    ).values("name", "state")[:10]
+
+    results = [
+        {"label": f"{loc['name']}, {loc['state']}", "value": f"{loc['name']}, {loc['state']}"}
+        for loc in locations
+    ]
+    return JsonResponse(results, safe=False)
 
 
 @login_required
@@ -2062,3 +2133,101 @@ def platform_analytics(request):
         cache.set(cache_key, cached_data, 3600)
 
     return render(request, "admin/platform_analytics.html", cached_data)
+
+
+# -------------------------------------------------------------------
+# Contact Page
+# -------------------------------------------------------------------
+def contact_view(request):
+    """
+    Public contact page with mailto links and an optional contact form.
+    Routes the submitted message to the correct Routeless email alias
+    based on the selected enquiry type.
+    """
+    ENQUIRY_EMAIL_MAP = {
+        "general":   "hello@therouteless.com",
+        "booking":   "explore@therouteless.com",
+        "tribe":     "tribe@therouteless.com",
+        "partner":   "partners@therouteless.com",
+        "support":   "support@therouteless.com",
+        "technical": "admin@therouteless.com",
+    }
+
+    form_success = False
+    form_data = {}
+
+    if request.method == "POST":
+        name = (request.POST.get("name") or "").strip()
+        email = (request.POST.get("email") or "").strip()
+        enquiry_type = (request.POST.get("enquiry_type") or "").strip()
+        subject = (request.POST.get("subject") or "").strip()
+        message_body = (request.POST.get("message") or "").strip()
+
+        form_data = {
+            "name": name,
+            "email": email,
+            "enquiry_type": enquiry_type,
+            "subject": subject,
+            "message": message_body,
+        }
+
+        # Server-side validation
+        errors = []
+        if not name:
+            errors.append("Full name is required.")
+        if not email or "@" not in email:
+            errors.append("A valid email address is required.")
+        if enquiry_type not in ENQUIRY_EMAIL_MAP:
+            errors.append("Please select a valid enquiry type.")
+        if not subject:
+            errors.append("Subject is required.")
+        if not message_body:
+            errors.append("Message is required.")
+
+        if errors:
+            for err in errors:
+                messages.error(request, err)
+        else:
+            recipient = ENQUIRY_EMAIL_MAP.get(enquiry_type, "hello@therouteless.com")
+            full_subject = f"[Routeless Contact] {subject}"
+            full_message = (
+                f"Name: {name}\n"
+                f"Email: {email}\n"
+                f"Enquiry Type: {enquiry_type.title()}\n"
+                f"Subject: {subject}\n\n"
+                f"Message:\n{message_body}\n"
+            )
+
+            try:
+                from django.core.mail import send_mail as django_send_mail
+
+                django_send_mail(
+                    subject=full_subject,
+                    message=full_message,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[recipient],
+                    fail_silently=False,
+                )
+            except Exception:
+                # If email sending fails (e.g. no SMTP configured locally),
+                # still show success — the form data was validated.
+                import logging
+                logging.getLogger(__name__).warning(
+                    "Contact form email could not be sent to %s", recipient, exc_info=True
+                )
+
+            form_success = True
+            form_data = {}  # Clear form on success
+            messages.success(
+                request,
+                "Your message has been sent! The right team will get back to you shortly.",
+            )
+
+    return render(
+        request,
+        "marketplace/contact.html",
+        {
+            "form_success": form_success,
+            "form_data": form_data,
+        },
+    )

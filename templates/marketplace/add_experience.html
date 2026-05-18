@@ -58,16 +58,50 @@ amenities.
             <!-- Main Column -->
             <div class="col-12 col-xl-8">
 
-                <!-- 1) Basic Information -->
-                <div class="rl-form-card mb-4">
+                <!-- ========== STEP 1: Quick Start ========== -->
+                <div class="rl-form-card mb-4" id="formStep1">
                     <div class="card-header-lite">
                         <div>
-                            <h4 class="mb-1">Basic Information</h4>
-                            <p class="text-muted small mb-0">Core listing details visible to travelers.</p>
+                            <h4 class="mb-1">Step 1: Quick Start</h4>
+                            <p class="text-muted small mb-0">Select a category and location to get started.</p>
                         </div>
                         <span class="step-badge">1</span>
                     </div>
+                    <div class="row g-3">
+                        <!-- Category -->
+                        <div class="col-12 col-md-6">
+                            <label for="{{ form.category.id_for_label }}" class="form-label fw-semibold">
+                                {{ form.category.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.category }}
+                            <div class="form-help">Choosing a category will show detailed fields in step 2.</div>
+                            {% for err in form.category.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+                        </div>
+                        <!-- Location -->
+                        <div class="col-12 col-md-6" style="position:relative;">
+                            <label for="id_location" class="form-label fw-semibold">
+                                {{ form.location.label }} <span class="text-danger">*</span>
+                            </label>
+                            {{ form.location }}
+                            <div id="locationResults" class="autocomplete-results"></div>
+                            {% for err in form.location.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-end mt-3">
+                        <button type="button" class="btn btn-primary rounded-pill px-4" onclick="showStep(2)">Next &rarr;</button>
+                    </div>
+                </div>
 
+                <!-- ========== STEP 2: Full Details ========== -->
+                <div id="formStep2" style="display:none;">
+                <div class="rl-form-card mb-4">
+                    <div class="card-header-lite">
+                        <div>
+                            <h4 class="mb-1">Step 2: Experience Details</h4>
+                            <p class="text-muted small mb-0">Core listing details visible to travelers.</p>
+                        </div>
+                        <span class="step-badge">2</span>
+                    </div>
                     <div class="row g-3">
                         <!-- Title -->
                         <div class="col-12">
@@ -75,40 +109,8 @@ amenities.
                                 {{ form.title.label }} <span class="text-danger">*</span>
                             </label>
                             {{ form.title }}
-                            {% if form.title.help_text %}<div class="form-help">{{ form.title.help_text }}</div>
-                            {% endif %}
                             {% for err in form.title.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
                         </div>
-
-                        <!-- Slug -->
-                        <div class="col-12 col-md-6">
-                            <label for="{{ form.slug.id_for_label }}" class="form-label fw-semibold">
-                                {{ form.slug.label }}
-                            </label>
-                            {{ form.slug }}
-                            <div class="form-help">Leave blank to auto-generate from title.</div>
-                            {% for err in form.slug.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
-                        </div>
-
-                        <!-- Category -->
-                        <div class="col-12 col-md-6">
-                            <label for="{{ form.category.id_for_label }}" class="form-label fw-semibold">
-                                {{ form.category.label }} <span class="text-danger">*</span>
-                            </label>
-                            {{ form.category }}
-                            <div class="form-help">Choosing a category will show detailed fields below.</div>
-                            {% for err in form.category.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
-                        </div>
-
-                        <!-- Location -->
-                        <div class="col-12 col-md-6">
-                            <label for="{{ form.location.id_for_label }}" class="form-label fw-semibold">
-                                {{ form.location.label }} <span class="text-danger">*</span>
-                            </label>
-                            {{ form.location }}
-                            {% for err in form.location.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
-                        </div>
-
                         <!-- Duration -->
                         <div class="col-12 col-md-6">
                             <label for="{{ form.duration.id_for_label }}" class="form-label fw-semibold">
@@ -118,17 +120,15 @@ amenities.
                             <div class="form-help">How long does the experience last?</div>
                             {% for err in form.duration.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
                         </div>
-
                         <!-- Price -->
                         <div class="col-6 col-md-3">
                             <label for="{{ form.price_per_person.id_for_label }}" class="form-label fw-semibold">
                                 {{ form.price_per_person.label }} <span class="text-danger">*</span>
                             </label>
                             {{ form.price_per_person }}
-                            {% for err in form.price_per_person.errors %}<div class="field-error">{{ err }}</div>
-                            {% endfor %}
+                            <div class="form-help">Whole numbers only, no decimals.</div>
+                            {% for err in form.price_per_person.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
                         </div>
-
                         <!-- Max Guests -->
                         <div class="col-6 col-md-3">
                             <label for="{{ form.max_guests.id_for_label }}" class="form-label fw-semibold">
@@ -137,69 +137,95 @@ amenities.
                             {{ form.max_guests }}
                             {% for err in form.max_guests.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
                         </div>
-
                         <!-- Short Description -->
                         <div class="col-12">
-                            <label for="{{ form.short_description.id_for_label }}" class="form-label fw-semibold">
-                                {{ form.short_description.label }}
-                            </label>
+                            <label for="{{ form.short_description.id_for_label }}" class="form-label fw-semibold">{{ form.short_description.label }}</label>
                             {{ form.short_description }}
                             <div class="form-help">A brief one-liner for search results and cards.</div>
                             {% for err in form.short_description.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
                         </div>
-
                         <!-- Description -->
                         <div class="col-12">
                             <label for="{{ form.description.id_for_label }}" class="form-label fw-semibold">
                                 {{ form.description.label }} <span class="text-danger">*</span>
                             </label>
                             {{ form.description }}
-                            <div class="form-help">Write what travelers will do and key expectations.</div>
                             {% for err in form.description.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
                         </div>
-
                         <!-- Experience Highlights -->
                         <div class="col-12">
-                            <label for="{{ form.experience_highlights.id_for_label }}" class="form-label fw-semibold">
-                                {{ form.experience_highlights.label }}
-                            </label>
+                            <label for="{{ form.experience_highlights.id_for_label }}" class="form-label fw-semibold">{{ form.experience_highlights.label }}</label>
                             {{ form.experience_highlights }}
                             {% if form.experience_highlights.help_text %}<div class="form-help">{{ form.experience_highlights.help_text }}</div>{% endif %}
                             {% for err in form.experience_highlights.errors %}<div class="field-error">{{ err }}</div>{% endfor %}
                         </div>
-
                         <!-- What is Included -->
                         <div class="col-12 col-md-6">
                             <label class="form-label fw-semibold">{{ form.what_is_included.label }}</label>
-                            <div class="checkbox-grid">
-                                {% for checkbox in form.what_is_included %}
-                                <div class="form-check">{{ checkbox }}</div>
-                                {% endfor %}
-                            </div>
-                            {% if form.what_is_included.help_text %}<div class="form-help">{{ form.what_is_included.help_text }}</div>{% endif %}
+                            <div class="checkbox-grid">{% for cb in form.what_is_included %}<div class="form-check">{{ cb }}</div>{% endfor %}</div>
                         </div>
-
                         <!-- What is NOT Included -->
                         <div class="col-12 col-md-6">
                             <label class="form-label fw-semibold">{{ form.what_is_not_included.label }}</label>
-                            <div class="checkbox-grid">
-                                {% for checkbox in form.what_is_not_included %}
-                                <div class="form-check">{{ checkbox }}</div>
-                                {% endfor %}
-                            </div>
-                            {% if form.what_is_not_included.help_text %}<div class="form-help">{{ form.what_is_not_included.help_text }}</div>{% endif %}
+                            <div class="checkbox-grid">{% for cb in form.what_is_not_included %}<div class="form-check">{{ cb }}</div>{% endfor %}</div>
                         </div>
-
                         <!-- Images -->
                         <div class="col-12">
                             <label for="id_images" class="form-label fw-semibold">Experience Images</label>
-                            <input type="file" name="images" id="id_images" class="form-control" multiple
-                                accept="image/*">
-                            <div class="form-help">Upload multiple images. First image will be used as primary image.
-                            </div>
+                            <input type="file" name="images" id="id_images" class="form-control" multiple accept="image/*">
+                            <div class="form-help">Upload multiple images. First image is the primary image.</div>
                         </div>
+                        <!-- Videos -->
+                        <div class="col-12">
+                            <label for="id_videos" class="form-label fw-semibold">Experience Videos</label>
+                            <input type="file" name="videos" id="id_videos" class="form-control" multiple accept="video/mp4,video/quicktime,video/webm">
+                            <div class="form-help">Upload videos (mp4, mov, webm). Max 100 MB per file.</div>
+                            <div id="videoError" class="field-error" style="display:none;"></div>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- Schedule & Availability -->
+                <div class="rl-form-card mb-4">
+                    <div class="category-section-head">
+                        <h5 class="mb-1"><i class="bi bi-calendar-event me-2"></i>Schedule &amp; Availability</h5>
+                        <p class="text-muted small mb-0">When does this experience happen?</p>
+                    </div>
+                    <div class="detail-grid">
+                        {% for field in form %}{% if field.name == 'experience_start_date' or field.name == 'experience_start_time' or field.name == 'experience_end_time' or field.name == 'experience_booking_cutoff_hours' %}
+                        <div class="detail-field"><label for="{{ field.id_for_label }}" class="form-label fw-semibold">{{ field.label }}</label>{{ field }}{% if field.help_text %}<div class="form-help">{{ field.help_text }}</div>{% endif %}{% for err in field.errors %}<div class="field-error">{{ err }}</div>{% endfor %}</div>
+                        {% endif %}{% endfor %}
+                        <div class="detail-field full-width">
+                            <label class="form-label fw-semibold">{{ form.experience_available_days.label }}</label>
+                            <div class="checkbox-grid">{% for cb in form.experience_available_days %}<div class="form-check">{{ cb }}</div>{% endfor %}</div>
+                            {% if form.experience_available_days.help_text %}<div class="form-help">{{ form.experience_available_days.help_text }}</div>{% endif %}
+                        </div>
+                    </div>
+                </div>
 
+                <!-- Pickup & Drop -->
+                <div class="rl-form-card mb-4">
+                    <div class="category-section-head">
+                        <h5 class="mb-1"><i class="bi bi-geo-alt me-2"></i>Pickup &amp; Drop</h5>
+                        <p class="text-muted small mb-0">Transportation details for guests.</p>
+                    </div>
+                    <div class="detail-grid">
+                        {% for field in form %}{% if field.name == 'pickup_included' or field.name == 'pickup_point' or field.name == 'drop_point' or field.name == 'pickup_drop_extra_charge' %}
+                        <div class="detail-field"><label for="{{ field.id_for_label }}" class="form-label fw-semibold">{{ field.label }}</label>{{ field }}{% if field.help_text %}<div class="form-help">{{ field.help_text }}</div>{% endif %}{% for err in field.errors %}<div class="field-error">{{ err }}</div>{% endfor %}</div>
+                        {% endif %}{% endfor %}
+                    </div>
+                </div>
+
+                <!-- Porter & Baggage -->
+                <div class="rl-form-card mb-4" id="porterBaggageSection">
+                    <div class="category-section-head">
+                        <h5 class="mb-1"><i class="bi bi-backpack me-2"></i>Porter &amp; Baggage</h5>
+                        <p class="text-muted small mb-0">Especially relevant for trek, adventure, and wildlife experiences.</p>
+                    </div>
+                    <div class="detail-grid">
+                        {% for field in form %}{% if field.name == 'porter_available' or field.name == 'porter_included_in_price' or field.name == 'porter_extra_charge' or field.name == 'baggage_loading_included' or field.name == 'baggage_loading_charge' or field.name == 'max_baggage_kg' %}
+                        <div class="detail-field"><label for="{{ field.id_for_label }}" class="form-label fw-semibold">{{ field.label }}</label>{{ field }}{% if field.help_text %}<div class="form-help">{{ field.help_text }}</div>{% endif %}{% for err in field.errors %}<div class="field-error">{{ err }}</div>{% endfor %}</div>
+                        {% endif %}{% endfor %}
                     </div>
                 </div>
 
@@ -362,14 +388,13 @@ amenities.
                     </div>
                 </div>
 
-                <!-- 3) Declarations -->
+                <!-- Declarations -->
                 <div class="rl-form-card mb-4">
                     <div class="card-header-lite">
                         <div>
                             <h4 class="mb-1">Declarations</h4>
                             <p class="text-muted small mb-0">Required before submitting for review. Not needed for drafts.</p>
                         </div>
-                        <span class="step-badge">3</span>
                     </div>
                     <div class="declaration-list">
                         <div class="form-check mb-3">
@@ -389,6 +414,11 @@ amenities.
                         </div>
                     </div>
                 </div>
+
+                <div class="d-flex justify-content-start mb-3">
+                    <button type="button" class="btn btn-outline-secondary rounded-pill px-4" onclick="showStep(1)">&larr; Back to Step 1</button>
+                </div>
+                </div><!-- /formStep2 -->
 
             </div>
 
@@ -653,6 +683,24 @@ amenities.
         display: none;
     }
 
+    /* Location autocomplete dropdown */
+    .autocomplete-results {
+        position: absolute; left: 0; right: 0; top: 100%;
+        z-index: 100; background: #fff;
+        border: 1px solid rgba(43,103,119,.15);
+        border-radius: 0 0 .8rem .8rem;
+        box-shadow: 0 8px 24px rgba(0,0,0,.08);
+        max-height: 220px; overflow-y: auto; display: none;
+    }
+    .autocomplete-results.show { display: block; }
+    .autocomplete-item {
+        padding: .6rem .9rem; cursor: pointer;
+        font-size: .92rem; border-bottom: 1px solid rgba(0,0,0,.04);
+    }
+    .autocomplete-item:hover, .autocomplete-item.active {
+        background: rgba(43,103,119,.07);
+    }
+
     @keyframes fadeSlideIn {
         from {
             opacity: 0;
@@ -704,91 +752,117 @@ amenities.
 
 {% block extra_js %}
 <script>
-    (function () {
-        const form = document.getElementById("experienceForm");
-        if (!form) return;
+/* Step navigation */
+function showStep(step) {
+    document.getElementById('formStep1').style.display = step === 1 ? '' : 'none';
+    document.getElementById('formStep2').style.display = step === 2 ? '' : 'none';
+    window.scrollTo({top: 0, behavior: 'smooth'});
+}
 
-        const categorySelect = document.getElementById("id_category");
-        const titleInput = document.getElementById("id_title");
-        const slugInput = document.getElementById("id_slug");
+(function () {
+    const form = document.getElementById("experienceForm");
+    if (!form) return;
 
-        const categorySections = document.querySelectorAll(".category-section");
-        const bannerText = document.getElementById("selectedCategoryText");
-        const sidebarCategoryLabel = document.getElementById("sidebarCategoryLabel");
+    const categorySelect = document.getElementById("id_category");
+    const categorySections = document.querySelectorAll(".category-section");
+    const bannerText = document.getElementById("selectedCategoryText");
+    const sidebarCategoryLabel = document.getElementById("sidebarCategoryLabel");
+    const advActivitySelect = document.getElementById("id_adv_activity_type");
+    const advCustomFieldWrap = document.querySelector('[data-field-name="adv_activity_custom_name"]');
+    const spiDressCodeSelect = document.getElementById("id_spi_dress_code_required");
+    const spiDressNotesWrap = document.querySelector('[data-field-name="spi_dress_code_notes"]');
 
-        const advActivitySelect = document.getElementById("id_adv_activity_type");
-        const advCustomFieldWrap = document.querySelector('[data-field-name="adv_activity_custom_name"]');
-
-        const spiDressCodeSelect = document.getElementById("id_spi_dress_code_required");
-        const spiDressNotesWrap = document.querySelector('[data-field-name="spi_dress_code_notes"]');
-
-        function slugifyText(text) {
-            return (text || "")
-                .toString()
-                .toLowerCase()
-                .trim()
-                .replace(/['"]/g, "")
-                .replace(/[^a-z0-9\s-]/g, "")
-                .replace(/\s+/g, "-")
-                .replace(/-+/g, "-")
-                .replace(/^-+|-+$/g, "");
+    function setCategorySection() {
+        const selected = categorySelect ? (categorySelect.value || "").trim() : "";
+        categorySections.forEach(s => s.classList.toggle("active", s.dataset.category === selected));
+        if (!selected) {
+            if (bannerText) bannerText.textContent = "Select a category above to show detailed fields.";
+            if (sidebarCategoryLabel) sidebarCategoryLabel.textContent = "Not selected";
+        } else {
+            if (bannerText) bannerText.textContent = 'Showing detailed fields for: ' + selected;
+            if (sidebarCategoryLabel) sidebarCategoryLabel.textContent = selected;
         }
+        toggleAdventureCustomField();
+        toggleSpiritualDressNotes();
+    }
 
-        function autoFillSlug() {
-            if (!titleInput || !slugInput) return;
-            // Only auto-fill if slug is empty OR untouched auto-like value
-            if (!slugInput.value.trim()) {
-                slugInput.value = slugifyText(titleInput.value);
+    function toggleAdventureCustomField() {
+        if (!advCustomFieldWrap || !advActivitySelect) return;
+        advCustomFieldWrap.style.display = advActivitySelect.value === "Other" ? "" : "none";
+    }
+    function toggleSpiritualDressNotes() {
+        if (!spiDressNotesWrap || !spiDressCodeSelect) return;
+        spiDressNotesWrap.style.display = spiDressCodeSelect.value === "Yes" ? "" : "none";
+    }
+
+    if (categorySelect) categorySelect.addEventListener("change", setCategorySection);
+    if (advActivitySelect) advActivitySelect.addEventListener("change", toggleAdventureCustomField);
+    if (spiDressCodeSelect) spiDressCodeSelect.addEventListener("change", toggleSpiritualDressNotes);
+    setCategorySection();
+
+    /* If server returned errors, show step 2 */
+    if (document.querySelector("#formStep2 .field-error")) {
+        showStep(2);
+    }
+
+    /* Location autocomplete */
+    const locInput = document.getElementById("id_location");
+    const locResults = document.getElementById("locationResults");
+    let locTimer = null;
+    if (locInput && locResults) {
+        locInput.addEventListener("input", function() {
+            clearTimeout(locTimer);
+            const q = this.value.trim();
+            if (q.length < 2) { locResults.classList.remove('show'); locResults.innerHTML=''; return; }
+            locTimer = setTimeout(function(){
+                fetch('/api/locations/search/?q=' + encodeURIComponent(q))
+                .then(r => r.json()).then(data => {
+                    if (!data.length) { locResults.classList.remove('show'); locResults.innerHTML=''; return; }
+                    locResults.innerHTML = data.map(d =>
+                        '<div class="autocomplete-item">' + d.label + '</div>'
+                    ).join('');
+                    locResults.classList.add('show');
+                    locResults.querySelectorAll('.autocomplete-item').forEach(item => {
+                        item.addEventListener('click', function(){
+                            locInput.value = this.textContent;
+                            locResults.classList.remove('show');
+                            locResults.innerHTML = '';
+                        });
+                    });
+                });
+            }, 250);
+        });
+        document.addEventListener('click', function(e){
+            if (!locResults.contains(e.target) && e.target !== locInput) {
+                locResults.classList.remove('show');
             }
-        }
+        });
+    }
 
-        function setCategorySection() {
-            const selected = categorySelect ? (categorySelect.value || "").trim() : "";
-
-            categorySections.forEach(section => {
-                const isMatch = section.dataset.category === selected;
-                section.classList.toggle("active", isMatch);
-            });
-
-            if (!selected) {
-                if (bannerText) bannerText.textContent = "Select a category above to show detailed fields.";
-                if (sidebarCategoryLabel) sidebarCategoryLabel.textContent = "Not selected";
-            } else {
-                if (bannerText) bannerText.textContent = `Showing detailed fields for: ${selected}`;
-                if (sidebarCategoryLabel) sidebarCategoryLabel.textContent = selected;
+    /* Video file size validation (client-side) */
+    const videoInput = document.getElementById('id_videos');
+    const videoError = document.getElementById('videoError');
+    if (videoInput && videoError) {
+        videoInput.addEventListener('change', function(){
+            const maxSize = 100 * 1024 * 1024;
+            let err = '';
+            for (let f of this.files) {
+                if (f.size > maxSize) err = 'File "' + f.name + '" exceeds 100 MB limit.';
             }
+            videoError.textContent = err;
+            videoError.style.display = err ? '' : 'none';
+            if (err) this.value = '';
+        });
+    }
 
-            toggleAdventureCustomField();
-            toggleSpiritualDressNotes();
-        }
-
-        function toggleAdventureCustomField() {
-            if (!advCustomFieldWrap || !advActivitySelect) return;
-            const show = advActivitySelect.value === "Other";
-            advCustomFieldWrap.style.display = show ? "" : "none";
-        }
-
-        function toggleSpiritualDressNotes() {
-            if (!spiDressNotesWrap || !spiDressCodeSelect) return;
-            const show = spiDressCodeSelect.value === "Yes";
-            spiDressNotesWrap.style.display = show ? "" : "none";
-        }
-
-        // Events
-        if (categorySelect) categorySelect.addEventListener("change", setCategorySection);
-        if (titleInput) titleInput.addEventListener("input", autoFillSlug);
-
-        if (advActivitySelect) advActivitySelect.addEventListener("change", toggleAdventureCustomField);
-        if (spiDressCodeSelect) spiDressCodeSelect.addEventListener("change", toggleSpiritualDressNotes);
-
-        // Initial state on page load (important for edit mode too)
-        setCategorySection();
-
-        // If category-specific fields contain server-side errors, ensure that section is visible
-        const anyErrorField = document.querySelector(".field-error");
-        if (anyErrorField && categorySelect) {
-            setCategorySection();
-        }
-    })();
+    /* Price: prevent decimal input */
+    const priceInput = document.getElementById('id_price_per_person');
+    if (priceInput) {
+        priceInput.addEventListener('input', function(){
+            this.value = this.value.replace(/[^0-9]/g, '');
+        });
+    }
+})();
 </script>
 {% endblock %}
+

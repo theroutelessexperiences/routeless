@@ -61,6 +61,13 @@ def send_routeless_email(purpose, subject, to, template_name=None, context=None,
     if "site_url" not in context:
         context["site_url"] = getattr(settings, "SITE_URL", "http://127.0.0.1:8080")
 
+    logger.info(
+        "Email sent: purpose=%s, from=%s, EMAIL_HOST_USER=%s, to=%s",
+        purpose, from_email,
+        getattr(settings, "EMAIL_HOST_USER", "UNSET"),
+        to,
+    )
+
     try:
         if template_name:
             html_content = render_to_string(template_name, context)
@@ -285,3 +292,70 @@ def send_new_review_email(review):
         [review.host.email],
         purpose="general",
     )
+
+
+# -------------------------------------------------------------------
+# Invoice email (with PDF attachment)
+# -------------------------------------------------------------------
+def send_invoice_email(booking, invoice):
+    """
+    Send the tax invoice email with PDF attachment to the customer.
+    """
+    if not invoice or not invoice.customer_email:
+        logger.warning("send_invoice_email: No email for booking #%s", booking.id)
+        return
+
+    cfg = getattr(settings, "ROUTELESS_TAX_CONFIG", {})
+
+    context = {
+        "customer_name": invoice.customer_name,
+        "experience_title": booking.experience.title,
+        "invoice_number": invoice.invoice_number,
+        "invoice_date": invoice.invoice_date.strftime("%d %b %Y"),
+        "booking_id": booking.id,
+        "taxable_amount": invoice.taxable_amount,
+        "gst_rate": invoice.gst_rate,
+        "total_tax_amount": invoice.total_tax_amount,
+        "total_amount": invoice.total_amount,
+        "my_bookings_url": f"{getattr(settings, 'SITE_URL', 'https://therouteless.com')}/my-bookings/",
+        "year": invoice.invoice_date.year,
+        "supplier_name": invoice.supplier_name,
+    }
+
+    subject = f"Invoice {invoice.invoice_number} — {booking.experience.title}"
+
+    try:
+        html_content = render_to_string("emails/invoice_email.html", context)
+        text_content = strip_tags(html_content)
+        from_email = get_sender_email("booking")
+
+        email = EmailMultiAlternatives(
+            subject=subject,
+            body=text_content,
+            from_email=from_email,
+            to=[invoice.customer_email],
+        )
+        email.attach_alternative(html_content, "text/html")
+
+        # Attach PDF if available
+        if invoice.pdf_file:
+            try:
+                invoice.pdf_file.open("rb")
+                pdf_content = invoice.pdf_file.read()
+                invoice.pdf_file.close()
+                filename = f"Invoice_{invoice.invoice_number.replace('/', '_')}.pdf"
+                email.attach(filename, pdf_content, "application/pdf")
+            except Exception as e:
+                logger.error("Could not attach invoice PDF for #%s: %s", booking.id, e)
+
+        email.send(fail_silently=False)
+
+        # Mark invoice as sent
+        invoice.status = "sent"
+        invoice.save(update_fields=["status"])
+
+        logger.info("Invoice email sent for booking #%s to %s", booking.id, invoice.customer_email)
+
+    except Exception as e:
+        logger.error("Failed to send invoice email for booking #%s: %s", booking.id, e)
+

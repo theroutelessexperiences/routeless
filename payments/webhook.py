@@ -101,6 +101,17 @@ def razorpay_webhook_view(request):
                         "Webhook: Booking %s confirmed via payment.captured", booking.id
                     )
 
+                    # Trigger idempotent invoice + vendor settlement
+                    try:
+                        from .invoice_service import create_invoice_for_booking, create_vendor_settlement
+                        from .invoice_pdf import generate_invoice_pdf
+
+                        invoice = create_invoice_for_booking(booking, payment)
+                        generate_invoice_pdf(invoice)
+                        create_vendor_settlement(booking, payment)
+                    except Exception as inv_err:
+                        logger.error("Webhook invoice/settlement failed for booking #%s: %s", booking.id, inv_err)
+
             elif event == "payment.failed":
                 PaymentLog.objects.create(
                     payment=payment,
@@ -144,6 +155,17 @@ def razorpay_webhook_view(request):
                     logger.info(
                         "Webhook: Booking %s confirmed via order.paid", booking.id
                     )
+
+                    # Trigger idempotent invoice + vendor settlement
+                    try:
+                        from .invoice_service import create_invoice_for_booking, create_vendor_settlement
+                        from .invoice_pdf import generate_invoice_pdf
+
+                        invoice = create_invoice_for_booking(booking, payment)
+                        generate_invoice_pdf(invoice)
+                        create_vendor_settlement(booking, payment)
+                    except Exception as inv_err:
+                        logger.error("Webhook invoice/settlement failed for booking #%s: %s", booking.id, inv_err)
 
             # TODO: Handle refund.processed when refund flow is implemented
             # elif event == "refund.processed":

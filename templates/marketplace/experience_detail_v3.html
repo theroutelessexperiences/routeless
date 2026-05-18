@@ -71,6 +71,7 @@
                 <div class="small text-muted mb-1">Starting from</div>
                 <div class="price-badge mb-0">&#8377;{{ listing.price_per_person|floatformat:2 }} <span class="fs-6 fw-normal text-muted">/
                         person / day</span></div>
+                <div class="small text-muted" style="font-size: 0.72rem; opacity: 0.7;">+ GST at checkout</div>
             </div>
         </div>
     </div>
@@ -329,6 +330,7 @@
                     <div>
                         <div class="price-badge mb-0">&#8377;{{ listing.price_per_person|floatformat:2 }}</div>
                         <div class="small text-muted">per person / day</div>
+                        <div class="small text-muted" style="font-size: 0.72rem; opacity: 0.7;">+ GST at checkout</div>
                     </div>
                     {% if listing.review_count and listing.review_count > 0 %}
                     <div class="small text-end">
@@ -531,7 +533,7 @@
                             <span id="estimateTotal">₹0</span>
                         </div>
                         <div class="small text-muted mt-1">
-                            Final price will be confirmed on checkout.
+                            Final price including GST will be shown on checkout.
                         </div>
                     </div>
 

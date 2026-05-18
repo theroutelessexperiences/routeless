@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your Invoice from The Routeless</title>
+</head>
+<body style="margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #f4f7fa;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.06);">
+        <!-- Header -->
+        <tr>
+            <td style="background: #2B6777; padding: 30px 40px; text-align: center;">
+                <h1 style="color: #ffffff; margin: 0; font-size: 24px; font-weight: 700;">THE ROUTELESS</h1>
+                <p style="color: rgba(255,255,255,0.8); margin: 6px 0 0; font-size: 13px;">Tax Invoice</p>
+            </td>
+        </tr>
+
+        <!-- Body -->
+        <tr>
+            <td style="padding: 36px 40px;">
+                <p style="color: #333; font-size: 16px; margin: 0 0 8px;">Hi {{ customer_name }},</p>
+                <p style="color: #666; font-size: 14px; line-height: 1.6; margin: 0 0 24px;">
+                    Thank you for booking with The Routeless! Your invoice for
+                    <strong>{{ experience_title }}</strong> is attached to this email.
+                </p>
+
+                <!-- Invoice Summary Box -->
+                <table width="100%" cellpadding="0" cellspacing="0" style="background: #f8fafb; border: 1px solid #e8edf2; border-radius: 8px; margin-bottom: 24px;">
+                    <tr>
+                        <td style="padding: 20px;">
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td style="color: #888; font-size: 12px; padding-bottom: 4px;">Invoice No.</td>
+                                    <td style="color: #333; font-size: 14px; font-weight: 600; text-align: right; padding-bottom: 4px;">{{ invoice_number }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #888; font-size: 12px; padding-bottom: 4px;">Date</td>
+                                    <td style="color: #333; font-size: 14px; text-align: right; padding-bottom: 4px;">{{ invoice_date }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #888; font-size: 12px; padding-bottom: 4px;">Booking ID</td>
+                                    <td style="color: #333; font-size: 14px; text-align: right; padding-bottom: 4px;">#{{ booking_id }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="border-top: 1px dashed #ddd; padding-top: 12px; padding-bottom: 4px;"></td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #888; font-size: 12px; padding-bottom: 4px;">Taxable Amount</td>
+                                    <td style="color: #333; font-size: 14px; text-align: right; padding-bottom: 4px;">₹{{ taxable_amount }}</td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #888; font-size: 12px; padding-bottom: 4px;">GST ({{ gst_rate }}%)</td>
+                                    <td style="color: #333; font-size: 14px; text-align: right; padding-bottom: 4px;">₹{{ total_tax_amount }}</td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" style="border-top: 2px solid #2B6777; padding-top: 12px;"></td>
+                                </tr>
+                                <tr>
+                                    <td style="color: #2B6777; font-size: 16px; font-weight: 700;">Total Paid</td>
+                                    <td style="color: #2B6777; font-size: 18px; font-weight: 700; text-align: right;">₹{{ total_amount }}</td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+
+                <p style="color: #888; font-size: 13px; line-height: 1.6; margin: 0;">
+                    The PDF invoice is attached to this email. You can also download it from your
+                    <a href="{{ my_bookings_url }}" style="color: #2B6777; text-decoration: underline;">My Bookings</a> page.
+                </p>
+            </td>
+        </tr>
+
+        <!-- Footer -->
+        <tr>
+            <td style="background: #f4f7fa; padding: 20px 40px; text-align: center; border-top: 1px solid #e8edf2;">
+                <p style="color: #999; font-size: 11px; margin: 0;">
+                    This is a computer-generated invoice and does not require a signature.
+                </p>
+                <p style="color: #bbb; font-size: 11px; margin: 8px 0 0;">
+                    &copy; {{ year }} The Routeless &mdash; {{ supplier_name }}
+                </p>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

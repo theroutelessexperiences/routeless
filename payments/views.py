@@ -2,9 +2,10 @@ from django.shortcuts import redirect, get_object_or_404, render
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.http import FileResponse, Http404
 from django.utils import timezone
 from marketplace.models import Booking
-from .models import Payment, PaymentLog
+from .models import Payment, PaymentLog, Invoice
 from .services import verify_payment_signature, calculate_ledger_entries
 from marketplace.services.emails import send_payment_success_email, send_host_new_booking_email
 import logging
@@ -135,6 +136,25 @@ def checkout_verify(request):
         except Exception as e:
             logger.error(f"Error sending payment notifications: {e}")
 
+        # --- Invoice & vendor settlement (idempotent, post-commit) ---
+        try:
+            from .invoice_service import create_invoice_for_booking, create_vendor_settlement
+            from .invoice_pdf import generate_invoice_pdf
+
+            invoice = create_invoice_for_booking(booking, payment)
+            generate_invoice_pdf(invoice)
+            create_vendor_settlement(booking, payment)
+
+            # Send invoice email with PDF attachment
+            try:
+                from marketplace.services.emails import send_invoice_email
+                send_invoice_email(booking, invoice)
+            except Exception as email_err:
+                logger.error("Failed to send invoice email for booking #%s: %s", booking.id, email_err)
+
+        except Exception as inv_err:
+            logger.error("Invoice/settlement creation failed for booking #%s: %s", booking.id, inv_err)
+
         messages.success(request, "Payment successful! Your booking is confirmed.")
         return redirect(f"/booking-success/?booking_id={booking.id}")
 
@@ -172,3 +192,28 @@ def retry_payment(request, booking_id):
             booking.save(update_fields=["booking_status"])
 
     return redirect("checkout", pk=booking.id)
+
+
+@login_required
+def download_invoice(request, booking_id):
+    """
+    Serve the invoice PDF for a booking.
+    Access: booking owner or staff.
+    """
+    booking = get_object_or_404(Booking, id=booking_id)
+
+    # Access check
+    if booking.user != request.user and not request.user.is_staff:
+        raise Http404
+
+    invoice = Invoice.objects.filter(booking=booking).first()
+    if not invoice or not invoice.pdf_file:
+        messages.error(request, "Invoice not available yet.")
+        return redirect("my_bookings")
+
+    return FileResponse(
+        invoice.pdf_file.open("rb"),
+        content_type="application/pdf",
+        as_attachment=True,
+        filename=f"Invoice_{invoice.invoice_number.replace('/', '_')}.pdf",
+    )

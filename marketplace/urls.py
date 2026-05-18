@@ -45,10 +45,12 @@ urlpatterns = [
     path('api/experiences/<int:experience_id>/slots/', views.api_experience_slots, name='api_experience_slots'),
     path('api/experiences/<int:experience_id>/price/', views.api_experience_price, name='api_experience_price'),
     path('api/notifications/unread/', views.api_unread_notifications_count, name='api_unread_notifications_count'),
+    path('api/locations/search/', views.location_search_api, name='location_search_api'),
     
     # Static info pages
     path('about/', TemplateView.as_view(template_name='privacy_tnc/about_us.html'), name='about_us'),
     path('privacy-policy/', TemplateView.as_view(template_name='privacy_tnc/privacy_policy.html'), name='privacy_policy'),
     path('terms/', TemplateView.as_view(template_name='privacy_tnc/terms_of_service.html'), name='terms_of_service'),
     path('cancellations-refunds/', TemplateView.as_view(template_name='privacy_tnc/cancellations_and_refunds.html'), name='cancellations_refunds'),
+    path('contact/', views.contact_view, name='contact'),
 ]

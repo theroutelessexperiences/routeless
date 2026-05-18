@@ -167,6 +167,11 @@ View and manage your bookings on The Routeless, including payment status, trip d
                         Payment Ref:
                         <span class="fw-semibold text-dark">{{ booking.payment_id }}</span>
                     </span>
+                    {% if booking.invoice %}
+                    <a href="{% url 'payments:download_invoice' booking_id=booking.id %}" class="btn btn-outline-primary rounded-pill btn-sm ms-2 py-0 px-2" style="font-size: 0.78rem;">
+                        <i class="bi bi-file-earmark-pdf me-1"></i>Invoice
+                    </a>
+                    {% endif %}
                 </div>
                 {% endif %}
 

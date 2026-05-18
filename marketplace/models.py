@@ -341,6 +341,34 @@ class ExperienceImage(models.Model):
         return f"Image for {self.experience.title}"
 
 
+def validate_video_file(value):
+    """Allow mp4, mov, webm video formats, max 100 MB."""
+    ext = os.path.splitext(value.name)[1].lower()
+    valid_extensions = [".mp4", ".mov", ".webm"]
+    if ext not in valid_extensions:
+        raise ValidationError(
+            "Unsupported video format. Allowed: .mp4, .mov, .webm."
+        )
+    limit = 100 * 1024 * 1024  # 100 MB
+    if value.size > limit:
+        raise ValidationError("Video file size cannot exceed 100 MB.")
+
+
+class ExperienceVideo(models.Model):
+    experience = models.ForeignKey(Experience, on_delete=models.CASCADE, related_name="videos")
+    video = models.FileField(
+        upload_to="experiences/videos/",
+        validators=[
+            FileExtensionValidator(allowed_extensions=["mp4", "mov", "webm"]),
+            validate_video_file,
+        ],
+    )
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Video for {self.experience.title}"
+
+
 class AvailabilitySlot(models.Model):
     experience = models.ForeignKey(Experience, on_delete=models.CASCADE, related_name="availability_slots")
     date = models.DateField()

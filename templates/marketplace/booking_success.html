@@ -92,11 +92,34 @@ Your booking on The Routeless has been confirmed successfully.
                         <div class="detail-label">Guests</div>
                         <div class="detail-value">{{ booking.guests_count }}</div>
                     </div>
+                    {% if booking.payment and booking.payment.total_payable_amount %}
+                    <div class="detail-item">
+                        <div class="detail-label">Subtotal</div>
+                        <div class="detail-value">&#8377;{{ booking.payment.taxable_amount|floatformat:2 }}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">{{ booking.payment.tax_label }}</div>
+                        <div class="detail-value">&#8377;{{ booking.payment.total_tax_amount|floatformat:2 }}</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">Total Paid</div>
+                        <div class="detail-value amount-text">&#8377;{{ booking.payment.total_payable_amount|floatformat:2 }}</div>
+                    </div>
+                    {% else %}
                     <div class="detail-item">
                         <div class="detail-label">Total Paid</div>
                         <div class="detail-value amount-text">&#8377;{{ booking.total_price|floatformat:2 }}</div>
                     </div>
+                    {% endif %}
                 </div>
+
+                {% if booking.invoice %}
+                <div class="text-center mt-3">
+                    <a href="{% url 'payments:download_invoice' booking_id=booking.id %}" class="btn btn-outline-primary rounded-pill px-4 btn-sm">
+                        <i class="bi bi-file-earmark-pdf me-1"></i>Download Invoice
+                    </a>
+                </div>
+                {% endif %}
             </div>
             {% endif %}
 
