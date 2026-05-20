@@ -60,6 +60,28 @@
             --navbar-height: 80px;
         }
 
+        /* ── Branded watermark for legal / info pages ── */
+        .branded-page {
+            position: relative;
+            overflow: hidden;
+        }
+        .branded-page::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: var(--watermark-url);
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: 380px auto;
+            opacity: 0.045;
+            pointer-events: none;
+            z-index: 0;
+        }
+        .branded-page > * {
+            position: relative;
+            z-index: 1;
+        }
+
         html,
         body {
             height: 100%;
@@ -240,11 +262,11 @@
         }
 
         .brand-logo-img {
-            height: 120px;
+            height: 56px;
             width: auto;
             object-fit: contain;
             background: transparent;
-            margin: -28px 0;
+            margin: -4px 0;
             mix-blend-mode: multiply;
             transition: filter 0.3s ease, opacity 0.3s ease;
         }
@@ -641,7 +663,7 @@
     <div class="offcanvas offcanvas-end" tabindex="-1" id="mobileNav" aria-labelledby="mobileNavLabel">
         <div class="offcanvas-header border-bottom">
             <h5 class="offcanvas-title fw-bold" id="mobileNavLabel">
-                <img src="{% static 'img/routeless-logo.png' %}" alt="The Routeless" style="height: 100px; width: auto; margin: -20px 0; mix-blend-mode: multiply;">
+                <img src="{% static 'img/routeless-logo.png' %}" alt="The Routeless" style="height: 48px; width: auto; mix-blend-mode: multiply;">
             </h5>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
         </div>
@@ -787,7 +809,7 @@
                 </div>
 
                 <div class="col-6 col-lg-2">
-                    <h6 class="fw-bold mb-3">Contact Us</h6>
+                    <h6 class="fw-bold mb-3"><a href="{% url 'contact' %}" class="text-white text-decoration-none">Contact Us</a></h6>
                     <ul class="list-unstyled small mb-0">
                         <li class="mb-2"><a href="mailto:hello@therouteless.com"><i class="bi bi-envelope me-1"></i>hello@therouteless.com</a></li>
                         <li class="mb-2"><a href="mailto:support@therouteless.com"><i class="bi bi-headset me-1"></i>support@therouteless.com</a></li>

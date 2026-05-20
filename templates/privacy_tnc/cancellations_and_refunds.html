@@ -1,11 +1,12 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Cancellation & Refund Policy | Routeless{% endblock %}
+{% block title %}Cancellation & Refund Policy | The Routeless{% endblock %}
 
 {% block content %}
 
 <!-- Header -->
-<section class="py-5 text-center bg-light">
+<section class="py-5 text-center bg-light branded-page" style="--watermark-url: url('{% static 'img/routeless-logo.png' %}');">
     <div class="container" style="max-width: 900px;">
         <h1 class="fw-bold mb-3">Cancellation & Refund Policy</h1>
         <p class="text-muted mb-0">
@@ -15,107 +16,82 @@
 </section>
 
 <!-- Content -->
-<div class="container py-5" style="max-width: 900px;">
+<div class="container py-5 branded-page" style="max-width: 900px; --watermark-url: url('{% static 'img/routeless-logo.png' %}');">
 
+    <!-- Section 1: General Principles -->
+    <h4 class="fw-bold mb-3">1. General Principles</h4>
+    <ul>
+        <li>Refunds will be processed to the <strong>original payment method</strong>.</li>
+        <li>Refund timeline: <strong>5–10 working days</strong>.</li>
+        <li>Payment gateway charges and taxes are <strong>non-refundable</strong>.</li>
+        <li>Applicable platform, operational, and transaction charges may be deducted where relevant.</li>
+    </ul>
+
+    <hr class="my-5">
+
+    <!-- Section 2: Customer Cancellation -->
+    <h4 class="fw-bold mb-3">2. Customer Cancellation</h4>
+    <ul>
+        <li>More than 7 days before the experience: <strong>85% refund</strong>.</li>
+        <li>5–7 days before the experience: <strong>50% refund</strong>.</li>
+        <li>Less than 5 days before the experience: <strong>No refund</strong>.</li>
+    </ul>
+
+    <hr class="my-5">
+
+    <!-- Section 3: No Show -->
+    <h4 class="fw-bold mb-3">3. No Show</h4>
+    <ul>
+        <li>No refund will be provided for no-shows.</li>
+        <li>The booking will be considered completed.</li>
+    </ul>
+
+    <hr class="my-5">
+
+    <!-- Section 4: Vendor / Operator Cancellation -->
+    <h4 class="fw-bold mb-3">4. Vendor / Operator Cancellation</h4>
+
+    <h5 class="fw-semibold mt-4 mb-2">a. Force Majeure</h5>
+    <p class="text-muted mb-2">
+        Weather, restrictions, safety, or unavoidable operational issues.
+    </p>
+    <ul>
+        <li>Rescheduling or credit/voucher will be prioritised over refunds.</li>
+        <li>The customer may choose:
+            <ul class="mt-1">
+                <li>An alternate date.</li>
+                <li>An alternate experience.</li>
+                <li>Credit valid for future use.</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h5 class="fw-semibold mt-4 mb-2">b. Vendor Fault</h5>
+    <p class="text-muted mb-2">
+        Overbooking, mismanagement, or failure to deliver the booked experience.
+    </p>
+    <ul>
+        <li><strong>Full refund</strong> will be provided to the customer.</li>
+        <li>A penalty may be applied to the vendor for failing to comply with The Routeless's standards.</li>
+        <li>Repeated violations may result in <strong>suspension or removal</strong> from the platform.</li>
+    </ul>
+
+    <hr class="my-5">
+
+    <!-- Section 5: Rescheduling -->
+    <h4 class="fw-bold mb-3">5. Rescheduling</h4>
+    <ul>
+        <li>Rescheduling is allowed subject to availability.</li>
+        <li>Rescheduling is strongly preferred for structured experiences.</li>
+    </ul>
+
+    <hr class="my-5">
+
+    <!-- Section 6: Resolution Authority -->
+    <h4 class="fw-bold mb-3">6. Resolution Authority</h4>
     <p>
-        All bookings made through <strong>The Routeless</strong> are governed by a standardised
-        cancellation and refund policy determined solely by Routeless, in compliance with
-        applicable Indian laws.
-    </p>
-
-    <hr class="my-5">
-
-    <h4 class="fw-bold mb-3">Refund Eligibility</h4>
-    <p>Refund eligibility depends on:</p>
-    <ul>
-        <li>Timing of cancellation</li>
-        <li>Safety considerations</li>
-        <li>Weather conditions</li>
-        <li>Regulatory or operational constraints</li>
-    </ul>
-
-    <p class="fw-semibold">
-        Third-party operators listed on Routeless do not have the authority to approve or deny refunds.
-    </p>
-
-    <hr class="my-5">
-
-    <h4 class="fw-bold mb-3">User Rights & Transparency</h4>
-    <p>Users will always be informed of:</p>
-    <ul>
-        <li>Applicable cancellation terms at the time of booking</li>
-        <li>Any non-refundable components (permits, insurance, fees)</li>
-    </ul>
-
-    <p>
-        Routeless ensures that all policies are clear, transparent, and free from misleading practices.
-    </p>
-
-    <hr class="my-5">
-
-    <h4 class="fw-bold mb-3">Platform Authority</h4>
-    <p>Routeless reserves the exclusive right to:</p>
-    <ul>
-        <li>Approve, deny, or modify refund requests</li>
-        <li>Offer full or partial refunds</li>
-        <li>Provide rescheduling or alternative experiences</li>
-    </ul>
-
-    <p class="fw-semibold text-danger">
-        All decisions made by Routeless are final and binding, subject to applicable law.
-    </p>
-
-    <hr class="my-5">
-
-    <h4 class="fw-bold mb-3">Mandatory Refund Scenarios</h4>
-    <p>If an experience cannot be delivered due to:</p>
-    <ul>
-        <li>Government restrictions</li>
-        <li>Safety risks</li>
-        <li>Weather or environmental disruptions</li>
-        <li>Operational failure by Routeless or partners</li>
-    </ul>
-
-    <p>Users will be offered:</p>
-    <ul>
-        <li>A full or proportionate refund</li>
-        <li>Or a rescheduling option where feasible</li>
-    </ul>
-
-    <hr class="my-5">
-
-    <h4 class="fw-bold mb-3">Non-Refundable Components</h4>
-    <p>Certain components may not be refundable, including:</p>
-    <ul>
-        <li>Government permits</li>
-        <li>Insurance fees</li>
-        <li>Third-party booking charges</li>
-    </ul>
-
-    <p>
-        These will always be clearly disclosed at the time of booking.
-    </p>
-
-    <hr class="my-5">
-
-    <h4 class="fw-bold mb-3">Refund Processing</h4>
-    <p>
-        Approved refunds are processed within <strong>5–10 business days</strong>,
-        depending on banking and payment gateway timelines.
-    </p>
-
-    <hr class="my-5">
-
-    <h4 class="fw-bold mb-3">Dispute Resolution</h4>
-    <p>In case of disputes:</p>
-    <ul>
-        <li>Users should first contact Routeless customer support</li>
-        <li>All matters are governed by applicable Indian laws</li>
-    </ul>
-
-    <p>
-        Users retain the right to approach consumer forums under the
-        <strong>Consumer Protection Act, 2019</strong>.
+        The Routeless reserves the right to determine the appropriate resolution in situations
+        involving cancellations, disputes, refunds, or operational concerns.
     </p>
 
 </div>

@@ -121,6 +121,43 @@ Your booking on The Routeless has been confirmed successfully.
                 </div>
                 {% endif %}
             </div>
+
+            {% if booking.checkin_code %}
+            <!-- Booking Pass -->
+            <div class="success-card glass-panel p-4 mb-4" data-aos="fade-up" data-aos-delay="150"
+                 style="background: linear-gradient(135deg, #fff9e6 0%, #fff3cc 100%); border: 2px solid #f0c040;">
+                <div class="text-center mb-3">
+                    <span class="badge rounded-pill px-3 py-2" style="background: var(--primary-color); color: #fff; font-size: 0.85rem;">
+                        <i class="bi bi-ticket-perforated me-1"></i>Your Booking Pass
+                    </span>
+                </div>
+
+                <div class="row align-items-center g-4">
+                    <div class="col-12 col-md-7 text-center text-md-start">
+                        <p class="small text-muted mb-2">Show this code to your host when you arrive:</p>
+                        <div class="checkin-code-display mx-auto mx-md-0"
+                             style="font-family: 'JetBrains Mono', monospace; font-size: 2.5rem; font-weight: 800;
+                                    letter-spacing: 14px; color: #1a1a2e; background: #fff; border-radius: 12px;
+                                    padding: 12px 24px; display: inline-block; border: 2px dashed #d4a017;
+                                    user-select: all;">
+                            {{ booking.checkin_code }}
+                        </div>
+                        <p class="small text-muted mt-2 mb-0">
+                            <i class="bi bi-info-circle me-1"></i>
+                            This code is unique to your booking. Keep it safe.
+                        </p>
+                    </div>
+
+                    {% if qr_data_uri %}
+                    <div class="col-12 col-md-5 text-center">
+                        <img src="{{ qr_data_uri }}" alt="Check-in QR Code"
+                             style="width: 160px; height: 160px; border-radius: 12px; border: 3px solid #fff; box-shadow: 0 2px 12px rgba(0,0,0,0.08);">
+                        <p class="small text-muted mt-1 mb-0">Scan QR at check-in</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
             {% endif %}
 
             <div class="success-card glass-panel p-4" data-aos="fade-up" data-aos-delay="200">

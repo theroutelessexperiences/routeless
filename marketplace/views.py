@@ -67,10 +67,12 @@ except Exception:
 ALLOWED_TRANSITIONS = {
     "pending": ["cancelled"],
     "payment_processing": ["cancelled"],
-    "confirmed": ["completed", "cancelled", "refunded"],
+    "confirmed": ["checked_in", "completed", "cancelled", "refunded", "no_show"],
+    "checked_in": ["completed", "no_show"],
     "completed": [],
     "cancelled": [],
     "refunded": [],
+    "no_show": [],
 }
 
 
@@ -837,16 +839,26 @@ def checkout(request, pk):
 @login_required
 def booking_success(request):
     booking = None
+    qr_data_uri = ""
     booking_id = request.GET.get("booking_id") or request.session.get("last_booking_success_id")
 
     if booking_id:
         booking = (
             Booking.objects.filter(pk=booking_id, user=request.user)
-            .select_related("experience")
+            .select_related("experience", "experience__host")
             .first()
         )
+        if booking and booking.checkin_token:
+            try:
+                from marketplace.services.checkin_service import generate_qr_data_uri
+                qr_data_uri = generate_qr_data_uri(booking)
+            except Exception:
+                pass
 
-    return render(request, "marketplace/booking_success.html", {"booking": booking})
+    return render(request, "marketplace/booking_success.html", {
+        "booking": booking,
+        "qr_data_uri": qr_data_uri,
+    })
 
 
 # -------------------------------------------------------------------
@@ -1180,6 +1192,136 @@ def host_dashboard(request):
             "pricing_rules": pricing_rules,
         },
     )
+
+
+# -------------------------------------------------------------------
+# Host Check-in Verification
+# -------------------------------------------------------------------
+@login_required
+def host_checkin_view(request):
+    """Display the host check-in page with today's bookings and code entry form."""
+    profile = getattr(request.user, "userprofile", None)
+    if not getattr(profile, "is_host", False):
+        messages.error(request, "You do not have permission to access this page.")
+        return redirect("home")
+
+    today = date.today()
+
+    # Today's bookings for this host
+    todays_bookings = (
+        Booking.objects.filter(
+            experience__host=request.user,
+            check_in_date=today,
+            booking_status__in=["confirmed", "checked_in"],
+        )
+        .select_related("experience", "user")
+        .order_by("created_at")
+    )
+
+    # Recent check-ins (last 7 days)
+    from datetime import timedelta
+    recent_checkins = (
+        Booking.objects.filter(
+            experience__host=request.user,
+            booking_status__in=["checked_in", "completed"],
+            checked_in_at__isnull=False,
+            checked_in_at__gte=timezone.now() - timedelta(days=7),
+        )
+        .select_related("experience", "user")
+        .order_by("-checked_in_at")[:20]
+    )
+
+    return render(request, "marketplace/host_checkin.html", {
+        "todays_bookings": todays_bookings,
+        "recent_checkins": recent_checkins,
+        "today": today,
+    })
+
+
+@login_required
+def host_checkin_verify(request):
+    """Handle check-in code submission and confirmation."""
+    profile = getattr(request.user, "userprofile", None)
+    if not getattr(profile, "is_host", False):
+        messages.error(request, "You do not have permission to access this page.")
+        return redirect("home")
+
+    if request.method != "POST":
+        return redirect("host_checkin")
+
+    from marketplace.services.checkin_service import validate_checkin, perform_checkin
+
+    action = request.POST.get("action", "verify")
+    checkin_code = request.POST.get("checkin_code", "").strip()
+
+    today = date.today()
+    todays_bookings = (
+        Booking.objects.filter(
+            experience__host=request.user,
+            check_in_date=today,
+            booking_status__in=["confirmed", "checked_in"],
+        )
+        .select_related("experience", "user")
+        .order_by("created_at")
+    )
+
+    if action == "verify":
+        # Step 1: Validate the code and show booking details
+        booking, errors = validate_checkin(checkin_code, request.user)
+
+        if errors:
+            for err in errors:
+                messages.error(request, err)
+            return render(request, "marketplace/host_checkin.html", {
+                "todays_bookings": todays_bookings,
+                "today": today,
+                "entered_code": checkin_code,
+            })
+
+        # Code is valid — show booking details for confirmation
+        return render(request, "marketplace/host_checkin.html", {
+            "todays_bookings": todays_bookings,
+            "today": today,
+            "matched_booking": booking,
+            "entered_code": checkin_code,
+        })
+
+    elif action == "confirm":
+        # Step 2: Actually perform the check-in
+        booking, errors = validate_checkin(checkin_code, request.user)
+
+        if errors:
+            for err in errors:
+                messages.error(request, err)
+            return redirect("host_checkin")
+
+        try:
+            notes = request.POST.get("checkin_notes", "").strip()
+            perform_checkin(booking, request.user, method="manual_code", notes=notes)
+            messages.success(
+                request,
+                f"✅ {booking.traveler_name} has been checked in for {booking.experience.title}!"
+            )
+
+            # Send real-time notification to customer
+            try:
+                from chat.utils import send_realtime_notification
+                if booking.user:
+                    send_realtime_notification(
+                        user_id=booking.user.id,
+                        title="Checked In!",
+                        message=f"You've been checked in for {booking.experience.title}. Enjoy your experience!",
+                        link="/my-bookings/",
+                    )
+            except Exception:
+                pass
+
+        except ValueError as e:
+            messages.error(request, str(e))
+
+        return redirect("host_checkin")
+
+    return redirect("host_checkin")
 
 
 # -------------------------------------------------------------------

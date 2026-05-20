@@ -1,13 +1,14 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}About Us | Routeless{% endblock %}
+{% block title %}About Us | The Routeless{% endblock %}
 
 {% block content %}
 
 <!-- Hero Section -->
-<section class="py-5 text-center bg-light">
+<section class="py-5 text-center bg-light branded-page" style="--watermark-url: url('{% static 'img/routeless-logo.png' %}');">
     <div class="container" style="max-width: 900px;">
-        <h1 class="fw-bold mb-3">About Routeless</h1>
+        <h1 class="fw-bold mb-3">About The Routeless</h1>
         <p class="lead text-muted">
             For those not bound by itineraries.
         </p>
@@ -15,7 +16,7 @@
 </section>
 
 <!-- Main Content -->
-<div class="container py-5" style="max-width: 900px;">
+<div class="container py-5 branded-page" style="max-width: 900px; --watermark-url: url('{% static 'img/routeless-logo.png' %}');">
 
     <p class="fs-5">
         <strong>The Routeless</strong> was built on a simple idea:
@@ -24,7 +25,7 @@
 
     <p>
         For backpackers, explorers, and wanderers — for those who are not bound by rigid itineraries —
-        Routeless is a platform designed to help you discover journeys your way.
+        The Routeless is a platform designed to help you discover journeys your way.
     </p>
 
     <p>
@@ -59,7 +60,7 @@
         Every traveller is different. Every journey is personal.
     </p>
 
-    <p>That’s why Routeless does not push a single operator. Instead, we:</p>
+    <p>That’s why The Routeless does not push a single operator. Instead, we:</p>
     <ul>
         <li>Show multiple options for the same experience</li>
         <li>Let you compare based on price, reviews, and travel style</li>
@@ -107,7 +108,7 @@
 
     <h4 class="fw-bold mb-3">Community First</h4>
     <p>
-        At its heart, Routeless is a community of explorers.
+        At its heart, The Routeless is a community of explorers.
     </p>
 
     <ul>
@@ -127,7 +128,7 @@
 
     <hr class="my-5">
 
-    <h4 class="fw-bold mb-3">Why Routeless?</h4>
+    <h4 class="fw-bold mb-3">Why The Routeless?</h4>
     <ul>
         <li>Travel is often too structured</li>
         <li>Too commercialised</li>

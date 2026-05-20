@@ -46,6 +46,10 @@ urlpatterns = [
     path('api/experiences/<int:experience_id>/price/', views.api_experience_price, name='api_experience_price'),
     path('api/notifications/unread/', views.api_unread_notifications_count, name='api_unread_notifications_count'),
     path('api/locations/search/', views.location_search_api, name='location_search_api'),
+
+    # Host Check-in
+    path('dashboard/host/checkin/', views.host_checkin_view, name='host_checkin'),
+    path('dashboard/host/checkin/verify/', views.host_checkin_verify, name='host_checkin_verify'),
     
     # Static info pages
     path('about/', TemplateView.as_view(template_name='privacy_tnc/about_us.html'), name='about_us'),

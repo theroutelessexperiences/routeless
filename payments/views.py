@@ -110,6 +110,13 @@ def checkout_verify(request):
 
             calculate_ledger_entries(booking, reference_id=razorpay_payment_id)
 
+            # Generate check-in credentials (6-digit code + QR token)
+            try:
+                from marketplace.services.checkin_service import generate_checkin_credentials
+                generate_checkin_credentials(booking)
+            except Exception as checkin_err:
+                logger.error("Check-in credential generation failed for booking #%s: %s", booking.id, checkin_err)
+
         # --- Post-commit notifications (outside atomic block) ---
         try:
             send_payment_success_email(booking)

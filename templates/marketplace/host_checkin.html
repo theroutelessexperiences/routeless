@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Check-In Verification - Host Dashboard{% endblock %}
+
+{% block meta_description %}
+Verify customer check-ins for your experiences on The Routeless.
+{% endblock %}
+
+{% block content %}
+<div class="checkin-page" style="padding-top: calc(var(--navbar-height) + 30px); min-height: 100vh;">
+<div class="container py-4">
+
+    <!-- Header -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between mb-4 gap-3">
+        <div>
+            <h1 class="fw-bold mb-1" style="color: var(--primary-color);">
+                <i class="bi bi-qr-code-scan me-2"></i>Check-In Verification
+            </h1>
+            <p class="text-muted mb-0">Verify your guests' booking codes when they arrive.</p>
+        </div>
+        <a href="{% url 'host_dashboard' %}" class="btn btn-outline-secondary rounded-pill">
+            <i class="bi bi-arrow-left me-1"></i>Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Messages -->
+    {% if messages %}
+    <div class="mb-4">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show rounded-3" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="row g-4">
+
+        <!-- Left: Verify Code -->
+        <div class="col-12 col-lg-5">
+            <!-- Code Entry Card -->
+            <div class="checkin-card glass-panel p-4 mb-4">
+                <h5 class="fw-bold mb-3">
+                    <i class="bi bi-shield-check me-2 text-primary"></i>Enter Check-In Code
+                </h5>
+                <form method="post" action="{% url 'host_checkin_verify' %}" id="verifyForm">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="verify">
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">6-Digit Check-In Code</label>
+                        <input type="text" name="checkin_code" id="checkinCodeInput"
+                               class="form-control form-control-lg text-center fw-bold"
+                               style="font-family: 'JetBrains Mono', monospace; font-size: 2rem; letter-spacing: 12px; border-radius: 12px;"
+                               maxlength="6" pattern="[0-9]{6}" inputmode="numeric"
+                               placeholder="• • • • • •"
+                               value="{{ entered_code|default:'' }}"
+                               autocomplete="off" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 rounded-pill fw-semibold py-2">
+                        <i class="bi bi-search me-1"></i>Verify Code
+                    </button>
+                </form>
+            </div>
+
+            {% if matched_booking %}
+            <!-- Matched Booking Details -->
+            <div class="checkin-card glass-panel p-4 mb-4 border-start border-4 border-success" style="animation: fadeInUp 0.3s ease;">
+                <div class="d-flex align-items-center gap-2 mb-3">
+                    <span class="badge bg-success rounded-pill px-3 py-2">
+                        <i class="bi bi-check-circle me-1"></i>Booking Found
+                    </span>
+                </div>
+
+                <h5 class="fw-bold mb-3">{{ matched_booking.experience.title }}</h5>
+
+                <div class="row g-2 mb-3">
+                    <div class="col-6">
+                        <div class="small text-muted">Customer</div>
+                        <div class="fw-semibold">{{ matched_booking.traveler_name }}</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="small text-muted">Booking ID</div>
+                        <div class="fw-semibold">#{{ matched_booking.id }}</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="small text-muted">Check-in Date</div>
+                        <div class="fw-semibold">{{ matched_booking.check_in_date|date:"d M Y" }}</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="small text-muted">Guests</div>
+                        <div class="fw-semibold">{{ matched_booking.guests_count }}</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="small text-muted">Payment</div>
+                        <div class="fw-semibold text-success">
+                            <i class="bi bi-check-circle-fill me-1"></i>Paid
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="small text-muted">Status</div>
+                        <div class="fw-semibold">{{ matched_booking.booking_status|title }}</div>
+                    </div>
+                </div>
+
+                <form method="post" action="{% url 'host_checkin_verify' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="action" value="confirm">
+                    <input type="hidden" name="checkin_code" value="{{ entered_code }}">
+                    <div class="mb-3">
+                        <label class="form-label small text-muted">Notes (optional)</label>
+                        <input type="text" name="checkin_notes" class="form-control rounded-3"
+                               placeholder="e.g. Arrived with 2 guests">
+                    </div>
+                    <button type="submit" class="btn btn-success w-100 rounded-pill fw-bold py-2"
+                            onclick="return confirm('Confirm check-in for {{ matched_booking.traveler_name }}?')">
+                        <i class="bi bi-check2-all me-1"></i>Confirm Check-In
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Right: Today's Bookings + Recent -->
+        <div class="col-12 col-lg-7">
+            <!-- Today's Bookings -->
+            <div class="checkin-card glass-panel p-4 mb-4">
+                <h5 class="fw-bold mb-3">
+                    <i class="bi bi-calendar-event me-2" style="color: var(--accent-color);"></i>
+                    Today's Bookings
+                    <span class="badge bg-primary rounded-pill ms-2">{{ todays_bookings|length }}</span>
+                </h5>
+
+                {% if todays_bookings %}
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Customer</th>
+                                <th>Experience</th>
+                                <th>Guests</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for b in todays_bookings %}
+                            <tr>
+                                <td>
+                                    <div class="fw-semibold">{{ b.traveler_name }}</div>
+                                    <div class="small text-muted">#{{ b.id }}</div>
+                                </td>
+                                <td>{{ b.experience.title|truncatechars:30 }}</td>
+                                <td>{{ b.guests_count }}</td>
+                                <td>
+                                    {% if b.booking_status == "checked_in" %}
+                                    <span class="badge bg-success rounded-pill">
+                                        <i class="bi bi-check-circle me-1"></i>Checked In
+                                    </span>
+                                    {% else %}
+                                    <span class="badge bg-warning text-dark rounded-pill">
+                                        <i class="bi bi-clock me-1"></i>Awaiting
+                                    </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="text-center py-4">
+                    <i class="bi bi-calendar-x" style="font-size: 2rem; opacity: 0.4;"></i>
+                    <p class="text-muted mt-2 mb-0">No bookings scheduled for today.</p>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Recent Check-ins -->
+            {% if recent_checkins %}
+            <div class="checkin-card glass-panel p-4">
+                <h5 class="fw-bold mb-3">
+                    <i class="bi bi-clock-history me-2 text-muted"></i>Recent Check-Ins
+                </h5>
+                <div class="list-group list-group-flush">
+                    {% for b in recent_checkins %}
+                    <div class="list-group-item d-flex justify-content-between align-items-center px-0 border-0">
+                        <div>
+                            <div class="fw-semibold small">{{ b.traveler_name }}</div>
+                            <div class="text-muted" style="font-size: 0.78rem;">
+                                {{ b.experience.title|truncatechars:25 }} &bull;
+                                {{ b.checked_in_at|date:"d M, h:i A" }}
+                            </div>
+                        </div>
+                        <span class="badge bg-success-subtle text-success rounded-pill">
+                            <i class="bi bi-check2 me-1"></i>{{ b.booking_status|title }}
+                        </span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+    .checkin-page {
+        background: linear-gradient(135deg, #f8fafc 0%, #eef2f7 100%);
+    }
+
+    .checkin-card {
+        background: #ffffff;
+        border-radius: 1rem;
+        border: 1px solid rgba(0, 0, 0, 0.06);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+    }
+
+    #checkinCodeInput::placeholder {
+        color: #cbd5e1;
+        letter-spacing: 16px;
+    }
+
+    #checkinCodeInput:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(var(--primary-rgb, 218, 165, 32), 0.15);
+    }
+
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(12px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Auto-focus code input
+    document.addEventListener('DOMContentLoaded', function() {
+        const input = document.getElementById('checkinCodeInput');
+        if (input && !input.value) input.focus();
+
+        // Auto-submit when 6 digits entered
+        if (input) {
+            input.addEventListener('input', function() {
+                this.value = this.value.replace(/\D/g, '').slice(0, 6);
+                if (this.value.length === 6) {
+                    document.getElementById('verifyForm').submit();
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

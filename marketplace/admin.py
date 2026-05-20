@@ -211,12 +211,39 @@ class BookingAdmin(ModelAdmin):
         "check_in_date",
         "check_out_date",
         "booking_status",
+        "checkin_status",
+        "checked_in_at",
         "created_at",
     )
-    list_filter = ("booking_status", "created_at")
-    search_fields = ("experience__title", "user__username", "traveler_name")
-    readonly_fields = ("created_at",)
+    list_filter = ("booking_status", "checkin_status", "created_at", "check_in_date")
+    search_fields = ("experience__title", "user__username", "traveler_name", "checkin_code")
+    readonly_fields = (
+        "created_at", "checkin_code", "checkin_token", "checkin_status",
+        "checked_in_at", "checked_in_by", "checkin_method",
+        "checkin_attempt_count", "last_checkin_attempt_at",
+    )
     list_select_related = ("experience", "user")
+    actions = ["mark_no_show", "mark_completed"]
+
+    @admin.action(description="Mark selected bookings as No Show")
+    def mark_no_show(self, request, queryset):
+        count = queryset.filter(
+            booking_status__in=["confirmed", "checked_in"]
+        ).update(
+            booking_status="no_show",
+            checkin_status="no_show",
+        )
+        self.message_user(request, f"{count} booking(s) marked as No Show.")
+
+    @admin.action(description="Mark selected bookings as Completed")
+    def mark_completed(self, request, queryset):
+        count = queryset.filter(
+            booking_status__in=["confirmed", "checked_in"]
+        ).update(
+            booking_status="completed",
+            checkin_status="completed",
+        )
+        self.message_user(request, f"{count} booking(s) marked as Completed.")
 
 
 @admin.register(Review)

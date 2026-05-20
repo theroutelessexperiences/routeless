@@ -1,9 +1,10 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Terms of Service | Routeless{% endblock %}
+{% block title %}Terms of Service | The Routeless{% endblock %}
 
 {% block content %}
-<div class="container py-5" style="max-width: 900px;">
+<div class="container py-5 branded-page" style="max-width: 900px; --watermark-url: url('{% static 'img/routeless-logo.png' %}');">
 
     <h1 class="fw-bold mb-4">Terms of Service</h1>
     <p class="text-muted">Effective Date: 23 April 2026</p>
@@ -14,13 +15,13 @@
         mobile applications, and services (collectively, the “Platform”).
     </p>
     <p>
-        By accessing or using Routeless, you agree to these Terms.
+        By accessing or using The Routeless, you agree to these Terms.
     </p>
 
     <hr class="my-4">
 
     <h5 class="fw-bold">1. Nature of Service</h5>
-    <p>Routeless is a platform that:</p>
+    <p>The Routeless is a platform that:</p>
     <ul>
         <li>Connects users with trekking, adventure, stays and travel experiences</li>
         <li>Acts as an intermediary between users and third-party operators</li>
@@ -90,7 +91,7 @@
     </ul>
 
     <h5 class="fw-bold mt-4">8. Liability Limitation</h5>
-    <p>To the maximum extent permitted by law, Routeless is not liable for:</p>
+    <p>To the maximum extent permitted by law, The Routeless is not liable for:</p>
     <ul>
         <li>Injury or loss during experiences</li>
         <li>Third-party operator actions</li>

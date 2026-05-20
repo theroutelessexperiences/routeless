@@ -160,6 +160,42 @@ View and manage your bookings on The Routeless, including payment status, trip d
                     </div>
                 </div>
 
+                {% if booking.checkin_code and booking.booking_status != "cancelled" and booking.booking_status != "refunded" and booking.booking_status != "pending" %}
+                <!-- Booking Pass -->
+                <div class="mt-3 pt-3 border-top">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="small fw-semibold" style="color: var(--primary-color);">
+                            <i class="bi bi-ticket-perforated me-1"></i>Booking Pass
+                        </span>
+                        {% if booking.checkin_status == "checked_in" %}
+                        <span class="badge bg-success rounded-pill small">
+                            <i class="bi bi-check-circle me-1"></i>Checked In
+                        </span>
+                        {% elif booking.checkin_status == "completed" or booking.booking_status == "completed" %}
+                        <span class="badge bg-primary rounded-pill small">
+                            <i class="bi bi-check2-all me-1"></i>Completed
+                        </span>
+                        {% elif booking.checkin_status == "no_show" or booking.booking_status == "no_show" %}
+                        <span class="badge bg-danger rounded-pill small">
+                            <i class="bi bi-x-circle me-1"></i>No Show
+                        </span>
+                        {% else %}
+                        <span class="badge bg-warning text-dark rounded-pill small">
+                            <i class="bi bi-clock me-1"></i>Awaiting Check-In
+                        </span>
+                        {% endif %}
+                    </div>
+                    <div class="d-flex align-items-center gap-3">
+                        <div style="font-family: 'JetBrains Mono', monospace; font-size: 1.4rem; font-weight: 700;
+                                    letter-spacing: 8px; color: #1a1a2e; background: #fff9e6; border-radius: 8px;
+                                    padding: 6px 16px; border: 1px dashed #d4a017; user-select: all;">
+                            {{ booking.checkin_code }}
+                        </div>
+                        <span class="small text-muted">Show to host</span>
+                    </div>
+                </div>
+                {% endif %}
+
                 {% if booking.payment_id %}
                 <div class="payment-ref mt-3 pt-3 border-top">
                     <span class="small text-muted">

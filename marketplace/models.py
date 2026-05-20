@@ -1,4 +1,5 @@
 from datetime import date
+import uuid
 
 from django.apps import apps
 from django.contrib.auth.models import User
@@ -51,10 +52,12 @@ def normalize_booking_status(value: str) -> str:
         "payment processing": "payment_processing",
         "payment_processing": "payment_processing",
         "confirmed": "confirmed",
+        "checked_in": "checked_in",
         "completed": "completed",
         "cancelled": "cancelled",
         "canceled": "cancelled",
         "refunded": "refunded",
+        "no_show": "no_show",
     }
     return mapping.get(raw, raw)
 
@@ -431,9 +434,17 @@ class Booking(models.Model):
         PENDING = "pending", "Pending"
         PAYMENT_PROCESSING = "payment_processing", "Payment Processing"
         CONFIRMED = "confirmed", "Confirmed"
+        CHECKED_IN = "checked_in", "Checked In"
         COMPLETED = "completed", "Completed"
         CANCELLED = "cancelled", "Cancelled"
         REFUNDED = "refunded", "Refunded"
+        NO_SHOW = "no_show", "No Show"
+
+    class CheckinStatus(models.TextChoices):
+        NOT_CHECKED_IN = "not_checked_in", "Not Checked In"
+        CHECKED_IN = "checked_in", "Checked In"
+        COMPLETED = "completed", "Completed"
+        NO_SHOW = "no_show", "No Show"
 
     experience = models.ForeignKey(Experience, on_delete=models.CASCADE, related_name="bookings")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="user_bookings", null=True)
@@ -461,6 +472,34 @@ class Booking(models.Model):
     platform_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     host_payout = models.DecimalField(max_digits=10, decimal_places=2, default=0)
     total_paid = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+
+    # --- Check-in / Verification fields ---
+    checkin_code = models.CharField(
+        max_length=6, blank=True, db_index=True,
+        help_text="6-digit code for host verification",
+    )
+    checkin_token = models.UUIDField(
+        default=None, null=True, blank=True, unique=True, db_index=True,
+        help_text="Secure UUID token for QR-based verification",
+    )
+    checkin_status = models.CharField(
+        max_length=20,
+        choices=CheckinStatus.choices,
+        default=CheckinStatus.NOT_CHECKED_IN,
+    )
+    checked_in_at = models.DateTimeField(null=True, blank=True)
+    checked_in_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name="checkins_performed",
+        help_text="Host who verified check-in",
+    )
+    checkin_method = models.CharField(
+        max_length=20, blank=True,
+        help_text="manual_code or qr_scan",
+    )
+    checkin_notes = models.TextField(blank=True)
+    checkin_attempt_count = models.PositiveIntegerField(default=0)
+    last_checkin_attempt_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         constraints = [

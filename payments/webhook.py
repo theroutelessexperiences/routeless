@@ -101,6 +101,13 @@ def razorpay_webhook_view(request):
                         "Webhook: Booking %s confirmed via payment.captured", booking.id
                     )
 
+                    # Generate check-in credentials (idempotent)
+                    try:
+                        from marketplace.services.checkin_service import generate_checkin_credentials
+                        generate_checkin_credentials(booking)
+                    except Exception as ci_err:
+                        logger.error("Webhook checkin credential gen failed for booking #%s: %s", booking.id, ci_err)
+
                     # Trigger idempotent invoice + vendor settlement
                     try:
                         from .invoice_service import create_invoice_for_booking, create_vendor_settlement
@@ -155,6 +162,13 @@ def razorpay_webhook_view(request):
                     logger.info(
                         "Webhook: Booking %s confirmed via order.paid", booking.id
                     )
+
+                    # Generate check-in credentials (idempotent)
+                    try:
+                        from marketplace.services.checkin_service import generate_checkin_credentials
+                        generate_checkin_credentials(booking)
+                    except Exception as ci_err:
+                        logger.error("Webhook checkin credential gen failed for booking #%s: %s", booking.id, ci_err)
 
                     # Trigger idempotent invoice + vendor settlement
                     try:

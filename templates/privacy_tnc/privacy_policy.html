@@ -1,9 +1,11 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Privacy Policy | Routeless{% endblock %}
+{% block title %}Privacy Policy | The Routeless{% endblock %}
 
 {% block content %}
-<div class="container py-5" style="max-width: 900px;">
+<div class="container py-5 branded-page"
+    style="max-width: 900px; --watermark-url: url('{% static 'img/routeless-logo.png' %}');">
 
     <h1 class="fw-bold mb-4">Privacy Policy</h1>
     <p class="text-muted">Effective Date: 23 April 2026</p>
@@ -125,7 +127,6 @@
     <h5 class="fw-bold mt-4">11. Contact Us</h5>
     <p>
         Email: <a href="mailto:hello@therouteless.com"><strong>hello@therouteless.com</strong></a><br>
-        Company Name: The Routeless
     </p>
 
 </div>
